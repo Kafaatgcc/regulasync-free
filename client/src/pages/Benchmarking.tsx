@@ -30,7 +30,7 @@ export default function Benchmarking() {
   const doCompare = async () => {
     setCompareLoading(true);
     try {
-      const data = await utils.client.benchmarking.compare.query({ industry, orgSize });
+      const data = await utils.client.enhancedBenchmarking.compare.query({ industry, orgSize });
       setComparison(data);
     } catch (e: any) {
       toast.error(e.message);

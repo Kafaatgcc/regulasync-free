@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +44,10 @@ import {
   ArrowRight,
   Building2,
   FileText,
-  ShieldCheck
+  ShieldCheck,
+  Bell,
+  RefreshCw,
+  Loader2
 } from "lucide-react";
 
 const delegations = [
@@ -161,6 +166,22 @@ export default function Delegation() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [demoDelegations, setDemoDelegations] = useState<any[]>([]);
+
+  // Delegation expiry alerts from DB
+  const { data: alertsData, refetch: refetchAlerts } = trpc.delegationAlerts.expiryAlerts.useQuery();
+  const expiringDelegations = alertsData?.expiring || [];
+  const expiredDelegations = alertsData?.expired || [];
+
+  // Renewal mutation
+  const renewMutation = trpc.delegationAlerts.renewDelegation.useMutation({
+    onSuccess: () => {
+      toast.success('Delegation renewed for 90 days!');
+      refetchAlerts();
+    },
+    onError: (error) => {
+      toast.error('Renewal failed', { description: error.message });
+    },
+  });
   const [formData, setFormData] = useState({
     title: '',
     type: '',
@@ -291,6 +312,51 @@ export default function Delegation() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Expiry Alerts Banner */}
+      {(expiringDelegations.length > 0 || expiredDelegations.length > 0) && (
+        <Card className="border-amber-400/50 bg-amber-50/50 dark:bg-amber-950/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2 text-amber-700 dark:text-amber-400">
+              <Bell className="h-4 w-4" />
+              Delegation Expiry Alerts
+              <Badge variant="destructive" className="ml-auto">{expiringDelegations.length + expiredDelegations.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {expiredDelegations.map((d: any) => (
+                <div key={d.id} className="flex items-center justify-between p-2 rounded bg-red-100/80 dark:bg-red-900/30">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-red-600" />
+                    <span className="text-sm font-medium">{d.title}</span>
+                    <Badge variant="destructive" className="text-xs">EXPIRED</Badge>
+                  </div>
+                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => renewMutation.mutate({ delegationId: d.id })} disabled={renewMutation.isPending}>
+                    {renewMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3 mr-1" />}
+                    Renew 90d
+                  </Button>
+                </div>
+              ))}
+              {expiringDelegations.map((d: any) => (
+                <div key={d.id} className={`flex items-center justify-between p-2 rounded ${
+                  d.urgency === 'critical' ? 'bg-red-50 dark:bg-red-900/20' : d.urgency === 'high' ? 'bg-amber-50 dark:bg-amber-900/20' : 'bg-yellow-50 dark:bg-yellow-900/20'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <Clock className={`h-4 w-4 ${d.urgency === 'critical' ? 'text-red-600' : 'text-amber-600'}`} />
+                    <span className="text-sm font-medium">{d.title}</span>
+                    <Badge variant={d.urgency === 'critical' ? 'destructive' : 'secondary'} className="text-xs">{d.daysLeft}d left</Badge>
+                  </div>
+                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => renewMutation.mutate({ delegationId: d.id })} disabled={renewMutation.isPending}>
+                    {renewMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3 mr-1" />}
+                    Renew 90d
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

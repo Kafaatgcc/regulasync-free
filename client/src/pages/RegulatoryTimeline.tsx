@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -138,6 +140,93 @@ const timelineEvents: TimelineEvent[] = [
     actionRequired: true
   }
 ];
+
+function LiveChangeTrackerSection() {
+  const { data, isLoading } = trpc.changeTracker.timeline.useQuery();
+
+  const impactColor = (level: string) => {
+    switch (level) {
+      case 'critical': return 'bg-red-100 text-red-700 border-red-200';
+      case 'high': return 'bg-amber-100 text-amber-700 border-amber-200';
+      case 'medium': return 'bg-blue-100 text-blue-700 border-blue-200';
+      default: return 'bg-gray-100 text-gray-600 border-gray-200';
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-copper" />
+            Live Regulatory Change Tracker
+          </CardTitle>
+          {data?.summary && (
+            <div className="flex gap-3 text-sm">
+              <span className="text-muted-foreground">Last 12 months:</span>
+              <Badge variant="outline">{data.summary.total} changes</Badge>
+              {(data.summary.actionRequired ?? 0) > 0 && (
+                <Badge className="bg-amber-100 text-amber-700">{data.summary.actionRequired} action required</Badge>
+              )}
+            </div>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 w-full" />)}
+          </div>
+        ) : !data?.events?.length ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <FileText className="w-10 h-10 mx-auto mb-3 opacity-40" />
+            <p className="text-sm">No regulatory changes recorded in the last 12 months.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Monthly summary bar */}
+            {data.byMonth && data.byMonth.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                {Object.entries(data.summary.byBody).map(([body, count]) =>
+                  (count as number) > 0 ? (
+                    <div key={body} className="bg-muted/50 rounded-lg p-3 text-center">
+                      <p className="text-lg font-bold">{count as number}</p>
+                      <p className="text-xs text-muted-foreground">{body}</p>
+                    </div>
+                  ) : null
+                )}
+              </div>
+            )}
+            <Separator />
+            {/* Recent events list */}
+            <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+              {data.events.slice(0, 10).map((event: any) => (
+                <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-muted/30 transition-colors">
+                  <Badge className={`${impactColor(event.impactLevel)} shrink-0 mt-0.5`}>
+                    {event.impactLevel}
+                  </Badge>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">{event.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{event.summary}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-muted-foreground">{event.regulatoryBody}</span>
+                      {event.effectiveDate && (
+                        <span className="text-xs text-muted-foreground">• Effective: {new Date(event.effectiveDate).toLocaleDateString('en-GB')}</span>
+                      )}
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="shrink-0 text-xs">
+                    {event.status?.replace('_', ' ')}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function RegulatoryTimeline() {
   const [filter, setFilter] = useState<'all' | 'critical' | 'action-required'>('all');
@@ -613,6 +702,9 @@ export default function RegulatoryTimeline() {
           )}
         </div>
       </div>
+
+      {/* Live Regulatory Change Tracker — DB-powered 12-month view */}
+      <LiveChangeTrackerSection />
 
       {/* Reminder Dialog */}
       <Dialog open={reminderDialogOpen} onOpenChange={(open) => {

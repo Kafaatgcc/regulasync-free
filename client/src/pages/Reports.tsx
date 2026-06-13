@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { generateCompliancePDF, getSampleReportData } from "@/lib/pdfGenerator";
+import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -181,6 +182,9 @@ export default function Reports() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [generatingReport, setGeneratingReport] = useState<number | null>(null);
   const [customReportOpen, setCustomReportOpen] = useState(false);
+
+  // Fetch live board data from DB for report generation
+  const { data: boardData } = trpc.boardReport.getData.useQuery();
   const [customReportConfig, setCustomReportConfig] = useState({
     name: "",
     sections: [] as string[],
@@ -196,8 +200,26 @@ export default function Reports() {
     setGeneratingReport(reportId);
     
     try {
-      // Generate actual PDF for demo
-      const reportData = getSampleReportData();
+      // Use live DB data for report id=1 (Executive Compliance Summary), fallback to sample
+      let reportData = getSampleReportData();
+      if (reportId === 1 && boardData) {
+        reportData = {
+          title: 'Executive Compliance Summary',
+          generatedDate: boardData.generatedDate,
+          period: boardData.period,
+          companyName: 'Your Organisation',
+          overallScore: boardData.overallScore,
+          departments: boardData.departments,
+          policies: boardData.policies.map((p: any) => ({
+            name: p.name,
+            status: p.status,
+            compliance: p.compliance,
+            owner: p.owner,
+          })),
+          recentActivities: boardData.recentActivities,
+          recommendations: boardData.recommendations,
+        };
+      }
       const pdfBlob = await generateCompliancePDF(reportData);
       
       // Create download link

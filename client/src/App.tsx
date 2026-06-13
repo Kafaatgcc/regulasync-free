@@ -44,6 +44,8 @@ import EvidenceCollection from "./pages/EvidenceCollection";
 import CompliancePassport from "./pages/CompliancePassport";
 import IncidentSimulation from "./pages/IncidentSimulation";
 import Benchmarking from "./pages/Benchmarking";
+import RegulatoryIntelligence from "./pages/RegulatoryIntelligence";
+import PredictiveRisk from "./pages/PredictiveRisk";
 import XAILogs from "./pages/XAILogs";
 import RegulatorPortal from "./pages/RegulatorPortal";
 import UniversityPartnership from "./pages/UniversityPartnership";
@@ -327,6 +329,16 @@ function Router() {
           </DashboardLayout>
         </Route>
 
+        <Route path="/regulatory-intelligence">
+          <DashboardLayout>
+            <RegulatoryIntelligence />
+          </DashboardLayout>
+        </Route>
+        <Route path="/predictive-risk">
+          <DashboardLayout>
+            <PredictiveRisk />
+          </DashboardLayout>
+        </Route>
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>

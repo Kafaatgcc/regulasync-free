@@ -30,7 +30,7 @@ export default function PublicHeader({ transparent = false }: PublicHeaderProps)
           <Link href="/">
             <a className="flex items-center gap-3">
               <img 
-                src="/manus-storage/logo_70fab7aa.png" 
+                src="/manus-storage/logo_optimized_0f753429.png" 
                 alt="RegulaSync" 
                 className="h-10 w-auto"
               />

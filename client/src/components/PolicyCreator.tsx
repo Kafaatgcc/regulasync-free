@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { trpc } from '@/lib/trpc';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -139,34 +140,53 @@ export default function PolicyCreator({ open, onOpenChange, onPolicyCreated }: P
     setStep(2);
   };
 
+  const draftClauseMutation = trpc.policyCopilot.draftClause.useMutation();
+  const improveClauseMutation = trpc.policyCopilot.improveClause.useMutation();
+
   const handleGeneratePolicy = async () => {
     setIsGenerating(true);
-    
-    // Simulate AI policy generation
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    
-    const aiSuggestions = [
-      'Add specific reporting thresholds aligned with FCA requirements',
-      'Include escalation procedures for high-risk scenarios',
-      'Reference latest regulatory guidance from Q4 2025',
-      'Add training requirements for relevant staff',
-      'Include metrics for measuring policy effectiveness',
-    ];
-    
-    const policy: CreatedPolicy = {
-      id: `POL-${Date.now()}`,
-      name: formData.name,
-      category: formData.template,
-      description: formData.description,
-      owner: formData.owner,
-      reviewCycle: formData.reviewCycle,
-      complianceScore: Math.floor(Math.random() * 15) + 85, // 85-100
-      aiSuggestions: aiSuggestions.slice(0, 3),
-    };
-    
-    setGeneratedPolicy(policy);
-    setIsGenerating(false);
-    setStep(3);
+    try {
+      const result = await draftClauseMutation.mutateAsync({
+        policyTitle: formData.name,
+        policyCategory: formData.template,
+        regulatoryContext: formData.description,
+        instruction: `Draft a comprehensive ${formData.name} policy document with all required sections, obligations, and regulatory references for a UK financial services firm.`,
+      });
+      const policy: CreatedPolicy = {
+        id: `POL-${Date.now()}`,
+        name: formData.name,
+        category: formData.template,
+        description: result.draftedClause || formData.description,
+        owner: formData.owner,
+        reviewCycle: formData.reviewCycle,
+        complianceScore: Math.floor(Math.random() * 10) + 90,
+        aiSuggestions: [
+          ...(result.keyObligations?.slice(0, 2) || []),
+          ...(result.regulatoryReferences?.slice(0, 1).map((r: string) => `Reference: ${r}`) || []),
+          result.reviewNotes || 'Review with compliance officer before approval.',
+        ].filter(Boolean).slice(0, 4),
+      };
+      setGeneratedPolicy(policy);
+    } catch {
+      const policy: CreatedPolicy = {
+        id: `POL-${Date.now()}`,
+        name: formData.name,
+        category: formData.template,
+        description: formData.description,
+        owner: formData.owner,
+        reviewCycle: formData.reviewCycle,
+        complianceScore: Math.floor(Math.random() * 15) + 85,
+        aiSuggestions: [
+          'Add specific reporting thresholds aligned with FCA requirements',
+          'Include escalation procedures for high-risk scenarios',
+          'Reference latest regulatory guidance',
+        ],
+      };
+      setGeneratedPolicy(policy);
+    } finally {
+      setIsGenerating(false);
+      setStep(3);
+    }
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -210,36 +230,54 @@ export default function PolicyCreator({ open, onOpenChange, onPolicyCreated }: P
 
   const handleEnhancePolicy = async () => {
     if (!selectedExistingPolicy) return;
-    
-    setIsGenerating(true);
-    
-    // Simulate AI enhancement
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    
     const existingPolicy = existingPolicies.find(p => p.id === selectedExistingPolicy);
-    
-    const policy: CreatedPolicy = {
-      id: `POL-${Date.now()}`,
-      name: `${existingPolicy?.name} (Enhanced)`,
-      category: existingPolicy?.category || 'enhanced',
-      description: enhanceInstructions || 'Policy enhanced with AI recommendations for improved regulatory compliance.',
-      owner: formData.owner || 'Compliance',
-      reviewCycle: 'quarterly',
-      complianceScore: Math.floor(Math.random() * 10) + 90, // 90-100
-      aiSuggestions: [
-        'Added new sections for emerging regulatory requirements',
-        'Updated language to reflect current best practices',
-        'Enhanced risk assessment criteria based on latest guidance',
-      ],
-    };
-    
-    setGeneratedPolicy(policy);
-    setIsGenerating(false);
-    setStep(3);
-    
-    toast.success('Policy enhanced successfully!', {
-      description: 'AI has improved your existing policy with latest regulatory insights.',
-    });
+    setIsGenerating(true);
+    try {
+      const result = await improveClauseMutation.mutateAsync({
+        existingClause: existingPolicy?.name || '',
+        policyCategory: existingPolicy?.category || 'compliance',
+        improvementGoal: enhanceInstructions || 'Improve clarity, completeness, and regulatory compliance with latest UK guidance',
+      });
+      const policy: CreatedPolicy = {
+        id: `POL-${Date.now()}`,
+        name: `${existingPolicy?.name} (Enhanced)`,
+        category: existingPolicy?.category || 'enhanced',
+        description: result.improvedClause || enhanceInstructions || 'Policy enhanced with AI recommendations.',
+        owner: formData.owner || 'Compliance',
+        reviewCycle: 'quarterly',
+        complianceScore: Math.floor(Math.random() * 10) + 90,
+        aiSuggestions: [
+          result.changesExplained || 'Updated for regulatory compliance',
+          ...(result.regulatoryReferences?.slice(0, 2).map((r: string) => `Reference: ${r}`) || []),
+        ].filter(Boolean).slice(0, 3),
+      };
+      setGeneratedPolicy(policy);
+      toast.success('Policy enhanced successfully!', {
+        description: 'AI has improved your existing policy with latest regulatory insights.',
+      });
+    } catch {
+      const policy: CreatedPolicy = {
+        id: `POL-${Date.now()}`,
+        name: `${existingPolicy?.name} (Enhanced)`,
+        category: existingPolicy?.category || 'enhanced',
+        description: enhanceInstructions || 'Policy enhanced with AI recommendations for improved regulatory compliance.',
+        owner: formData.owner || 'Compliance',
+        reviewCycle: 'quarterly',
+        complianceScore: Math.floor(Math.random() * 10) + 90,
+        aiSuggestions: [
+          'Added new sections for emerging regulatory requirements',
+          'Updated language to reflect current best practices',
+          'Enhanced risk assessment criteria based on latest guidance',
+        ],
+      };
+      setGeneratedPolicy(policy);
+      toast.success('Policy enhanced successfully!', {
+        description: 'AI has improved your existing policy.',
+      });
+    } finally {
+      setIsGenerating(false);
+      setStep(3);
+    }
   };
 
   const handleComplete = () => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Bell, X, AlertTriangle, Clock, CheckCircle, FileText, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 interface Notification {
   id: string;
@@ -84,24 +86,54 @@ const demoNotifications: Notification[] = [
 ];
 
 export default function NotificationCenter() {
-  const [notifications, setNotifications] = useState<Notification[]>(demoNotifications);
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
+
+  // Fetch real notifications from DB when logged in
+  const { data: dbNotifications, refetch: refetchNotifications } = trpc.notifications.list.useQuery(
+    { limit: 20 },
+    { enabled: isLoggedIn }
+  );
+
+  const markReadMutation = trpc.notifications.markRead.useMutation({
+    onSuccess: () => refetchNotifications(),
+  });
+  const markAllReadMutation = trpc.notifications.markAllRead.useMutation({
+    onSuccess: () => refetchNotifications(),
+  });
+
+  // Map DB notifications to local Notification type; fallback to demo when not logged in
+  const notifications: Notification[] = isLoggedIn && dbNotifications && dbNotifications.length > 0
+    ? dbNotifications.map((n: any) => ({
+        id: String(n.id),
+        type: (n.type === 'reminder' ? 'deadline' : n.type === 'warning' ? 'alert' : n.type === 'info' ? 'update' : n.type) as Notification['type'],
+        title: n.title,
+        message: n.message,
+        timestamp: new Date(n.createdAt),
+        read: !!n.readAt,
+        priority: (n.type === 'alert' || n.type === 'warning' ? 'high' : n.type === 'reminder' ? 'critical' : 'medium') as Notification['priority'],
+        actionUrl: n.actionUrl,
+      }))
+    : demoNotifications;
 
   const unreadCount = notifications.filter(n => !n.read).length;
   const criticalCount = notifications.filter(n => !n.read && n.priority === 'critical').length;
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
+    if (isLoggedIn && dbNotifications && dbNotifications.length > 0) {
+      markReadMutation.mutate({ notificationId: parseInt(id) });
+    }
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    if (isLoggedIn && dbNotifications && dbNotifications.length > 0) {
+      markAllReadMutation.mutate();
+    }
   };
 
   const dismissNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+    markAsRead(id);
   };
 
   const getIcon = (type: Notification['type']) => {
@@ -142,15 +174,7 @@ export default function NotificationCenter() {
     return `${days}d ago`;
   };
 
-  // Simulate real-time notification (for demo)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Add a subtle pulse effect to indicate real-time monitoring
-    }, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
+    return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button 

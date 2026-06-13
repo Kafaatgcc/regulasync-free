@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
 import {
   Shield,
   FileText,
@@ -15,7 +16,9 @@ import {
   ArrowRight,
   Brain,
   Bell,
-  BarChart3
+  BarChart3,
+  Activity,
+  Loader2
 } from "lucide-react";
 import {
   ChartConfig,
@@ -78,6 +81,10 @@ export default function Dashboard() {
   // Check for demo mode
   const isDemoMode = typeof window !== 'undefined' && localStorage.getItem('demoMode') === 'true';
   const displayName = isDemoMode ? 'Demo User' : (user?.name?.split(' ')[0] || 'User');
+
+  // Compliance Health Scorecard
+  const { data: scorecard, isLoading: scorecardLoading } = trpc.healthScorecard.scorecard.useQuery();
+  const scorecardScore = scorecard?.overall ?? 0;
 
   return (
     <div className="space-y-6">
@@ -277,7 +284,71 @@ export default function Dashboard() {
         </Card>
       </div>
 
-           {/* Live Compliance Simulation (Demo Feature) */}
+           {/* Compliance Health Scorecard */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Activity className="h-5 w-5 text-copper" />
+            Compliance Health Scorecard
+          </CardTitle>
+          <CardDescription>Real-time C-suite governance health index</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {scorecardLoading ? (
+            <div className="flex items-center justify-center h-24">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : scorecard ? (
+            <div className="space-y-4">
+              <div className="flex items-center gap-6">
+                <div className="relative flex items-center justify-center h-24 w-24 shrink-0">
+                  <svg viewBox="0 0 100 100" className="h-24 w-24 -rotate-90">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--muted))" strokeWidth="10" />
+                    <circle
+                      cx="50" cy="50" r="40" fill="none"
+                      stroke={scorecardScore >= 90 ? '#22c55e' : scorecardScore >= 70 ? '#f59e0b' : '#ef4444'}
+                      strokeWidth="10"
+                      strokeDasharray={`${(scorecardScore / 100) * 251.2} 251.2`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute text-center">
+                    <p className="text-2xl font-bold leading-none">{scorecardScore}</p>
+                    <p className="text-xs text-muted-foreground">/ 100</p>
+                  </div>
+                </div>
+                <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {scorecard.categories?.map((cat: any) => (
+                    <div key={cat.category} className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted-foreground truncate">{cat.label}</span>
+                        <span className="font-medium">{cat.score}</span>
+                      </div>
+                      <Progress value={cat.score} className="h-1.5" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {scorecard.departments && scorecard.departments.length > 0 && (
+                <div className="border-t pt-3">
+                  <p className="text-xs font-semibold text-muted-foreground mb-2">DEPARTMENT STATUS</p>
+                  <div className="flex flex-wrap gap-2">
+                    {scorecard.departments.slice(0, 5).map((dept: any) => (
+                      <Badge key={dept.id} variant={dept.trend === 'critical' ? 'destructive' : dept.trend === 'warning' ? 'secondary' : 'default'} className="text-xs">
+                        {dept.name}: {dept.score}%
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">Scorecard data unavailable.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Live Compliance Simulation (Demo Feature) */}
       <LiveComplianceSimulator />
 
       {/* Recent Activity */}

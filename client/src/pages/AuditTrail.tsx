@@ -73,6 +73,32 @@ export default function AuditTrail() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEntity, setSelectedEntity] = useState<string>("all");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [aiQuery, setAiQuery] = useState("");
+  const [aiResults, setAiResults] = useState<any[] | null>(null);
+  const [aiInterpretation, setAiInterpretation] = useState("");
+
+  // AI natural language search
+  const aiSearchMutation = trpc.auditSearch.naturalLanguageSearch.useMutation({
+    onSuccess: (data) => {
+      setAiResults(data.results);
+      setAiInterpretation(data.interpretation);
+      toast.success(`Found ${data.count} matching entries`, { description: data.interpretation });
+    },
+    onError: (error) => {
+      toast.error('AI search failed', { description: error.message });
+    },
+  });
+
+  const handleAiSearch = () => {
+    if (!aiQuery.trim()) return;
+    aiSearchMutation.mutate({ query: aiQuery });
+  };
+
+  const clearAiSearch = () => {
+    setAiResults(null);
+    setAiInterpretation("");
+    setAiQuery("");
+  };
 
   // Fetch audit trail from database
   const { data: auditLogs, isLoading: isLoadingLogs, refetch: refetchLogs } = trpc.audit.list.useQuery({ limit: 100 });
@@ -158,8 +184,9 @@ export default function AuditTrail() {
     toast.success('Hash copied to clipboard');
   };
 
-  // Filter logs
-  const filteredLogs = (auditLogs || []).filter(log => {
+  // Filter logs (use AI results if available)
+  const baseLogsForFilter = aiResults !== null ? aiResults : (auditLogs || []);
+  const filteredLogs = baseLogsForFilter.filter(log => {
     const matchesSearch = 
       log.id.toString().includes(searchQuery) ||
       (log.userName?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
@@ -351,6 +378,40 @@ export default function AuditTrail() {
         </Card>
       </div>
 
+      {/* AI Smart Search */}
+      <Card className="border-copper/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Search className="h-4 w-4 text-copper" />
+            AI Smart Search
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-2">
+            <Input
+              placeholder='Try: "Show all policy approvals by Sarah last week" or "GDPR updates"'
+              value={aiQuery}
+              onChange={(e) => setAiQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAiSearch()}
+              className="flex-1"
+            />
+            <Button onClick={handleAiSearch} disabled={aiSearchMutation.isPending || !aiQuery.trim()} className="bg-copper hover:bg-copper/90">
+              {aiSearchMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+              <span className="ml-2 hidden sm:inline">Search</span>
+            </Button>
+            {aiResults !== null && (
+              <Button variant="outline" onClick={clearAiSearch}>Clear</Button>
+            )}
+          </div>
+          {aiInterpretation && (
+            <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+              <CheckCircle2 className="h-3 w-3 text-green-500" />
+              {aiInterpretation}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Filters & Table */}
       <Card>
         <CardHeader>
@@ -358,14 +419,14 @@ export default function AuditTrail() {
             <div>
               <CardTitle>Audit Log Entries</CardTitle>
               <CardDescription>
-                Complete cryptographically verified history of all governance activities
+                {aiResults !== null ? `AI search: ${aiResults.length} results` : 'Complete cryptographically verified history of all governance activities'}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search logs..."
+                  placeholder="Filter results..."
                   className="pl-9 w-64"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}

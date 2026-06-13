@@ -6,6 +6,18 @@ import { z } from "zod";
 import * as db from "./db";
 import { notifyOwner } from "./_core/notification";
 import { invokeLLM } from "./_core/llm";
+import {
+  regulatoryIntelligenceRouter,
+  predictiveRiskRouter,
+  boardReportRouter,
+  changeTrackerRouter,
+  policyCopilotRouter,
+  healthScorecardRouter,
+  delegationAlertsRouter,
+  obligationMappingRouter,
+  auditSearchRouter,
+  enhancedBenchmarkingRouter,
+} from "./enhancementsRouter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -1552,6 +1564,26 @@ Keep responses under 150 words unless detailed explanation is needed.`;
         return await seedGapAnalysisData();
       }),
   }),
+  // ─── 10 TRANSFORMATIVE ENHANCEMENTS ────────────────────────────────────────
+  // Enhancement 1: AI Regulatory Intelligence Feed
+  regulatoryIntelligence: regulatoryIntelligenceRouter,
+  // Enhancement 2: Predictive Compliance Risk Engine
+  predictiveRisk: predictiveRiskRouter,
+  // Enhancement 3: Board-Ready Report Data
+  boardReport: boardReportRouter,
+  // Enhancement 4: Live Regulatory Change Tracker
+  changeTracker: changeTrackerRouter,
+  // Enhancement 5: AI Policy Drafting Copilot
+  policyCopilot: policyCopilotRouter,
+  // Enhancement 6: Compliance Health Scorecard
+  healthScorecard: healthScorecardRouter,
+  // Enhancement 7: Automated Delegation Expiry Alerts
+  delegationAlerts: delegationAlertsRouter,
+  // Enhancement 8: Regulatory Obligation Mapping
+  obligationMapping: obligationMappingRouter,
+  // Enhancement 9: Smart Audit Trail Search
+  auditSearch: auditSearchRouter,
+  // Enhancement 10: Enhanced Benchmarking Intelligence (fixed)
+  enhancedBenchmarking: enhancedBenchmarkingRouter,
 });
-
 export type AppRouter = typeof appRouter;

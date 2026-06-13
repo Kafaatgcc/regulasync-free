@@ -58,7 +58,9 @@ import {
   BarChart2,
   BookOpen,
   GraduationCap,
-  Sliders
+  Sliders,
+  Rss,
+  TrendingDown
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { CSSProperties, useEffect, useRef, useState, useMemo, useCallback } from "react";
@@ -82,6 +84,8 @@ const mainMenuItems = [
 
 const insightsMenuItems = [
   { icon: Brain, label: "AI Insights", path: "/ai-recommendations" },
+  { icon: Rss, label: "Reg Intelligence", path: "/regulatory-intelligence" },
+  { icon: TrendingDown, label: "Predictive Risk", path: "/predictive-risk" },
   { icon: Bell, label: "Reg Updates", path: "/regulatory-updates" },
   { icon: Calendar, label: "Reg Timeline", path: "/regulatory-timeline" },
   { icon: RefreshCw, label: "Reg Sync", path: "/regulatory-sync" },
@@ -273,7 +277,7 @@ function DashboardLayoutContent({
                   <div className="flex items-center gap-2 px-1">
                     <div className="w-6 h-6 flex items-center justify-center">
                       <img 
-                        src="/manus-storage/logo_70fab7aa.png" 
+                        src="/manus-storage/logo_optimized_0f753429.png" 
                         alt="RegulaSync" 
                         className="w-6 h-6 object-contain"
                       />

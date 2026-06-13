@@ -281,6 +281,7 @@ export default function GapAnalysis() {
           <TabsTrigger value="analyze">Analyze Update</TabsTrigger>
           <TabsTrigger value="results">Analysis Results ({allResults.length})</TabsTrigger>
           <TabsTrigger value="custom">Custom Analysis</TabsTrigger>
+          <TabsTrigger value="matrix">Obligation Matrix</TabsTrigger>
         </TabsList>
 
         <TabsContent value="analyze" className="space-y-6">
@@ -558,7 +559,120 @@ export default function GapAnalysis() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Obligation Matrix Tab */}
+        <TabsContent value="matrix" className="space-y-4">
+          <ObligationMatrixTab />
+        </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+function ObligationMatrixTab() {
+  const { data: matrixData, isLoading } = trpc.obligationMapping.matrix.useQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const matrix = matrixData?.matrix || [];
+  const summary = matrixData?.summary;
+  const unmapped = matrixData?.unmappedRegulations || [];
+
+  return (
+    <div className="space-y-4">
+      {summary && (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          {[
+            { label: 'Regulations', value: summary.totalRegulations, color: 'text-foreground' },
+            { label: 'Mappings', value: summary.totalMappings, color: 'text-blue-600' },
+            { label: 'Compliant', value: summary.compliant, color: 'text-green-600' },
+            { label: 'Gaps', value: summary.gapsIdentified, color: 'text-red-600' },
+            { label: 'Unmapped', value: summary.unmapped, color: 'text-amber-600' },
+          ].map((s) => (
+            <Card key={s.label}>
+              <CardContent className="pt-4 pb-3">
+                <p className="text-xs text-muted-foreground">{s.label}</p>
+                <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5" />
+            Regulation \u2192 Policy Coverage Matrix
+          </CardTitle>
+          <CardDescription>Visual mapping of regulations to policies and compliance status</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {matrix.length === 0 ? (
+            <div className="text-center py-8">
+              <Shield className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground">No obligation mappings found. Run a gap analysis to generate mappings.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {matrix.map((reg: any) => (
+                <div key={reg.regulationId} className="border rounded-lg p-3">
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium text-sm">{reg.regulationTitle}</span>
+                        <Badge variant="outline" className="text-xs">{reg.regulatoryBody}</Badge>
+                        <Badge variant={reg.impactLevel === 'critical' ? 'destructive' : reg.impactLevel === 'high' ? 'secondary' : 'outline'} className="text-xs">
+                          {reg.impactLevel} impact
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-sm font-semibold">{reg.coveragePercent}%</p>
+                      <p className="text-xs text-muted-foreground">covered</p>
+                    </div>
+                  </div>
+                  <Progress value={reg.coveragePercent} className="h-1.5 mb-2" />
+                  {reg.mappedPolicies.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {reg.mappedPolicies.map((p: any, i: number) => (
+                        <Badge key={i} variant={p.mappingType === 'compliant' ? 'default' : p.mappingType === 'gap_identified' ? 'destructive' : 'secondary'} className="text-xs">
+                          {p.policyTitle.length > 30 ? p.policyTitle.slice(0, 30) + '\u2026' : p.policyTitle}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      {unmapped.length > 0 && (
+        <Card className="border-amber-400/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2 text-amber-700 dark:text-amber-400">
+              <AlertTriangle className="h-4 w-4" />
+              Unmapped Regulations ({unmapped.length})
+            </CardTitle>
+            <CardDescription>These regulations have no policy coverage</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {unmapped.map((u: any) => (
+                <Badge key={u.id} variant="outline" className="text-xs border-amber-400">
+                  {u.title} ({u.regulatoryBody})
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
