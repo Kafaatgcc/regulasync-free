@@ -83,7 +83,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function Router() {
   // Public paths that never require auth
   const [location] = useLocation();
-  const publicPaths = ["/", "/home", "/login", "/forgot-password", "/accept-invite",
+  const publicPaths = ["/", "/home", "/landing", "/login", "/forgot-password", "/accept-invite",
     "/about", "/pricing", "/security", "/integrations", "/case-studies",
     "/privacy", "/terms", "/cookies", "/careers", "/contact"];
   const isPublicPage = publicPaths.some(p => location === p || location.startsWith(p + '?'));

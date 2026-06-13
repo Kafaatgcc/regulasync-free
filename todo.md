@@ -89,3 +89,10 @@
 ### Phase 5: Seed & Polish
 - [x] Seeded 5 demo users: superadmin@regulasync.co.uk, admin@acmecorp.co.uk, compliance@acmecorp.co.uk, finance@acmecorp.co.uk, auditor@acmecorp.co.uk (all password: Demo@2026!)
 - [x] TypeScript clean (0 errors), checkpoint saved (version: 3d870cc3)
+
+## Logo & Routing Fixes (Session 3)
+- [x] Fix broken logo URL: updated all 4 components (AnimatedLogo, DashboardLayout, PublicFooter, PublicHeader) to use /manus-storage/logo_optimized_92a39fa3.png
+- [x] Fix /landing route: added to publicPaths array in App.tsx so it renders correctly without auth redirect
+- [x] PublicHeader updated: "Try Demo" button replaced with "Log In" button linking to /login
+- [x] TypeScript: 0 errors confirmed
+- [x] Checkpoint saved (version: final)

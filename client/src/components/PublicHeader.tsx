@@ -30,7 +30,7 @@ export default function PublicHeader({ transparent = false }: PublicHeaderProps)
           <Link href="/">
             <a className="flex items-center gap-3">
               <img 
-                src="/manus-storage/logo_optimized_0f753429.png" 
+                src="/manus-storage/logo_optimized_92a39fa3.png" 
                 alt="RegulaSync" 
                 className="h-10 w-auto"
               />
@@ -55,9 +55,9 @@ export default function PublicHeader({ transparent = false }: PublicHeaderProps)
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="/dashboard?demo=true">
+            <Link href="/login">
               <Button variant="outline" size="sm">
-                Try Demo
+                Log In
               </Button>
             </Link>
             <Link href="/#request-demo">
