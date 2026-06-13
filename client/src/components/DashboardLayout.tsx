@@ -1,9 +1,10 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -18,70 +19,160 @@ import {
   SidebarProvider,
   SidebarTrigger,
   useSidebar,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users } from "lucide-react";
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { 
+  LayoutDashboard, 
+  LogOut, 
+  PanelLeft, 
+  FileText, 
+  GitBranch, 
+  Shield, 
+  Brain, 
+  History, 
+  BarChart3,
+  Bell,
+  Settings,
+  ChevronRight,
+  Building2,
+  Eye,
+  Moon,
+  Sun,
+  Users,
+  RefreshCw,
+  User,
+  LogIn,
+  Calendar,
+  Presentation,
+  Target,
+  Sparkles,
+  Bot,
+  Leaf,
+  FileCheck,
+  Award,
+  Activity,
+  BarChart2,
+  BookOpen,
+  GraduationCap,
+  Sliders
+} from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
+import { CSSProperties, useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { Input } from "./ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./ui/dialog";
+import { Label } from "./ui/label";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import GuidedTour, { resetGuidedTour } from './GuidedTour';
+import NotificationCenter from './NotificationCenter';
+import { Link } from 'wouter';
 
-const menuItems = [
-  { icon: LayoutDashboard, label: "Page 1", path: "/" },
-  { icon: Users, label: "Page 2", path: "/some-path" },
+const mainMenuItems = [
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+  { icon: Target, label: "Exec Summary", path: "/executive-summary" },
+  { icon: FileText, label: "Policies", path: "/policies" },
+  { icon: GitBranch, label: "Delegation", path: "/delegation" },
+  { icon: Shield, label: "Compliance", path: "/compliance" },
+];
+
+const insightsMenuItems = [
+  { icon: Brain, label: "AI Insights", path: "/ai-recommendations" },
+  { icon: Bell, label: "Reg Updates", path: "/regulatory-updates" },
+  { icon: Calendar, label: "Reg Timeline", path: "/regulatory-timeline" },
+  { icon: RefreshCw, label: "Reg Sync", path: "/regulatory-sync" },
+  { icon: Sparkles, label: "Gap Analysis", path: "/gap-analysis" },
+];
+
+const systemMenuItems = [
+  { icon: History, label: "Audit Trail", path: "/audit-trail" },
+  { icon: BarChart3, label: "Reports", path: "/reports" },
+  { icon: Users, label: "Contacts", path: "/admin/contacts" },
+  { icon: Settings, label: "Admin Panel", path: "/admin" },
+];
+
+import { GitCompare, Calculator, Workflow, Scale } from "lucide-react";
+
+const toolsMenuItems = [
+  { icon: Workflow, label: "Workflow Sim", path: "/workflow-simulator" },
+  { icon: GitCompare, label: "Gov Logic", path: "/governance-logic" },
+  { icon: Scale, label: "Competitors", path: "/competitor-comparison" },
+  { icon: Award, label: "Certifications", path: "/certifications" },
+  { icon: Calculator, label: "ROI Calc", path: "/roi-calculator" },
+];
+
+const innovationMenuItems = [
+  { icon: Bot, label: "Agentic AI", path: "/agentic-tasks" },
+  { icon: Brain, label: "XAI Logs", path: "/xai-logs" },
+  { icon: Building2, label: "Vendor Risk", path: "/vendor-risk" },
+  { icon: FileCheck, label: "Evidence", path: "/evidence-collection" },
+  { icon: BarChart2, label: "Benchmarking", path: "/benchmarking" },
+];
+
+const horizonMenuItems = [
+  { icon: Award, label: "Compliance Passport", path: "/compliance-passport" },
+  { icon: Activity, label: "Incident Sim", path: "/incident-simulation" },
+  { icon: Leaf, label: "ESG Tracking", path: "/esg-tracking" },
+  { icon: Shield, label: "Regulator Portal", path: "/regulator-portal" },
+  { icon: GraduationCap, label: "University Partners", path: "/university-partnerships" },
+  { icon: Sliders, label: "Platform Settings", path: "/platform-settings" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
-const DEFAULT_WIDTH = 280;
+const DEFAULT_WIDTH = 320;
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
+
+// Production user object
+const getDefaultUser = () => {
+  const savedName = typeof window !== 'undefined' ? localStorage.getItem('userName') : null;
+  return {
+    id: 0,
+    name: savedName || 'Demo User',
+    email: 'demo@regulasync.com',
+    openId: 'user',
+    role: 'user' as const,
+    loginMethod: 'production',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    lastSignedIn: new Date(),
+  };
+};
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [user, setUser] = useState(getDefaultUser);
+  
+  // Update user name
+  const updateUserName = useCallback((name: string) => {
+    localStorage.setItem('userName', name);
+    setUser(prev => ({ ...prev, name }));
+  }, []);
+  
+  // Reset data
+  const resetData = useCallback(() => {
+    localStorage.removeItem('userName');
+    setUser(getDefaultUser());
+    window.location.reload();
+  }, []);
+  
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
-  const { loading, user } = useAuth();
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
   }, [sidebarWidth]);
 
-  if (loading) {
-    return <DashboardLayoutSkeleton />
-  }
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
-          <div className="flex flex-col items-center gap-6">
-            <h1 className="text-2xl font-semibold tracking-tight text-center">
-              Sign in to continue
-            </h1>
-            <p className="text-sm text-muted-foreground text-center max-w-sm">
-              Access to this dashboard requires authentication. Continue to launch the login flow.
-            </p>
-          </div>
-          <Button
-            onClick={() => {
-              window.location.href = getLoginUrl();
-            }}
-            size="lg"
-            className="w-full shadow-lg hover:shadow-xl transition-all"
-          >
-            Sign in
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
+  // Production mode - full access
   return (
     <SidebarProvider
       style={
@@ -90,7 +181,12 @@ export default function DashboardLayout({
         } as CSSProperties
       }
     >
-      <DashboardLayoutContent setSidebarWidth={setSidebarWidth}>
+      <DashboardLayoutContent 
+        setSidebarWidth={setSidebarWidth}
+        user={user}
+        onUpdateUserName={updateUserName}
+        onResetData={resetData}
+      >
         {children}
       </DashboardLayoutContent>
     </SidebarProvider>
@@ -100,33 +196,43 @@ export default function DashboardLayout({
 type DashboardLayoutContentProps = {
   children: React.ReactNode;
   setSidebarWidth: (width: number) => void;
+  user: ReturnType<typeof getDefaultUser> | null;
+  onUpdateUserName: (name: string) => void;
+  onResetData: () => void;
 };
 
 function DashboardLayoutContent({
   children,
   setSidebarWidth,
+  user,
+  onUpdateUserName,
+  onResetData,
 }: DashboardLayoutContentProps) {
-  const { user, logout } = useAuth();
-  const [location, setLocation] = useLocation();
-  const { state, toggleSidebar } = useSidebar();
-  const isCollapsed = state === "collapsed";
-  const [isResizing, setIsResizing] = useState(false);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const activeMenuItem = menuItems.find(item => item.path === location);
-  const isMobile = useIsMobile();
+  const currentUser = user;
+  
+  // Sign out redirects to home
+  const handleSignOut = () => {
+    localStorage.removeItem('userName');
+    window.location.href = '/';
+  };
 
-  useEffect(() => {
-    if (isCollapsed) {
-      setIsResizing(false);
-    }
-  }, [isCollapsed]);
+  const { theme, toggleTheme } = useTheme();
+  const [location, setLocation] = useLocation();
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const [showNameDialog, setShowNameDialog] = useState(false);
+  const [newName, setNewName] = useState('');
+
+  // Resizable sidebar
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing) return;
-
-      const sidebarLeft = sidebarRef.current?.getBoundingClientRect().left ?? 0;
-      const newWidth = e.clientX - sidebarLeft;
+      const newWidth = e.clientX;
       if (newWidth >= MIN_WIDTH && newWidth <= MAX_WIDTH) {
         setSidebarWidth(newWidth);
       }
@@ -137,128 +243,352 @@ function DashboardLayoutContent({
     };
 
     if (isResizing) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "col-resize";
-      document.body.style.userSelect = "none";
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
     }
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isResizing, setSidebarWidth]);
+
+  // Navigate helper
+  const navigate = (path: string) => {
+    setLocation(path);
+  };
 
   return (
     <>
       <div className="relative" ref={sidebarRef}>
-        <Sidebar
-          collapsible="icon"
-          className="border-r-0"
-          disableTransition={isResizing}
-        >
-          <SidebarHeader className="h-16 justify-center">
-            <div className="flex items-center gap-3 px-2 transition-all w-full">
-              <button
-                onClick={toggleSidebar}
-                className="h-8 w-8 flex items-center justify-center hover:bg-accent rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0"
-                aria-label="Toggle navigation"
-              >
-                <PanelLeft className="h-4 w-4 text-muted-foreground" />
-              </button>
-              {!isCollapsed ? (
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-semibold tracking-tight truncate">
-                    Navigation
-                  </span>
-                </div>
-              ) : null}
-            </div>
-          </SidebarHeader>
-
-          <SidebarContent className="gap-0">
-            <SidebarMenu className="px-2 py-1">
-              {menuItems.map(item => {
-                const isActive = location === item.path;
-                return (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      onClick={() => setLocation(item.path)}
-                      tooltip={item.label}
-                      className={`h-10 transition-all font-normal`}
-                    >
-                      <item.icon
-                        className={`h-4 w-4 ${isActive ? "text-primary" : ""}`}
-                      />
-                      <span>{item.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarContent>
-
-          <SidebarFooter className="p-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                  <Avatar className="h-9 w-9 border shrink-0">
-                    <AvatarFallback className="text-xs font-medium">
-                      {user?.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
-                    <p className="text-sm font-medium truncate leading-none">
-                      {user?.name || "-"}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate mt-1.5">
-                      {user?.email || "-"}
-                    </p>
-                  </div>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem
-                  onClick={logout}
-                  className="cursor-pointer text-destructive focus:text-destructive"
+        <Sidebar collapsible="icon" className="border-r border-sidebar-border">
+          <SidebarHeader className="border-b border-sidebar-border py-2.5">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  asChild 
+                  className="h-[19px] hover:bg-transparent cursor-pointer"
+                  onClick={() => window.location.href = '/'}
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <div className="flex items-center gap-2 px-1">
+                    <div className="w-6 h-6 flex items-center justify-center">
+                      <img 
+                        src="/manus-storage/logo_e0c56c19.png" 
+                        alt="RegulaSync" 
+                        className="w-6 h-6 object-contain"
+                      />
+                    </div>
+                    <span className="font-semibold text-sm text-sidebar-foreground">
+                      Regula<span className="text-copper">Sync</span>
+                    </span>
+                  </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarHeader>
+          
+          <SidebarContent className="py-2">
+            {/* Main Navigation */}
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
+                Main
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {mainMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={location === item.path}
+                        className="h-[19px] space-y-0.5"
+                      >
+                        <item.icon className="h-3.5 w-3.5" />
+                        <span className="text-xs">{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Insights */}
+            <SidebarGroup className="mt-2">
+              <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
+                Insights
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {insightsMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={location === item.path}
+                        className="h-[19px] space-y-0.5"
+                      >
+                        <item.icon className="h-3.5 w-3.5" />
+                        <span className="text-xs">{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Tools */}
+            <SidebarGroup className="mt-2">
+              <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
+                Tools
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {toolsMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={location === item.path}
+                        className="h-[19px] space-y-0.5"
+                      >
+                        <item.icon className="h-3.5 w-3.5" />
+                        <span className="text-xs">{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Innovation */}
+            <SidebarGroup className="mt-2">
+              <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
+                Innovation
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {innovationMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={location === item.path}
+                        className="h-[19px] space-y-0.5"
+                      >
+                        <item.icon className="h-3.5 w-3.5" />
+                        <span className="text-xs">{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Horizon */}
+            <SidebarGroup className="mt-2">
+              <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
+                Horizon
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {horizonMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={location === item.path}
+                        className="h-[19px] space-y-0.5"
+                      >
+                        <item.icon className="h-3.5 w-3.5" />
+                        <span className="text-xs">{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* System */}
+            <SidebarGroup className="mt-2">
+              <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
+                System
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {systemMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={location === item.path}
+                        className="h-[19px] space-y-0.5"
+                      >
+                        <item.icon className="h-3.5 w-3.5" />
+                        <span className="text-xs">{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+          
+          <SidebarFooter className="border-t border-sidebar-border py-2">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <UserMenu 
+                  user={currentUser}
+                  onUpdateUserName={onUpdateUserName}
+                  onResetData={onResetData}
+                  onSignOut={handleSignOut}
+                />
+              </SidebarMenuItem>
+            </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
+        
+        {/* Resize handle */}
         <div
-          className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors ${isCollapsed ? "hidden" : ""}`}
-          onMouseDown={() => {
-            if (isCollapsed) return;
-            setIsResizing(true);
-          }}
-          style={{ zIndex: 50 }}
+          className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors z-50"
+          onMouseDown={handleMouseDown}
         />
       </div>
-
+      
       <SidebarInset>
-        {isMobile && (
-          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
+        {/* Dashboard Header with Navigation */}
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+          <div className="flex h-12 items-center justify-between px-4">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="h-8 w-8" />
+              <nav className="hidden md:flex items-center gap-4 text-sm">
+                <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">Home</Link>
+                <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link>
+                <Link href="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
+                <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
+              </nav>
+            </div>
             <div className="flex items-center gap-2">
-              <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col gap-1">
-                  <span className="tracking-tight text-foreground">
-                    {activeMenuItem?.label ?? "Menu"}
-                  </span>
-                </div>
-              </div>
+              <NotificationCenter />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => toggleTheme?.()}
+                className="h-8 w-8"
+              >
+                {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
             </div>
           </div>
-        )}
-        <main className="flex-1 p-4">{children}</main>
+        </header>
+        
+        <main className="flex-1 p-4 md:p-6">
+          {children}
+        </main>
+        
+        {/* Dashboard Footer */}
+        <footer className="border-t py-4 px-6 text-center text-xs text-muted-foreground">
+          <p>© 2026 RegulaSync. All rights reserved.</p>
+        </footer>
       </SidebarInset>
+      
+      {/* Guided Tour */}
+      <GuidedTour isDemoMode={false} />
+    </>
+  );
+}
+
+// User Menu Component
+function UserMenu({ 
+  user, 
+  onUpdateUserName,
+  onResetData,
+  onSignOut
+}: { 
+  user: ReturnType<typeof getDefaultUser> | null;
+  onUpdateUserName: (name: string) => void;
+  onResetData: () => void;
+  onSignOut: () => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showNameDialog, setShowNameDialog] = useState(false);
+  const [newName, setNewName] = useState('');
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+  
+  const handleSaveName = () => {
+    if (newName.trim()) {
+      onUpdateUserName(newName.trim());
+      setShowNameDialog(false);
+      setNewName('');
+    }
+  };
+
+  return (
+    <>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton className="h-10 w-full">
+            <Avatar className="h-6 w-6">
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            {!isCollapsed && (
+              <div className="flex flex-col items-start text-left min-w-0 flex-1">
+                <span className="text-xs font-medium truncate w-full">
+                  {user?.name || 'User'}
+                </span>
+                <span className="text-[10px] text-muted-foreground truncate w-full">
+                  {user?.email || 'user@regulasync.com'}
+                </span>
+              </div>
+            )}
+            {!isCollapsed && <ChevronRight className="h-4 w-4 ml-auto" />}
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent 
+          side="right" 
+          align="end" 
+          className="w-56"
+          sideOffset={8}
+        >
+          <div className="px-2 py-1.5">
+            <p className="text-sm font-medium">{user?.name || 'User'}</p>
+            <p className="text-xs text-muted-foreground">{user?.email}</p>
+          </div>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => { setShowNameDialog(true); setIsOpen(false); }}>
+            <User className="h-4 w-4 mr-2" /> Edit Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { onResetData(); setIsOpen(false); }}>
+            <RefreshCw className="h-4 w-4 mr-2" /> Reset Data
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => { onSignOut(); setIsOpen(false); }}>
+            <LogOut className="h-4 w-4 mr-2" /> Sign Out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      
+      {/* Name Edit Dialog */}
+      <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Your Name</DialogTitle>
+            <DialogDescription>
+              Enter your name to personalize your experience.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder={user?.name || 'Enter your name'}
+              className="mt-2"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNameDialog(false)}>Cancel</Button>
+            <Button onClick={handleSaveName}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

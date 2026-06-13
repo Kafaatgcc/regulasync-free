@@ -1,0 +1,1 @@
+ALTER TABLE `ai_explainability_logs` DROP FOREIGN KEY `ai_explainability_logs_regulatoryUpdateId_regulatory_updates_id_fk`;
