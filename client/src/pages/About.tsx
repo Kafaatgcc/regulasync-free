@@ -86,7 +86,7 @@ export default function About() {
               <div className="md:col-span-2 bg-gradient-to-br from-[#1e3a5f] to-[#2d5a87] p-12 flex flex-col items-center justify-center text-white">
                 <div className="w-48 h-48 rounded-full overflow-hidden mb-6 border-4 border-white/30">
                   <img 
-                    src="/founder-baidaa-housen.jpg" 
+                    src="/manus-storage/founder-baidaa-housen_2316a2e2.jpg" 
                     alt="Baidaa Housen - Founder & CEO of RegulaSync"
                     className="w-full h-full object-cover"
                   />

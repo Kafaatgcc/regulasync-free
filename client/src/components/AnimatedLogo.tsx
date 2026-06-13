@@ -83,7 +83,7 @@ export default function AnimatedLogo({
 
         {/* Main logo image with subtle rotation */}
         <img 
-          src="/manus-storage/logo_e0c56c19.png" 
+          src="/manus-storage/logo_70fab7aa.png" 
           alt="RegulaSync"
           className={`w-full h-full object-contain transition-all duration-500 ${
             animate ? 'animate-logo-rotate' : ''
@@ -181,7 +181,7 @@ export function AnimatedLogoSplash({ onComplete }: { onComplete?: () => void }) 
           {/* Main logo image */}
           <div className="relative">
             <img 
-              src="/manus-storage/logo_e0c56c19.png" 
+              src="/manus-storage/logo_70fab7aa.png" 
               alt="RegulaSync"
               className="w-36 h-36 object-contain animate-logo-float"
               style={{

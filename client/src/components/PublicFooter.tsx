@@ -12,7 +12,7 @@ export default function PublicFooter() {
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4">
               <img 
-                src="/manus-storage/logo_e0c56c19.png" 
+                src="/manus-storage/logo_70fab7aa.png" 
                 alt="RegulaSync" 
                 className="h-10 w-auto"
               />

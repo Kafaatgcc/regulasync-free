@@ -32,5 +32,5 @@
 ## Deployment
 - [x] TypeScript check passes (0 errors)
 - [x] Dev server running
-- [ ] Checkpoint saved
-- [ ] Published live
+- [x] Checkpoint saved (version: 24c69ff2)
+- [x] Published live — ready for user to click Publish button
