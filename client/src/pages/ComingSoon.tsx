@@ -40,7 +40,7 @@ export default function ComingSoon() {
         window.dispatchEvent(new Event('regulasync-access-changed'));
         // Small delay to ensure state updates, then redirect
         setTimeout(() => {
-          window.location.href = '/home';
+          window.location.href = '/landing';
         }, 100);
       } else {
         setError("Invalid credentials. Please check your demo access details.");

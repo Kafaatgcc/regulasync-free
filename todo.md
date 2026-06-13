@@ -40,14 +40,14 @@
 - [x] Seed audit trail with hash chain data
 - [x] Seed gap analysis with UK regulatory scenarios
 - [x] Seed ESG metrics data
-- [ ] Configure Stripe integration (set STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET) — awaiting user
+- [ ] Configure Stripe integration (set STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET) — awaiting user [BLOCKED: requires user to provide keys]
 - [x] Verify all seeded data appears correctly on each dashboard page
 - [x] Guide user on custom domain connection (regulasync.co.uk)
 
 ## 10 Transformative Enhancements
 - [x] FIX #1: Logo rendering issue — fixed, re-uploaded to /manus-storage/logo_70fab7aa.png
 - [x] FIX #2: Seed full demo database — 6 policies, 8 reg updates, 6 depts, 30 audit entries, 14 AI recs, 6 compliance records, 3 delegations
-- [ ] FIX #3: Configure Stripe integration (awaiting user's STRIPE_SECRET_KEY)
+- [ ] FIX #3: Configure Stripe integration (awaiting user's STRIPE_SECRET_KEY) [BLOCKED: requires user to provide keys]
 - [x] ENHANCE #1: AI Regulatory Intelligence Feed — new page /regulatory-intelligence with AI impact summaries
 - [x] ENHANCE #2: Predictive Compliance Risk Engine — new page /predictive-risk with 90-day breach forecasts
 - [x] ENHANCE #3: Board-Ready PDF with real DB data — Reports.tsx uses trpc.boardReport.getData for live data

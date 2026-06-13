@@ -94,8 +94,9 @@ function Router() {
         <ScrollToTop />
         <LiveChat />
         <Switch>
-          <Route path="/"><Landing /></Route>
+          <Route path="/"><ComingSoon /></Route>
           <Route path="/home"><Landing /></Route>
+          <Route path="/landing"><Landing /></Route>
           <Route path="/login"><Login /></Route>
           <Route path="/forgot-password"><ForgotPassword /></Route>
           <Route path="/accept-invite"><AcceptInvite /></Route>
