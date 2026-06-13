@@ -129,13 +129,33 @@ export default function GuidedTour({ isDemoMode }: GuidedTourProps) {
       stepIndex={stepIndex}
       continuous
       onEvent={handleJoyrideCallback}
-
       locale={{
         back: 'Back',
         close: 'Close',
         last: 'Finish Tour',
         next: 'Next',
         skip: 'Skip Tour',
+      }}
+      styles={{
+        tooltip: {
+          borderRadius: '12px',
+          padding: '20px',
+        },
+        buttonPrimary: {
+          backgroundColor: '#1e3a5f',
+          borderRadius: '8px',
+          padding: '8px 16px',
+        },
+        buttonBack: {
+          color: '#1e3a5f',
+          marginRight: '8px',
+        },
+        buttonSkip: {
+          color: '#6b7280',
+        },
+        spotlight: {
+          rx: '8',
+        },
       }}
     />
   );
