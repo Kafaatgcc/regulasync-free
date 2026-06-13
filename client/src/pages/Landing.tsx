@@ -145,14 +145,11 @@ export default function Landing() {
             >
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
-            <Button 
-              onClick={() => {
-                window.location.href = '/dashboard';
-              }}
-              className="bg-primary hover:bg-primary/90"
-            >
-              Sign In
-            </Button>
+            <Link href="/login">
+              <Button className="bg-primary hover:bg-primary/90">
+                Log In
+              </Button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -177,16 +174,15 @@ export default function Landing() {
                 ensure compliance, and streamline decision-making across your organization.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  size="lg" 
-                  onClick={() => {
-                    window.location.href = '/dashboard';
-                  }}
-                  className="bg-primary hover:bg-primary/90 text-lg px-8"
-                >
-                  Start Demo
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+                <Link href="/login">
+                  <Button 
+                    size="lg" 
+                    className="bg-primary hover:bg-primary/90 text-lg px-8"
+                  >
+                    Log In to Platform
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
                 <Button 
                   size="lg" 
                   variant="outline"

@@ -36,13 +36,13 @@
 - [x] Published live — ready for user to click Publish button
 
 ## Production Readiness Tasks
-- [ ] Seed full demo database (policies, users, regulatory updates, departments, AI recommendations)
-- [ ] Seed audit trail with hash chain data
-- [ ] Seed gap analysis with UK regulatory scenarios
-- [ ] Seed ESG metrics data
-- [ ] Configure Stripe integration (set STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET)
-- [ ] Verify all seeded data appears correctly on each dashboard page
-- [ ] Guide user on custom domain connection (regulasync.co.uk)
+- [x] Seed full demo database (policies, users, regulatory updates, departments, AI recommendations)
+- [x] Seed audit trail with hash chain data
+- [x] Seed gap analysis with UK regulatory scenarios
+- [x] Seed ESG metrics data
+- [ ] Configure Stripe integration (set STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET) — awaiting user
+- [x] Verify all seeded data appears correctly on each dashboard page
+- [x] Guide user on custom domain connection (regulasync.co.uk)
 
 ## 10 Transformative Enhancements
 - [x] FIX #1: Logo rendering issue — fixed, re-uploaded to /manus-storage/logo_70fab7aa.png
@@ -59,3 +59,32 @@
 - [x] ENHANCE #9: Smart Audit Trail Search — AuditTrail.tsx uses trpc.auditSearch.naturalLanguageSearch
 - [x] ENHANCE #10: Competitor Benchmarking — Benchmarking.tsx already uses trpc.enhancedBenchmarking.compare
 - [x] Wire NotificationCenter to real DB — trpc.notifications.list + markRead + markAllRead, fallback to demo when logged out
+
+## Production-Ready SaaS Build (20 Years Ahead of Competition)
+
+### Phase 1: Real Multi-User Authentication
+- [ ] Extend users table: passwordHash, expanded roles, isActive, inviteToken, organizationId
+- [ ] Push DB schema migration
+- [ ] Install bcryptjs for password hashing
+- [ ] Build server auth: register, login, logout, me, invite, accept-invite, forgot-password, reset-password
+- [ ] Replace ComingSoon localStorage gate with real session-based auth
+- [ ] Build /login page (professional branded)
+- [ ] Build /register page (for invited users to set password)
+- [ ] Build /forgot-password and /reset-password pages
+
+### Phase 2: User Management
+- [ ] Build /user-management page: list org users, invite by email, assign role+department, activate/deactivate
+- [ ] Add User Management to sidebar (company_admin and super_admin only)
+
+### Phase 3: Role-Based Sidebar & Data Filtering
+- [ ] Sidebar nav items filtered by role
+- [ ] Department users see only their department data
+- [ ] Route guards for unauthorized access
+
+### Phase 4: World-Class Landing Page
+- [ ] Redesign Landing.tsx: asymmetric hero, animated stats, feature showcase, pricing, testimonials, demo CTA
+- [ ] Mobile-responsive, dark/light mode, professional typography
+
+### Phase 5: Seed & Polish
+- [ ] Seed 5 demo users for each role
+- [ ] TypeScript clean, screenshot all role journeys, checkpoint

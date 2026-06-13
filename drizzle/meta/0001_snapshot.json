@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "97f829a5-bfc3-4c91-b077-ef9a691bd56a",
-  "prevId": "7e1e1add-4988-43b4-8bff-575e535612b9",
+  "id": "4e81915d-ebc9-42a6-83ed-510fadf16d99",
+  "prevId": "0037fce4-d706-4e50-a2f0-f79e2de1f90f",
   "tables": {
     "agentic_tasks": {
       "name": "agentic_tasks",
@@ -318,19 +318,6 @@
           "tableTo": "policies",
           "columnsFrom": [
             "policyId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "ai_explainability_logs_regulatoryUpdateId_regulatory_updates_id_fk": {
-          "name": "ai_explainability_logs_regulatoryUpdateId_regulatory_updates_id_fk",
-          "tableFrom": "ai_explainability_logs",
-          "tableTo": "regulatory_updates",
-          "columnsFrom": [
-            "regulatoryUpdateId"
           ],
           "columnsTo": [
             "id"
@@ -3892,20 +3879,28 @@
           "notNull": false,
           "autoincrement": false
         },
+        "passwordHash": {
+          "name": "passwordHash",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "loginMethod": {
           "name": "loginMethod",
           "type": "varchar(64)",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "'password'"
         },
         "role": {
           "name": "role",
-          "type": "enum('user','admin')",
+          "type": "enum('super_admin','company_admin','compliance_manager','department_user','auditor','user','admin')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'user'"
+          "default": "'department_user'"
         },
         "department": {
           "name": "department",
@@ -3917,6 +3912,56 @@
         "jobTitle": {
           "name": "jobTitle",
           "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "organizationId": {
+          "name": "organizationId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "invitedBy": {
+          "name": "invitedBy",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "inviteToken": {
+          "name": "inviteToken",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "inviteTokenExpiry": {
+          "name": "inviteTokenExpiry",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "passwordResetToken": {
+          "name": "passwordResetToken",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "passwordResetExpiry": {
+          "name": "passwordResetExpiry",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

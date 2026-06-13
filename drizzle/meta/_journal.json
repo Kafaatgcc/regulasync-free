@@ -8,6 +8,20 @@
       "when": 1781331165729,
       "tag": "0000_lonely_nightmare",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1781353145778,
+      "tag": "0001_slippery_franklin_richards",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1781353984941,
+      "tag": "0002_curved_selene",
+      "breakpoints": true
     }
   ]
 }

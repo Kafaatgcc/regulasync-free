@@ -71,8 +71,21 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 import GuidedTour, { resetGuidedTour } from './GuidedTour';
-import NotificationCenter from './NotificationCenter';
-import { Link } from 'wouter';
+import NotificationCenter from './NotificationCenter';import { Link } from 'wouter';
+import { trpc } from '@/lib/trpc';
+
+// Role-based nav permissions
+const ROLE_LEVELS: Record<string, number> = {
+  super_admin: 5,
+  company_admin: 4,
+  compliance_manager: 3,
+  department_user: 2,
+  auditor: 1,
+  admin: 4,
+  user: 2,
+};
+const hasRole = (userRole: string | undefined, minRole: string) =>
+  (ROLE_LEVELS[userRole || 'user'] || 0) >= (ROLE_LEVELS[minRole] || 0);
 
 const mainMenuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -93,10 +106,11 @@ const insightsMenuItems = [
 ];
 
 const systemMenuItems = [
-  { icon: History, label: "Audit Trail", path: "/audit-trail" },
-  { icon: BarChart3, label: "Reports", path: "/reports" },
-  { icon: Users, label: "Contacts", path: "/admin/contacts" },
-  { icon: Settings, label: "Admin Panel", path: "/admin" },
+  { icon: History, label: "Audit Trail", path: "/audit-trail", minRole: "department_user" },
+  { icon: BarChart3, label: "Reports", path: "/reports", minRole: "compliance_manager" },
+  { icon: Users, label: "User Management", path: "/user-management", minRole: "company_admin" },
+  { icon: Users, label: "Contacts", path: "/admin/contacts", minRole: "company_admin" },
+  { icon: Settings, label: "Admin Panel", path: "/admin", minRole: "company_admin" },
 ];
 
 import { GitCompare, Calculator, Workflow, Scale } from "lucide-react";
@@ -152,21 +166,23 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState(getDefaultUser);
-  
-  // Update user name
+  // Try to get the real authenticated user from the server
+  const { data: authUser } = trpc.auth.me.useQuery(undefined, { retry: false });
+  // Merge real user with fallback defaults
+  const [localName, setLocalName] = useState(() => localStorage.getItem('userName') || '');
+  const user = authUser
+    ? { ...authUser, name: authUser.name || localName || 'User', email: authUser.email || 'user@regulasync.com' }
+    : getDefaultUser();
+
   const updateUserName = useCallback((name: string) => {
     localStorage.setItem('userName', name);
-    setUser(prev => ({ ...prev, name }));
+    setLocalName(name);
   }, []);
-  
-  // Reset data
   const resetData = useCallback(() => {
     localStorage.removeItem('userName');
-    setUser(getDefaultUser());
+    setLocalName('');
     window.location.reload();
   }, []);
-  
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
@@ -197,10 +213,23 @@ export default function DashboardLayout({
   );
 }
 
+type AnyUser = {
+  id: number;
+  name: string;
+  email: string;
+  openId: string;
+  role: string;
+  department?: string | null;
+  jobTitle?: string | null;
+  loginMethod?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  lastSignedIn: Date;
+};
 type DashboardLayoutContentProps = {
   children: React.ReactNode;
   setSidebarWidth: (width: number) => void;
-  user: ReturnType<typeof getDefaultUser> | null;
+  user: AnyUser | null;
   onUpdateUserName: (name: string) => void;
   onResetData: () => void;
 };
@@ -213,11 +242,16 @@ function DashboardLayoutContent({
   onResetData,
 }: DashboardLayoutContentProps) {
   const currentUser = user;
-  
-  // Sign out redirects to home
+  const logoutMutation = trpc.auth.logout.useMutation({
+    onSettled: () => {
+      localStorage.removeItem('regulasync_demo_access');
+      localStorage.removeItem('userName');
+      window.location.href = '/';
+    },
+  });
+  // Sign out: call server logout then redirect
   const handleSignOut = () => {
-    localStorage.removeItem('userName');
-    window.location.href = '/';
+    logoutMutation.mutate();
   };
 
   const { theme, toggleTheme } = useTheme();
@@ -414,7 +448,7 @@ function DashboardLayoutContent({
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {systemMenuItems.map((item) => (
+                  {systemMenuItems.filter(item => hasRole(currentUser?.role, item.minRole)).map((item) => (
                     <SidebarMenuItem key={item.path}>
                       <SidebarMenuButton
                         onClick={() => navigate(item.path)}
@@ -502,7 +536,7 @@ function UserMenu({
   onResetData,
   onSignOut
 }: { 
-  user: ReturnType<typeof getDefaultUser> | null;
+  user: AnyUser | null;
   onUpdateUserName: (name: string) => void;
   onResetData: () => void;
   onSignOut: () => void;
@@ -553,16 +587,19 @@ function UserMenu({
           <div className="px-2 py-1.5">
             <p className="text-sm font-medium">{user?.name || 'User'}</p>
             <p className="text-xs text-muted-foreground">{user?.email}</p>
+            {user?.role && user.role !== 'user' && (
+              <p className="text-[10px] text-primary font-medium mt-0.5 capitalize">
+                {user.role.replace(/_/g, ' ')}
+                {user.department ? ` · ${user.department}` : ''}
+              </p>
+            )}
           </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => { setShowNameDialog(true); setIsOpen(false); }}>
             <User className="h-4 w-4 mr-2" /> Edit Profile
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { onResetData(); setIsOpen(false); }}>
-            <RefreshCw className="h-4 w-4 mr-2" /> Reset Data
-          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => { onSignOut(); setIsOpen(false); }}>
+          <DropdownMenuItem onClick={() => { onSignOut(); setIsOpen(false); }} className="text-destructive focus:text-destructive">
             <LogOut className="h-4 w-4 mr-2" /> Sign Out
           </DropdownMenuItem>
         </DropdownMenuContent>

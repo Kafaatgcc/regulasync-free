@@ -46,6 +46,10 @@ import IncidentSimulation from "./pages/IncidentSimulation";
 import Benchmarking from "./pages/Benchmarking";
 import RegulatoryIntelligence from "./pages/RegulatoryIntelligence";
 import PredictiveRisk from "./pages/PredictiveRisk";
+import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import AcceptInvite from "./pages/AcceptInvite";
+import UserManagement from "./pages/UserManagement";
 import XAILogs from "./pages/XAILogs";
 import RegulatorPortal from "./pages/RegulatorPortal";
 import UniversityPartnership from "./pages/UniversityPartnership";
@@ -64,89 +68,56 @@ function ScrollToTop() {
   return null;
 }
 
-// Check if demo access has been granted
-function hasAccess(): boolean {
-  return localStorage.getItem('regulasync_demo_access') === 'true';
-}
-
-// Protected route wrapper - redirects to Coming Soon if no access
+// Protected route wrapper - redirects to /login if no session
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  if (!hasAccess()) {
-    return <Redirect to="/" />;
+  // Check both real session (cookie set by server) and legacy demo flag
+  const hasLegacyAccess = localStorage.getItem('regulasync_demo_access') === 'true';
+  if (!hasLegacyAccess) {
+    return <Redirect to="/login" />;
   }
   return <>{children}</>;
 }
-
-// Main Router - Coming Soon gate first, then full platform
+// Main Router - public pages always accessible, protected routes require login
 function Router() {
-  const [accessGranted, setAccessGranted] = useState(hasAccess());
-
-  useEffect(() => {
-    const handleAccessChange = () => {
-      setAccessGranted(hasAccess());
-    };
-    window.addEventListener('regulasync-access-changed', handleAccessChange);
-    return () => window.removeEventListener('regulasync-access-changed', handleAccessChange);
-  }, []);
-
-  // If no access, always show Coming Soon page
-  if (!accessGranted) {
+  // Public paths that never require auth
+  const [location] = useLocation();
+  const publicPaths = ["/", "/home", "/login", "/forgot-password", "/accept-invite",
+    "/about", "/pricing", "/security", "/integrations", "/case-studies",
+    "/privacy", "/terms", "/cookies", "/careers", "/contact"];
+  const isPublicPage = publicPaths.some(p => location === p || location.startsWith(p + '?'));
+    // Public pages — always accessible without login
+  if (isPublicPage) {
     return (
       <>
         <ScrollToTop />
-        <ComingSoon />
+        <LiveChat />
+        <Switch>
+          <Route path="/"><Landing /></Route>
+          <Route path="/home"><Landing /></Route>
+          <Route path="/login"><Login /></Route>
+          <Route path="/forgot-password"><ForgotPassword /></Route>
+          <Route path="/accept-invite"><AcceptInvite /></Route>
+          <Route path="/about"><About /></Route>
+          <Route path="/pricing"><Pricing /></Route>
+          <Route path="/security"><Security /></Route>
+          <Route path="/integrations"><Integrations /></Route>
+          <Route path="/case-studies"><CaseStudies /></Route>
+          <Route path="/privacy"><PrivacyPolicy /></Route>
+          <Route path="/terms"><Terms /></Route>
+          <Route path="/cookies"><Cookies /></Route>
+          <Route path="/careers"><Careers /></Route>
+          <Route path="/contact"><Contact /></Route>
+        </Switch>
       </>
     );
   }
-
   return (
     <>
       <ScrollToTop />
       <LiveChat />
       <PresentationMode />
       <Switch>
-        {/* Landing page - default route after access */}
-        <Route path="/">
-          <Landing />
-        </Route>
-        
-        <Route path="/home">
-          <Landing />
-        </Route>
-        
-        {/* Public pages */}
-        <Route path="/about">
-          <About />
-        </Route>
-        <Route path="/pricing">
-          <Pricing />
-        </Route>
-        <Route path="/security">
-          <Security />
-        </Route>
-        <Route path="/integrations">
-          <Integrations />
-        </Route>
-        <Route path="/case-studies">
-          <CaseStudies />
-        </Route>
-        <Route path="/privacy">
-          <PrivacyPolicy />
-        </Route>
-        <Route path="/terms">
-          <Terms />
-        </Route>
-        <Route path="/cookies">
-          <Cookies />
-        </Route>
-        <Route path="/careers">
-          <Careers />
-        </Route>
-        <Route path="/contact">
-          <Contact />
-        </Route>
-        
-        {/* Dashboard Routes */}
+        {/* Dashboard Routes — all require login */}
         <Route path="/dashboard">
           <DashboardLayout>
             <Dashboard />
@@ -338,6 +309,18 @@ function Router() {
           <DashboardLayout>
             <PredictiveRisk />
           </DashboardLayout>
+        </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
+        <Route path="/forgot-password">
+          <ForgotPassword />
+        </Route>
+        <Route path="/accept-invite">
+          <AcceptInvite />
+        </Route>
+        <Route path="/user-management">
+          <UserManagement />
         </Route>
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />

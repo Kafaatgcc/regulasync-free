@@ -18,10 +18,12 @@ import {
   auditSearchRouter,
   enhancedBenchmarkingRouter,
 } from "./enhancementsRouter";
-
+import { authRouter } from "./authRouter";
+import { userManagementRouter } from "./userManagementRouter";
 export const appRouter = router({
   system: systemRouter,
-  
+  passwordAuth: authRouter,
+  userManagement: userManagementRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
