@@ -5,6 +5,7 @@ import { Route, Switch, useLocation, Redirect } from "wouter";
 import { useEffect, useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { trpc } from "./lib/trpc";
 import Landing from "./pages/Landing";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
@@ -68,13 +69,14 @@ function ScrollToTop() {
   return null;
 }
 
-// Protected route wrapper - redirects to /login if no session
+// Protected route wrapper - checks real server session via trpc.auth.me
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  // Check both real session (cookie set by server) and legacy demo flag
-  const hasLegacyAccess = localStorage.getItem('regulasync_demo_access') === 'true';
-  if (!hasLegacyAccess) {
-    return <Redirect to="/login" />;
-  }
+  const { data: user, isLoading } = trpc.auth.me.useQuery(undefined, {
+    retry: false,
+    staleTime: 30_000,
+  });
+  if (isLoading) return null; // brief flash while checking session
+  if (!user) return <Redirect to="/login" />;
   return <>{children}</>;
 }
 // Main Router - public pages always accessible, protected routes require login

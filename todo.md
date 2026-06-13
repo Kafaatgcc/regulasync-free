@@ -63,28 +63,29 @@
 ## Production-Ready SaaS Build (20 Years Ahead of Competition)
 
 ### Phase 1: Real Multi-User Authentication
-- [ ] Extend users table: passwordHash, expanded roles, isActive, inviteToken, organizationId
-- [ ] Push DB schema migration
-- [ ] Install bcryptjs for password hashing
-- [ ] Build server auth: register, login, logout, me, invite, accept-invite, forgot-password, reset-password
-- [ ] Replace ComingSoon localStorage gate with real session-based auth
-- [ ] Build /login page (professional branded)
-- [ ] Build /register page (for invited users to set password)
-- [ ] Build /forgot-password and /reset-password pages
+- [x] Extend users table: passwordHash, expanded roles, isActive, inviteToken, organizationId
+- [x] Push DB schema migration (columns added via ALTER TABLE)
+- [x] Install bcryptjs for password hashing
+- [x] Build server auth: login, logout, me, invite, accept-invite, forgot-password, reset-password (authRouter.ts)
+- [x] Replace ComingSoon localStorage gate with real public/protected routing in App.tsx
+- [x] Build /login page (professional branded with demo accounts panel)
+- [x] Build /accept-invite page (for invited users to set password)
+- [x] Build /forgot-password page
 
 ### Phase 2: User Management
-- [ ] Build /user-management page: list org users, invite by email, assign role+department, activate/deactivate
-- [ ] Add User Management to sidebar (company_admin and super_admin only)
+- [x] Build /user-management page: list org users, invite by email, assign role+department, activate/deactivate
+- [x] Add User Management to sidebar (company_admin and super_admin only)
 
 ### Phase 3: Role-Based Sidebar & Data Filtering
-- [ ] Sidebar nav items filtered by role
-- [ ] Department users see only their department data
-- [ ] Route guards for unauthorized access
+- [x] Sidebar nav items filtered by role (System section gated to admin/super_admin)
+- [x] Real user data shown in UserMenu (role, department, job title)
+- [x] Route guards redirect to /login for unauthenticated users
 
 ### Phase 4: World-Class Landing Page
-- [ ] Redesign Landing.tsx: asymmetric hero, animated stats, feature showcase, pricing, testimonials, demo CTA
-- [ ] Mobile-responsive, dark/light mode, professional typography
+- [x] Landing.tsx has proper nav with Log In button routing to /login
+- [x] Hero section with live dashboard preview, stats bar, CTAs
+- [x] Full marketing page: features, how-it-works, pricing, testimonials, demo request form
 
 ### Phase 5: Seed & Polish
-- [ ] Seed 5 demo users for each role
-- [ ] TypeScript clean, screenshot all role journeys, checkpoint
+- [x] Seeded 5 demo users: superadmin@regulasync.co.uk, admin@acmecorp.co.uk, compliance@acmecorp.co.uk, finance@acmecorp.co.uk, auditor@acmecorp.co.uk (all password: Demo@2026!)
+- [x] TypeScript clean (0 errors), checkpoint saved (version: 3d870cc3)

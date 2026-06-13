@@ -167,7 +167,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   // Try to get the real authenticated user from the server
-  const { data: authUser } = trpc.auth.me.useQuery(undefined, { retry: false });
+  const { data: authUser, isLoading: authLoading } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 30_000 });
+  // Redirect to login if not authenticated
+  const [, navigate] = useLocation();
+  useEffect(() => {
+    if (!authLoading && !authUser) {
+      navigate('/login');
+    }
+  }, [authUser, authLoading, navigate]);
   // Merge real user with fallback defaults
   const [localName, setLocalName] = useState(() => localStorage.getItem('userName') || '');
   const user = authUser

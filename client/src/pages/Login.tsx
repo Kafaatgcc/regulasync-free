@@ -15,20 +15,13 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  const utils = trpc.useUtils();
   const loginMutation = trpc.passwordAuth.loginWithPassword.useMutation({
-    onSuccess: (data) => {
-      // Set localStorage flag for backward compat with ProtectedRoute
-      localStorage.setItem("regulasync_demo_access", "true");
+    onSuccess: async (data) => {
       toast.success(`Welcome back, ${data.user.name || data.user.email}!`);
-      // Redirect based on role
-      const role = data.user.role;
-      if (role === "super_admin" || role === "company_admin" || role === "admin") {
-        setLocation("/dashboard");
-      } else {
-        setLocation("/dashboard");
-      }
-      // Force page reload to pick up new session cookie
-      setTimeout(() => window.location.reload(), 100);
+      // Invalidate auth.me so DashboardLayout and ProtectedRoute pick up the new session
+      await utils.auth.me.invalidate();
+      setLocation("/dashboard");
     },
     onError: (err) => {
       setError(err.message || "Invalid email or password");
