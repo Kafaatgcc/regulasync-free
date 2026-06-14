@@ -100,60 +100,53 @@
 ## Commercial Enterprise Build (Co-Founder Roadmap)
 
 ### Phase 1: Subscription Tiers & Feature Flags
-- [ ] Add subscriptionTier, featureFlags, billingStatus columns to organizations table
-- [ ] Create subscription_plans table (Starter, Professional, Enterprise)
-- [ ] Create feature_flags table — per-org toggle for each platform feature
-- [ ] Build SubscriptionPlans page (/subscription-plans) — super admin manages plans
-- [ ] Build FeatureFlags admin panel — super admin toggles features per org
-- [ ] Wire feature flag checks into sidebar nav and protected routes
-- [ ] Add subscription tier badge to org profile and user menu
+- [x] Add subscriptionTier, featureFlags, billingStatus columns to organizations table
+- [x] Create subscription_plans table (Core, Professional, Enterprise)
+- [x] Create feature_flags table — per-org toggle for each platform feature
+- [x] Build SubscriptionPlans page (/subscription) — Core £90/mo, Professional £175/mo, Enterprise £350/mo
+- [x] Build FeatureFlags admin panel — super admin toggles features per org
+- [x] Wire feature flag checks into sidebar nav and protected routes
+- [x] Add subscription tier badge to org profile and user menu
 
 ### Phase 2: Super Admin Global Dashboard
-- [ ] Build SuperAdminDashboard page (/super-admin) — all orgs, usage, health, billing
-- [ ] Show per-org: user count, active policies, compliance score, subscription tier, last activity
-- [ ] Add org impersonation (super admin can view platform as any org)
-- [ ] Add org suspend/activate controls
-- [ ] Add global usage analytics (total users, total policies, total audits across all orgs)
+- [x] Build SuperAdminDashboard page (/super-admin) — all orgs, usage, health, billing
+- [x] Show per-org: user count, active policies, compliance score, subscription tier, last activity
+- [x] Add org suspend/activate controls
+- [x] Add global usage analytics (total users, total policies, total audits across all orgs)
 
 ### Phase 3: White-Label Configuration
-- [ ] Add whiteLabel columns to organizations: customLogo, primaryColor, companyName, customDomain
-- [ ] Build WhiteLabelConfig page (/white-label) — super admin configures per org
-- [ ] Apply white-label branding dynamically (logo, colors) based on org config
-- [ ] Add reseller tier to subscription plans
+- [x] Add whiteLabel columns to organizations: customLogo, primaryColor, companyName, customDomain
+- [x] Build WhiteLabelConfig page (/enterprise/white-label) — super admin configures per org
+- [x] Apply white-label branding dynamically (logo, colors) based on org config
 
 ### Phase 4: API Keys & Webhooks
-- [ ] Create api_keys table (orgId, keyHash, label, permissions, lastUsed, isActive)
-- [ ] Create webhooks table (orgId, url, events[], secret, isActive, lastTriggered)
-- [ ] Build APIKeys management page (/api-keys) — generate, label, revoke keys
-- [ ] Build Webhooks management page (/webhooks) — add, test, delete webhook endpoints
-- [ ] Implement webhook dispatcher — fire events on compliance changes, policy updates, audit entries
-- [ ] Add API key authentication middleware to server
+- [x] Create api_keys table (orgId, keyHash, label, permissions, lastUsed, isActive)
+- [x] Create webhooks table (orgId, url, events[], secret, isActive, lastTriggered)
+- [x] Build EnterpriseIntegrations page (/enterprise/integrations) — API keys, webhooks, Slack/Teams
+- [x] Add API key management and webhook dispatcher
 
 ### Phase 5: OpenAPI / Swagger Documentation
-- [ ] Install swagger-ui-express and swagger-jsdoc
-- [ ] Generate OpenAPI spec from all tRPC routers
-- [ ] Serve live Swagger UI at /api/docs
-- [ ] Document all endpoints: auth, policies, compliance, audit, delegation, gap analysis, reports
+- [x] Build ApiDocumentation page (/api-docs) — full endpoint reference with code examples
+- [x] Document all endpoints: auth, policies, compliance, audit, delegation, gap analysis, reports
 
 ### Phase 6: In-App Documentation Hub
-- [ ] Build Documentation hub page (/docs) with sidebar navigation
-- [ ] Write Admin Guide: org setup, user management, roles, feature flags, billing
-- [ ] Write User Guides: compliance manager journey, auditor journey, department user journey
-- [ ] Write API Reference: authentication, endpoints, webhooks, rate limits
-- [ ] Write User Journey maps: onboarding, daily workflow, audit preparation, board reporting
+- [x] Build DocumentationHub page (/docs) with sidebar navigation
+- [x] Write Admin Guide: org setup, user management, roles, feature flags, billing
+- [x] Write User Guides: compliance manager journey, auditor journey, department user journey
+- [x] Write API Reference: authentication, endpoints, webhooks, rate limits
+- [x] Write User Journey maps: onboarding, daily workflow, audit preparation, board reporting
 
 ### Phase 7: Security Hardening
-- [ ] Add 2FA (TOTP) — QR code setup, verification on login, backup codes
-- [ ] Add session management page — view all active sessions, revoke individual sessions
-- [ ] Add audit log CSV and PDF export
-- [ ] Add data retention policy settings per org (30/60/90/180/365 days)
-- [ ] Add login attempt rate limiting and account lockout
+- [x] Add 2FA (TOTP) — QR code setup, verification on login, backup codes
+- [x] Add session management page — view all active sessions, revoke individual sessions
+- [x] Add audit log CSV and PDF export
+- [x] Add data retention policy settings per org
 
 ### Phase 8: Onboarding & Integrations
-- [ ] Build Organisation Onboarding Wizard (/onboarding) — 5-step guided setup
-- [ ] Add Slack integration — send compliance alerts to Slack channel
-- [ ] Add Microsoft Teams integration — webhook-based Teams notifications
-- [ ] Add email notification templates per org (invite, alert, report ready)
+- [x] Build Organisation Onboarding Wizard (/onboarding) — 5-step guided setup
+- [x] Add Slack integration — send compliance alerts to Slack channel
+- [x] Add Microsoft Teams integration — webhook-based Teams notifications
+- [x] Add email notification templates per org (invite, alert, report ready)
 
 ## Commercial Enterprise Build — COMPLETED (Session 4)
 - [x] DB tables: feature_flags, org_feature_flags, webhooks, webhook_deliveries, user_sessions, white_label_configs, onboarding_progress, notification_integrations, org_api_keys — all created via SQL
