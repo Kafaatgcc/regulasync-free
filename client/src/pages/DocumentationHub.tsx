@@ -92,15 +92,15 @@ To change a user's role, navigate to User Management, click the user's name, and
 
 RegulaSync offers three subscription tiers:
 
-### Starter
+### Core — £90/month
 Ideal for small compliance teams getting started.
 - Up to 5 users
-- 3 regulatory frameworks
+- 3 regulatory frameworks (FCA, PRA, ICO)
 - Core policy management
-- Basic audit trail
+- Basic SVAC audit trail
 - Email support
 
-### Professional
+### Professional — £175/month
 For growing compliance functions.
 - Up to 25 users
 - Unlimited frameworks
@@ -110,7 +110,7 @@ For growing compliance functions.
 - Slack/Teams integration
 - Priority support
 
-### Enterprise
+### Enterprise — £350/month
 For large regulated firms requiring full capability.
 - Unlimited users
 - All Professional features
@@ -487,7 +487,7 @@ const isValid = crypto.timingSafeEqual(
 ### Rate Limits
 | Tier | Requests/Minute |
 |---|---|
-| Starter | 60 |
+| Core | 60 |
 | Professional | 300 |
 | Enterprise | 1,000 |
 

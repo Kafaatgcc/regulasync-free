@@ -105,9 +105,9 @@ export default function Terms() {
               <div className="bg-muted/50 p-4 rounded-lg space-y-2">
                 <h3 className="font-medium text-foreground">Pricing Tiers</h3>
                 <ul className="text-sm space-y-1">
-                  <li>• <strong>Core:</strong> £49 per user/month (billed monthly) or £490 per user/year</li>
-                  <li>• <strong>Professional:</strong> £109 per user/month or £1,090 per user/year</li>
-                  <li>• <strong>Enterprise:</strong> £179 per user/month or £1,790 per user/year</li>
+                  <li>• <strong>Core:</strong> £90 per month (up to 5 users) or £900 per year</li>
+                  <li>• <strong>Professional:</strong> £175 per month (up to 25 users) or £1,750 per year</li>
+                  <li>• <strong>Enterprise:</strong> £350 per month (unlimited users) or £3,500 per year</li>
                 </ul>
               </div>
               <ul className="list-disc pl-6 space-y-2 mt-4">

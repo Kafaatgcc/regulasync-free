@@ -12,105 +12,77 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 
 const pricingTiers = [
   {
-    name: "Starter",
-    description: "Perfect for solo compliance officers getting started",
-    price: "£19",
+    name: "Core",
+    description: "Essential governance tools for small compliance teams",
+    price: "£90",
     period: "/month",
-    annualPrice: "£190/year",
+    annualPrice: "£900/year",
     savings: "2 months free",
     icon: Users,
     color: "slate",
     badge: "14-Day Free Trial",
     features: [
-      { text: "2 compliance policies", tooltip: "Manage up to 2 active policies" },
-      { text: "1 user account", tooltip: "Single user access" },
-      { text: "5 AI gap analyses/month", tooltip: "AI-powered regulatory gap detection" },
-      { text: "30-day audit trail", tooltip: "Activity tracking and audit history" },
-      { text: "UK regulatory feeds", tooltip: "FCA, PRA, ICO updates" },
-      { text: "Basic compliance dashboard", tooltip: "Real-time compliance status" },
-      { text: "PDF report exports", tooltip: "Generate compliance reports" },
+      { text: "Up to 5 users", tooltip: "Team collaboration for small compliance teams" },
+      { text: "3 regulatory frameworks (FCA, PRA, ICO)", tooltip: "Core UK regulatory coverage" },
+      { text: "Policy management", tooltip: "Create, version, and manage compliance policies" },
+      { text: "Basic audit trail (SVAC)", tooltip: "Cryptographic tamper-resistant audit records" },
+      { text: "Compliance dashboard", tooltip: "Real-time compliance status overview" },
+      { text: "UK regulatory feeds", tooltip: "FCA, PRA, ICO regulatory updates" },
+      { text: "PDF report exports", tooltip: "Generate board-ready compliance reports" },
       { text: "Email support", tooltip: "Response within 48 hours" },
     ],
     cta: "Start Free Trial",
     popular: false,
-    targetUsers: "Solo compliance officers, small businesses",
-  },
-  {
-    name: "Core",
-    description: "Essential governance tools for small compliance teams",
-    price: "£39",
-    period: "/user/month",
-    annualPrice: "£390/user/year",
-    savings: "2 months free",
-    icon: Users,
-    color: "blue",
-    features: [
-      { text: "10 compliance policies", tooltip: "Manage up to 10 active policies" },
-      { text: "Up to 5 users", tooltip: "Team collaboration" },
-      { text: "25 AI gap analyses/month", tooltip: "AI-powered regulatory gap detection" },
-      { text: "1-year audit trail with hash verification", tooltip: "Cryptographic tamper-proof audit" },
-      { text: "UK + EU regulatory feeds", tooltip: "Expanded regulatory coverage" },
-      { text: "Delegation workflows", tooltip: "Approval chain automation" },
-      { text: "Compliance calendar & reminders", tooltip: "Never miss a deadline" },
-      { text: "Priority email support", tooltip: "Response within 24 hours" },
-    ],
-    cta: "Start Free Trial",
-    popular: false,
-    targetUsers: "SMEs, small compliance teams",
+    targetUsers: "UK SMEs, small compliance teams",
   },
   {
     name: "Professional",
-    description: "Advanced features for growing compliance teams",
-    price: "£99",
-    period: "/user/month",
-    annualPrice: "£990/user/year",
+    description: "Advanced AI-powered compliance for growing organisations",
+    price: "£175",
+    period: "/month",
+    annualPrice: "£1,750/year",
     savings: "2 months free",
     icon: Building2,
-    color: "emerald",
+    color: "blue",
     badge: "Most Popular",
     features: [
-      { text: "50 compliance policies", tooltip: "Comprehensive policy management" },
       { text: "Up to 25 users", tooltip: "Full team collaboration" },
-      { text: "100 AI gap analyses/month", tooltip: "Extensive regulatory analysis" },
-      { text: "3-year audit trail with hash verification", tooltip: "Extended compliance history" },
-      { text: "Global regulatory feeds", tooltip: "Worldwide regulatory coverage" },
-      { text: "Full workflow automation", tooltip: "End-to-end process automation" },
-      { text: "API access (10,000 calls/month)", tooltip: "Integrate with your systems" },
-      { text: "SMCR & Consumer Duty modules", tooltip: "UK regulatory compliance" },
-      { text: "99.5% SLA guarantee", tooltip: "Enterprise reliability" },
-      { text: "Priority phone & email support", tooltip: "Response within 4 hours" },
+      { text: "Unlimited regulatory frameworks", tooltip: "All UK and relevant EU frameworks" },
+      { text: "AI policy drafting", tooltip: "AI-generated policy drafts aligned to regulations" },
+      { text: "Predictive risk engine", tooltip: "AI-powered risk scoring and forecasting" },
+      { text: "Full SVAC audit trail", tooltip: "Complete cryptographic audit chain" },
+      { text: "Board-ready reports", tooltip: "Automated executive and board reporting" },
+      { text: "Delegation of authority workflows", tooltip: "7-level approval chain automation" },
+      { text: "Slack/Teams integration", tooltip: "Compliance alerts in your existing tools" },
+      { text: "Priority support", tooltip: "Response within 24 hours" },
     ],
     cta: "Start Free Trial",
     popular: true,
-    targetUsers: "Mid-sized organisations, regulated sectors",
+    targetUsers: "UK financial services and professional services firms",
   },
   {
     name: "Enterprise",
-    description: "Full platform access for large organisations",
-    price: "£199",
-    period: "/user/month",
-    annualPrice: "£1,990/user/year",
+    description: "Full platform access for large regulated organisations",
+    price: "£350",
+    period: "/month",
+    annualPrice: "£3,500/year",
     savings: "2 months free",
     icon: Globe,
     color: "purple",
-    badge: "Best Value",
+    badge: "Full Capability",
     features: [
-      { text: "Unlimited policies", tooltip: "No limits on policy management" },
       { text: "Unlimited users", tooltip: "Organisation-wide access" },
-      { text: "Unlimited AI gap analyses", tooltip: "Continuous regulatory monitoring" },
-      { text: "7-year audit trail with hash verification", tooltip: "Full regulatory retention" },
-      { text: "Global + custom regulatory feeds", tooltip: "Tailored regulatory coverage" },
-      { text: "SSO/SAML integration", tooltip: "Enterprise identity management" },
-      { text: "Custom branding", tooltip: "White-label options" },
-      { text: "Unlimited API access", tooltip: "Full integration capabilities" },
-      { text: "Data residency options", tooltip: "UK-only data storage" },
-      { text: "99.9% SLA guarantee", tooltip: "Maximum reliability" },
+      { text: "All Professional features", tooltip: "Complete platform access" },
+      { text: "White-label configuration", tooltip: "Custom branding and domain" },
+      { text: "API access & webhooks", tooltip: "Full integration with enterprise systems" },
+      { text: "Custom regulatory frameworks", tooltip: "Bespoke regulatory coverage" },
       { text: "Dedicated account manager", tooltip: "Named support contact" },
-      { text: "Quarterly business reviews", tooltip: "Strategic partnership" },
+      { text: "SLA-backed support", tooltip: "99.9% uptime guarantee" },
+      { text: "Custom onboarding package", tooltip: "Guided implementation and training" },
     ],
     cta: "Contact Sales",
     popular: false,
-    targetUsers: "Large organisations, multi-entity, high-regulation",
+    targetUsers: "Large regulated firms, multi-entity organisations",
   },
 ];
 
@@ -150,9 +122,9 @@ const faqs = [
 ];
 
 const marketStats = [
-  { label: "UK GRC Market", value: "£3.7B", growth: "12.1% CAGR" },
-  { label: "Global RegTech", value: "$62.5B", growth: "13% CAGR" },
-  { label: "UK RegTech Sector", value: "$526M", growth: "16.4% CAGR" },
+  { label: "UK Compliance Market", value: "£33.9B", growth: "Growing annually" },
+  { label: "Average SME Compliance Cost", value: "£47K", growth: "Per year, manual process" },
+  { label: "Target UK Firms", value: "5,500+", growth: "FCA/PRA regulated SMEs" },
 ];
 
 export default function Pricing() {
@@ -193,11 +165,11 @@ export default function Pricing() {
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-6xl text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Transparent Per-User Pricing
+            Simple, Transparent Pricing
           </h1>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-4">
-            Scale governance automation across your organisation with flexible, 
-            per-user pricing. All plans include a 14-day free trial.
+            Three tiers built specifically for UK regulated businesses. 
+            Replace a £47,000/year manual compliance burden from as little as £90/month.
           </p>
           <p className="text-sm text-slate-500">
             Prices shown in GBP. VAT may apply for UK customers.
@@ -317,19 +289,19 @@ export default function Pricing() {
             <h3 className="text-xl font-bold text-slate-900 mb-6 text-center">Example Pricing</h3>
             <div className="grid md:grid-cols-3 gap-6 text-center">
               <div className="p-4 bg-slate-50 rounded-lg">
-                <div className="text-sm text-slate-500 mb-2">Small Team (10 users)</div>
-                <div className="text-2xl font-bold text-slate-900">£490<span className="text-sm font-normal">/month</span></div>
-                <div className="text-xs text-slate-500">Core Plan</div>
+                <div className="text-sm text-slate-500 mb-2">Small Team</div>
+                <div className="text-2xl font-bold text-slate-900">£90<span className="text-sm font-normal">/month</span></div>
+                <div className="text-xs text-slate-500">Core Plan — up to 5 users</div>
               </div>
               <div className="p-4 bg-[#1e3a5f]/5 rounded-lg border border-[#1e3a5f]/20">
-                <div className="text-sm text-slate-500 mb-2">Mid-Size (25 users)</div>
-                <div className="text-2xl font-bold text-[#1e3a5f]">£2,725<span className="text-sm font-normal">/month</span></div>
-                <div className="text-xs text-slate-500">Professional Plan</div>
+                <div className="text-sm text-slate-500 mb-2">Growing Team</div>
+                <div className="text-2xl font-bold text-[#1e3a5f]">£175<span className="text-sm font-normal">/month</span></div>
+                <div className="text-xs text-slate-500">Professional Plan — up to 25 users</div>
               </div>
               <div className="p-4 bg-slate-50 rounded-lg">
-                <div className="text-sm text-slate-500 mb-2">Enterprise (100 users)</div>
-                <div className="text-2xl font-bold text-slate-900">£17,900<span className="text-sm font-normal">/month</span></div>
-                <div className="text-xs text-slate-500">Enterprise Plan</div>
+                <div className="text-sm text-slate-500 mb-2">Large Organisation</div>
+                <div className="text-2xl font-bold text-slate-900">£350<span className="text-sm font-normal">/month</span></div>
+                <div className="text-xs text-slate-500">Enterprise Plan — unlimited users</div>
               </div>
             </div>
           </div>

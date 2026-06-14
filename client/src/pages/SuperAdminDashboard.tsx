@@ -16,7 +16,7 @@ const PLAN_COLORS: Record<string, string> = {
 };
 
 const PLAN_LABELS: Record<string, string> = {
-  core: "Starter",
+  core: "Core",
   professional: "Professional",
   enterprise: "Enterprise",
 };
@@ -124,7 +124,7 @@ export default function SuperAdminDashboard() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="core">Starter</SelectItem>
+                              <SelectItem value="core">Core</SelectItem>
                               <SelectItem value="professional">Professional</SelectItem>
                               <SelectItem value="enterprise">Enterprise</SelectItem>
                             </SelectContent>
@@ -207,7 +207,7 @@ export default function SuperAdminDashboard() {
                     <tr className="border-b border-border text-muted-foreground">
                       <th className="text-left py-2 pr-4">Feature</th>
                       <th className="text-left py-2 pr-4">Category</th>
-                      <th className="text-center py-2 pr-4">Starter</th>
+                      <th className="text-center py-2 pr-4">Core</th>
                       <th className="text-center py-2 pr-4">Professional</th>
                       <th className="text-center py-2">Enterprise</th>
                     </tr>

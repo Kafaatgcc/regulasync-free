@@ -9,9 +9,9 @@ import { toast } from "sonner";
 const PLANS = [
   {
     id: "core",
-    name: "Starter",
+    name: "Core",
     tagline: "For small compliance teams getting started",
-    price: "£299",
+    price: "£90",
     period: "/month",
     highlight: false,
     icon: Zap,
@@ -36,7 +36,7 @@ const PLANS = [
     id: "professional",
     name: "Professional",
     tagline: "For growing compliance functions",
-    price: "£799",
+    price: "£175",
     period: "/month",
     highlight: true,
     icon: Building2,
@@ -61,7 +61,7 @@ const PLANS = [
     id: "enterprise",
     name: "Enterprise",
     tagline: "For large regulated firms requiring full capability",
-    price: "Custom",
+    price: "£350",
     period: "",
     highlight: false,
     icon: Globe,
@@ -218,7 +218,7 @@ export default function SubscriptionPlans() {
               <thead>
                 <tr className="border-b border-border bg-muted/30">
                   <th className="text-left p-4 text-muted-foreground font-medium">Feature</th>
-                  <th className="text-center p-4 text-slate-400 font-medium">Starter</th>
+                  <th className="text-center p-4 text-slate-400 font-medium">Core</th>
                   <th className="text-center p-4 text-blue-400 font-medium">Professional</th>
                   <th className="text-center p-4 text-amber-400 font-medium">Enterprise</th>
                 </tr>

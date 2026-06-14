@@ -53,8 +53,8 @@ export default function ROICalculator() {
     const automatedAuditPrepCost = currentAuditPrepCost * (1 - 0.90); // 90% reduction in audit prep
     const automatedTotalCost = automatedPolicyReviewCost + automatedRegulatoryUpdateCost + automatedAuditPrepCost;
     
-    // RegulaSync subscription cost (Professional tier)
-    const regulaSyncAnnualCost = employees <= 50 ? 3900 : employees <= 200 ? 9900 : 24900;
+    // RegulaSync subscription cost — Core £90/mo (£1,080/yr), Professional £175/mo (£2,100/yr), Enterprise £350/mo (£4,200/yr)
+    const regulaSyncAnnualCost = employees <= 5 ? 1080 : employees <= 25 ? 2100 : 4200;
     
     // Savings
     const laborSavings = currentTotalManualCost - automatedTotalCost;
