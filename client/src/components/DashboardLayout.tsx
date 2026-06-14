@@ -330,7 +330,7 @@ function DashboardLayoutContent({
                   <div className="flex items-center gap-2 px-1">
                     <div className="w-6 h-6 flex items-center justify-center">
                       <img 
-                        src="/manus-storage/logo_optimized_92a39fa3.png" 
+                        src="/manus-storage/logo_optimized_2040b206.png" 
                         alt="RegulaSync" 
                         className="w-6 h-6 object-contain"
                       />

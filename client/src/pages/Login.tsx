@@ -44,7 +44,7 @@ export default function Login() {
         </Link>
         <div className="flex items-center gap-2">
           <img
-            src="/manus-storage/logo_optimized_92a39fa3.png"
+            src="/manus-storage/logo_optimized_2040b206.png"
             alt="RegulaSync"
             className="h-8 w-8 object-contain"
           />
