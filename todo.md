@@ -96,3 +96,78 @@
 - [x] PublicHeader updated: "Try Demo" button replaced with "Log In" button linking to /login
 - [x] TypeScript: 0 errors confirmed
 - [x] Checkpoint saved (version: final)
+
+## Commercial Enterprise Build (Co-Founder Roadmap)
+
+### Phase 1: Subscription Tiers & Feature Flags
+- [ ] Add subscriptionTier, featureFlags, billingStatus columns to organizations table
+- [ ] Create subscription_plans table (Starter, Professional, Enterprise)
+- [ ] Create feature_flags table — per-org toggle for each platform feature
+- [ ] Build SubscriptionPlans page (/subscription-plans) — super admin manages plans
+- [ ] Build FeatureFlags admin panel — super admin toggles features per org
+- [ ] Wire feature flag checks into sidebar nav and protected routes
+- [ ] Add subscription tier badge to org profile and user menu
+
+### Phase 2: Super Admin Global Dashboard
+- [ ] Build SuperAdminDashboard page (/super-admin) — all orgs, usage, health, billing
+- [ ] Show per-org: user count, active policies, compliance score, subscription tier, last activity
+- [ ] Add org impersonation (super admin can view platform as any org)
+- [ ] Add org suspend/activate controls
+- [ ] Add global usage analytics (total users, total policies, total audits across all orgs)
+
+### Phase 3: White-Label Configuration
+- [ ] Add whiteLabel columns to organizations: customLogo, primaryColor, companyName, customDomain
+- [ ] Build WhiteLabelConfig page (/white-label) — super admin configures per org
+- [ ] Apply white-label branding dynamically (logo, colors) based on org config
+- [ ] Add reseller tier to subscription plans
+
+### Phase 4: API Keys & Webhooks
+- [ ] Create api_keys table (orgId, keyHash, label, permissions, lastUsed, isActive)
+- [ ] Create webhooks table (orgId, url, events[], secret, isActive, lastTriggered)
+- [ ] Build APIKeys management page (/api-keys) — generate, label, revoke keys
+- [ ] Build Webhooks management page (/webhooks) — add, test, delete webhook endpoints
+- [ ] Implement webhook dispatcher — fire events on compliance changes, policy updates, audit entries
+- [ ] Add API key authentication middleware to server
+
+### Phase 5: OpenAPI / Swagger Documentation
+- [ ] Install swagger-ui-express and swagger-jsdoc
+- [ ] Generate OpenAPI spec from all tRPC routers
+- [ ] Serve live Swagger UI at /api/docs
+- [ ] Document all endpoints: auth, policies, compliance, audit, delegation, gap analysis, reports
+
+### Phase 6: In-App Documentation Hub
+- [ ] Build Documentation hub page (/docs) with sidebar navigation
+- [ ] Write Admin Guide: org setup, user management, roles, feature flags, billing
+- [ ] Write User Guides: compliance manager journey, auditor journey, department user journey
+- [ ] Write API Reference: authentication, endpoints, webhooks, rate limits
+- [ ] Write User Journey maps: onboarding, daily workflow, audit preparation, board reporting
+
+### Phase 7: Security Hardening
+- [ ] Add 2FA (TOTP) — QR code setup, verification on login, backup codes
+- [ ] Add session management page — view all active sessions, revoke individual sessions
+- [ ] Add audit log CSV and PDF export
+- [ ] Add data retention policy settings per org (30/60/90/180/365 days)
+- [ ] Add login attempt rate limiting and account lockout
+
+### Phase 8: Onboarding & Integrations
+- [ ] Build Organisation Onboarding Wizard (/onboarding) — 5-step guided setup
+- [ ] Add Slack integration — send compliance alerts to Slack channel
+- [ ] Add Microsoft Teams integration — webhook-based Teams notifications
+- [ ] Add email notification templates per org (invite, alert, report ready)
+
+## Commercial Enterprise Build — COMPLETED (Session 4)
+- [x] DB tables: feature_flags, org_feature_flags, webhooks, webhook_deliveries, user_sessions, white_label_configs, onboarding_progress, notification_integrations, org_api_keys — all created via SQL
+- [x] Seeded feature_flags with 12 platform features across Starter/Professional/Enterprise tiers
+- [x] enterpriseRouter.ts — 8 sub-routers: featureFlags, superAdmin, whiteLabel, webhooks, orgApiKeys, sessions, notificationIntegrations, onboarding
+- [x] All enterprise routers wired into appRouter in routers.ts
+- [x] SuperAdminDashboard page (/super-admin) — global org management, feature flag overrides, all users
+- [x] WhiteLabelConfig page (/enterprise/white-label) — brand identity, colour scheme, domain, legal links
+- [x] EnterpriseIntegrations page (/enterprise/integrations) — API keys, webhooks, Slack/Teams notifications
+- [x] ApiDocumentation page (/api-docs) — full endpoint reference with code examples
+- [x] DocumentationHub page (/docs) — admin guide, user guide, user journeys, integration guides
+- [x] SecuritySettings page (/security-settings) — active sessions, 2FA setup, security overview
+- [x] OnboardingWizard page (/onboarding) — 5-step guided org setup
+- [x] SubscriptionPlans page (/subscription) — Starter £299/mo, Professional £799/mo, Enterprise custom
+- [x] Enterprise sidebar section added to DashboardLayout with role-based visibility
+- [x] All routes registered in App.tsx
+- [x] TypeScript: 0 errors

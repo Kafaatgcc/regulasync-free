@@ -20,6 +20,16 @@ import {
 } from "./enhancementsRouter";
 import { authRouter } from "./authRouter";
 import { userManagementRouter } from "./userManagementRouter";
+import {
+  featureFlagsRouter,
+  superAdminRouter,
+  whiteLabelRouter,
+  webhooksRouter,
+  orgApiKeysRouter,
+  sessionManagementRouter,
+  notificationIntegrationsRouter,
+  onboardingRouter,
+} from "./enterpriseRouter";
 export const appRouter = router({
   system: systemRouter,
   passwordAuth: authRouter,
@@ -1587,5 +1597,15 @@ Keep responses under 150 words unless detailed explanation is needed.`;
   auditSearch: auditSearchRouter,
   // Enhancement 10: Enhanced Benchmarking Intelligence (fixed)
   enhancedBenchmarking: enhancedBenchmarkingRouter,
+
+  // ─── ENTERPRISE COMMERCIAL FEATURES ────────────────────────────────────────
+  featureFlags: featureFlagsRouter,
+  superAdmin: superAdminRouter,
+  whiteLabel: whiteLabelRouter,
+  webhooks: webhooksRouter,
+  orgApiKeys: orgApiKeysRouter,
+  sessions: sessionManagementRouter,
+  notificationIntegrations: notificationIntegrationsRouter,
+  onboarding: onboardingRouter,
 });
 export type AppRouter = typeof appRouter;

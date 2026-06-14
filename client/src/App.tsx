@@ -55,6 +55,14 @@ import XAILogs from "./pages/XAILogs";
 import RegulatorPortal from "./pages/RegulatorPortal";
 import UniversityPartnership from "./pages/UniversityPartnership";
 import PlatformSettings from "./pages/PlatformSettings";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import WhiteLabelConfig from "./pages/WhiteLabelConfig";
+import EnterpriseIntegrations from "./pages/EnterpriseIntegrations";
+import ApiDocumentation from "./pages/ApiDocumentation";
+import DocumentationHub from "./pages/DocumentationHub";
+import SecuritySettings from "./pages/SecuritySettings";
+import OnboardingWizard from "./pages/OnboardingWizard";
+import SubscriptionPlans from "./pages/SubscriptionPlans";
 import LiveChat from "./components/LiveChat";
 import PresentationMode from "./components/PresentationMode";
 
@@ -311,6 +319,55 @@ function Router() {
         <Route path="/predictive-risk">
           <DashboardLayout>
             <PredictiveRisk />
+          </DashboardLayout>
+        </Route>
+
+        {/* Enterprise & Commercial Routes */}
+        <Route path="/super-admin">
+          <DashboardLayout>
+            <SuperAdminDashboard />
+          </DashboardLayout>
+        </Route>
+
+        <Route path="/enterprise/white-label">
+          <DashboardLayout>
+            <WhiteLabelConfig />
+          </DashboardLayout>
+        </Route>
+
+        <Route path="/enterprise/integrations">
+          <DashboardLayout>
+            <EnterpriseIntegrations />
+          </DashboardLayout>
+        </Route>
+
+        <Route path="/api-docs">
+          <DashboardLayout>
+            <ApiDocumentation />
+          </DashboardLayout>
+        </Route>
+
+        <Route path="/docs">
+          <DashboardLayout>
+            <DocumentationHub />
+          </DashboardLayout>
+        </Route>
+
+        <Route path="/security-settings">
+          <DashboardLayout>
+            <SecuritySettings />
+          </DashboardLayout>
+        </Route>
+
+        <Route path="/onboarding">
+          <DashboardLayout>
+            <OnboardingWizard />
+          </DashboardLayout>
+        </Route>
+
+        <Route path="/subscription">
+          <DashboardLayout>
+            <SubscriptionPlans />
           </DashboardLayout>
         </Route>
         <Route path="/login">

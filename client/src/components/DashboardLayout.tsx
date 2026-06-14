@@ -113,7 +113,7 @@ const systemMenuItems = [
   { icon: Settings, label: "Admin Panel", path: "/admin", minRole: "company_admin" },
 ];
 
-import { GitCompare, Calculator, Workflow, Scale } from "lucide-react";
+import { GitCompare, Calculator, Workflow, Scale, Webhook, CreditCard, Globe, ShieldCheck } from "lucide-react";
 
 const toolsMenuItems = [
   { icon: Workflow, label: "Workflow Sim", path: "/workflow-simulator" },
@@ -138,6 +138,17 @@ const horizonMenuItems = [
   { icon: Shield, label: "Regulator Portal", path: "/regulator-portal" },
   { icon: GraduationCap, label: "University Partners", path: "/university-partnerships" },
   { icon: Sliders, label: "Platform Settings", path: "/platform-settings" },
+];
+
+const enterpriseMenuItems = [
+  { icon: Globe, label: "Super Admin", path: "/super-admin", minRole: "super_admin" },
+  { icon: Globe, label: "White Label", path: "/enterprise/white-label", minRole: "company_admin" },
+  { icon: Webhook, label: "Integrations", path: "/enterprise/integrations", minRole: "company_admin" },
+  { icon: CreditCard, label: "Subscription", path: "/subscription", minRole: "company_admin" },
+  { icon: BookOpen, label: "Documentation", path: "/docs" },
+  { icon: BookOpen, label: "API Docs", path: "/api-docs", minRole: "company_admin" },
+  { icon: ShieldCheck, label: "Security", path: "/security-settings" },
+  { icon: Settings, label: "Onboarding", path: "/onboarding", minRole: "company_admin" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -456,6 +467,29 @@ function DashboardLayoutContent({
               <SidebarGroupContent>
                 <SidebarMenu>
                   {systemMenuItems.filter(item => hasRole(currentUser?.role, item.minRole)).map((item) => (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={location === item.path}
+                        className="h-[19px] space-y-0.5"
+                      >
+                        <item.icon className="h-3.5 w-3.5" />
+                        <span className="text-xs">{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Enterprise */}
+            <SidebarGroup className="mt-2">
+              <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
+                Enterprise
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {enterpriseMenuItems.filter(item => !item.minRole || hasRole(currentUser?.role, item.minRole)).map((item) => (
                     <SidebarMenuItem key={item.path}>
                       <SidebarMenuButton
                         onClick={() => navigate(item.path)}

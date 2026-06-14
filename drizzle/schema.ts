@@ -770,3 +770,190 @@ export const agenticTasks = mysqlTable("agentic_tasks", {
 });
 export type AgenticTask = typeof agenticTasks.$inferSelect;
 export type InsertAgenticTask = typeof agenticTasks.$inferInsert;
+
+/**
+ * Feature Flags — Per-organisation feature toggles by subscription tier
+ */
+export const featureFlags = mysqlTable("feature_flags", {
+  id: int("id").autoincrement().primaryKey(),
+  key: varchar("key", { length: 128 }).notNull().unique(),
+  label: varchar("label", { length: 256 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 64 }).notNull(),
+  defaultEnabled: boolean("defaultEnabled").default(false).notNull(),
+  starterEnabled: boolean("starterEnabled").default(false).notNull(),
+  professionalEnabled: boolean("professionalEnabled").default(true).notNull(),
+  enterpriseEnabled: boolean("enterpriseEnabled").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FeatureFlag = typeof featureFlags.$inferSelect;
+export type InsertFeatureFlag = typeof featureFlags.$inferInsert;
+
+/**
+ * Org Feature Flag Overrides — Super admin can override per org
+ */
+export const orgFeatureFlags = mysqlTable("org_feature_flags", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").references(() => organizations.id).notNull(),
+  flagKey: varchar("flagKey", { length: 128 }).notNull(),
+  enabled: boolean("enabled").notNull(),
+  overriddenBy: int("overriddenBy").references(() => users.id),
+  overriddenAt: timestamp("overriddenAt").defaultNow().notNull(),
+});
+export type OrgFeatureFlag = typeof orgFeatureFlags.$inferSelect;
+export type InsertOrgFeatureFlag = typeof orgFeatureFlags.$inferInsert;
+
+/**
+ * Outbound Webhooks — Per-org webhook endpoints for enterprise integrations
+ */
+export const webhooks = mysqlTable("webhooks", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").references(() => organizations.id).notNull(),
+  label: varchar("label", { length: 256 }).notNull(),
+  url: text("url").notNull(),
+  secret: varchar("secret", { length: 256 }).notNull(),
+  events: json("events").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  lastTriggeredAt: timestamp("lastTriggeredAt"),
+  lastStatusCode: int("lastStatusCode"),
+  failureCount: int("failureCount").default(0),
+  createdBy: int("createdBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Webhook = typeof webhooks.$inferSelect;
+export type InsertWebhook = typeof webhooks.$inferInsert;
+
+/**
+ * Webhook Delivery Log — Track every outbound webhook attempt
+ */
+export const webhookDeliveries = mysqlTable("webhook_deliveries", {
+  id: int("id").autoincrement().primaryKey(),
+  webhookId: int("webhookId").references(() => webhooks.id).notNull(),
+  eventType: varchar("eventType", { length: 128 }).notNull(),
+  payload: json("payload"),
+  statusCode: int("statusCode"),
+  responseBody: text("responseBody"),
+  durationMs: int("durationMs"),
+  success: boolean("success").default(false).notNull(),
+  attemptedAt: timestamp("attemptedAt").defaultNow().notNull(),
+});
+export type WebhookDelivery = typeof webhookDeliveries.$inferSelect;
+export type InsertWebhookDelivery = typeof webhookDeliveries.$inferInsert;
+
+/**
+ * User Sessions — Track active sessions for session management
+ */
+export const userSessions = mysqlTable("user_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id).notNull(),
+  sessionToken: varchar("sessionToken", { length: 256 }).notNull().unique(),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  deviceType: varchar("deviceType", { length: 64 }),
+  location: varchar("location", { length: 256 }),
+  isActive: boolean("isActive").default(true).notNull(),
+  lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type UserSession = typeof userSessions.$inferSelect;
+export type InsertUserSession = typeof userSessions.$inferInsert;
+
+/**
+ * 2FA Secrets — TOTP secrets for two-factor authentication
+ */
+export const twoFactorSecrets = mysqlTable("two_factor_secrets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id).notNull().unique(),
+  secret: varchar("secret", { length: 256 }).notNull(),
+  backupCodes: json("backupCodes"),
+  isEnabled: boolean("isEnabled").default(false).notNull(),
+  verifiedAt: timestamp("verifiedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type TwoFactorSecret = typeof twoFactorSecrets.$inferSelect;
+export type InsertTwoFactorSecret = typeof twoFactorSecrets.$inferInsert;
+
+/**
+ * White Label Config — Per-org branding for white-label reselling
+ */
+export const whiteLabelConfigs = mysqlTable("white_label_configs", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").references(() => organizations.id).notNull().unique(),
+  brandName: varchar("brandName", { length: 256 }),
+  logoUrl: text("logoUrl"),
+  faviconUrl: text("faviconUrl"),
+  primaryColor: varchar("primaryColor", { length: 32 }).default("#b87333"),
+  secondaryColor: varchar("secondaryColor", { length: 32 }).default("#1e293b"),
+  accentColor: varchar("accentColor", { length: 32 }).default("#f59e0b"),
+  customDomain: varchar("customDomain", { length: 256 }),
+  supportEmail: varchar("supportEmail", { length: 320 }),
+  privacyPolicyUrl: text("privacyPolicyUrl"),
+  termsUrl: text("termsUrl"),
+  isActive: boolean("isActive").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type WhiteLabelConfig = typeof whiteLabelConfigs.$inferSelect;
+export type InsertWhiteLabelConfig = typeof whiteLabelConfigs.$inferInsert;
+
+/**
+ * Onboarding Progress — Track org setup wizard completion
+ */
+export const onboardingProgress = mysqlTable("onboarding_progress", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").references(() => organizations.id).notNull().unique(),
+  userId: int("userId").references(() => users.id).notNull(),
+  step1OrgProfile: boolean("step1OrgProfile").default(false).notNull(),
+  step2InviteTeam: boolean("step2InviteTeam").default(false).notNull(),
+  step3ConfigureFrameworks: boolean("step3ConfigureFrameworks").default(false).notNull(),
+  step4UploadPolicies: boolean("step4UploadPolicies").default(false).notNull(),
+  step5ConnectIntegrations: boolean("step5ConnectIntegrations").default(false).notNull(),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type OnboardingProgress = typeof onboardingProgress.$inferSelect;
+export type InsertOnboardingProgress = typeof onboardingProgress.$inferInsert;
+
+/**
+ * Notification Integrations — Slack / Teams / Email config per org
+ */
+export const notificationIntegrations = mysqlTable("notification_integrations", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").references(() => organizations.id).notNull(),
+  type: mysqlEnum("type", ["slack", "teams", "email", "pagerduty"]).notNull(),
+  label: varchar("label", { length: 256 }).notNull(),
+  webhookUrl: text("webhookUrl"),
+  config: json("config"),
+  events: json("events"),
+  isActive: boolean("isActive").default(true).notNull(),
+  lastTestedAt: timestamp("lastTestedAt"),
+  createdBy: int("createdBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type NotificationIntegration = typeof notificationIntegrations.$inferSelect;
+export type InsertNotificationIntegration = typeof notificationIntegrations.$inferInsert;
+
+/**
+ * Org API Keys — Machine-to-machine API keys per organisation
+ */
+export const orgApiKeys = mysqlTable("org_api_keys", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").references(() => organizations.id).notNull(),
+  label: varchar("label", { length: 256 }).notNull(),
+  keyPrefix: varchar("keyPrefix", { length: 16 }).notNull(),
+  keyHash: varchar("keyHash", { length: 256 }).notNull(),
+  permissions: json("permissions"),
+  lastUsedAt: timestamp("lastUsedAt"),
+  expiresAt: timestamp("expiresAt"),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type OrgApiKey = typeof orgApiKeys.$inferSelect;
+export type InsertOrgApiKey = typeof orgApiKeys.$inferInsert;
