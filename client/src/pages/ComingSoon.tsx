@@ -15,9 +15,15 @@ import {
 
 } from "lucide-react";
 
-// Demo credentials
-const DEMO_EMAIL = "demo@regulasync.co.uk";
-const DEMO_PASSWORD = "RS@Demo#2026!Uk";
+// Demo credentials — all 5 seeded demo users share the same gate password
+const DEMO_EMAILS = [
+  "superadmin@regulasync.co.uk",
+  "admin@acmecorp.co.uk",
+  "compliance@acmecorp.co.uk",
+  "finance@acmecorp.co.uk",
+  "auditor@acmecorp.co.uk",
+];
+const DEMO_PASSWORD = "Demo@2026!";
 
 export default function ComingSoon() {
   const [email, setEmail] = useState("");
@@ -32,15 +38,16 @@ export default function ComingSoon() {
 
     // Simulate a brief loading state
     setTimeout(() => {
-      if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+      if (DEMO_EMAILS.includes(email.toLowerCase()) && password === DEMO_PASSWORD) {
         // Set demo mode and dispatch event to notify App.tsx
         localStorage.setItem('demoMode', 'true');
         localStorage.setItem('regulasync_demo_access', 'true');
+        localStorage.setItem('regulasync_gate_email', email.toLowerCase());
         // Dispatch custom event to trigger re-render in App.tsx
         window.dispatchEvent(new Event('regulasync-access-changed'));
-        // Small delay to ensure state updates, then redirect
+        // Redirect to real login page with email pre-filled
         setTimeout(() => {
-          window.location.href = '/landing';
+          window.location.href = '/login?email=' + encodeURIComponent(email.toLowerCase());
         }, 100);
       } else {
         setError("Invalid credentials. Please check your demo access details.");
