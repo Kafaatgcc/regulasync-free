@@ -9,11 +9,7 @@ import { Mail, KeyRound, ArrowRight, Eye, EyeOff, Loader2, AlertCircle, ChevronL
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  // Pre-fill email if passed from gate page via query param
-  const initialEmail = typeof window !== 'undefined'
-    ? new URLSearchParams(window.location.search).get('email') || ""
-    : "";
-  const [email, setEmail] = useState(initialEmail);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
