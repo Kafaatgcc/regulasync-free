@@ -164,3 +164,11 @@
 - [x] Enterprise sidebar section added to DashboardLayout with role-based visibility
 - [x] All routes registered in App.tsx
 - [x] TypeScript: 0 errors
+
+## UI Bug Fixes (Mobile + Desktop — June 2026)
+- [x] FIX: Sidebar nav items overlapping section labels (MAIN/TOOLS/MONITORS etc.) — mobile and desktop
+- [x] FIX: Logo broken/upside-down in public header
+- [x] FIX: Light grey text on white background — poor contrast on landing page sections
+- [x] FIX: Remove "Sign in with Manus" button from login page
+- [x] FIX: Remove exposed demo credentials panel from login page (security risk)
+- [x] FIX: Move Login button into public header navigation bar

@@ -85,9 +85,7 @@ export default function AnimatedLogo({
         <img 
           src="/manus-storage/logo_optimized_92a39fa3.png" 
           alt="RegulaSync"
-          className={`w-full h-full object-contain transition-all duration-500 ${
-            animate ? 'animate-logo-rotate' : ''
-          }`}
+          className="w-full h-full object-contain transition-all duration-500"
           style={{
             filter: isHovered 
               ? 'drop-shadow(0 0 20px rgba(184, 115, 51, 0.7))' 

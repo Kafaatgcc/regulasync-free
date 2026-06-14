@@ -152,8 +152,8 @@ const enterpriseMenuItems = [
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
-const DEFAULT_WIDTH = 320;
-const MIN_WIDTH = 200;
+const DEFAULT_WIDTH = 280;
+const MIN_WIDTH = 240;
 const MAX_WIDTH = 480;
 
 // Production user object
@@ -203,7 +203,8 @@ export default function DashboardLayout({
   }, []);
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
-    return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
+    const parsed = saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
+    return Math.max(parsed, MIN_WIDTH);
   });
 
   useEffect(() => {
@@ -317,13 +318,13 @@ function DashboardLayoutContent({
   return (
     <>
       <div className="relative" ref={sidebarRef}>
-        <Sidebar collapsible="icon" className="border-r border-sidebar-border">
+        <Sidebar collapsible="offcanvas" className="border-r border-sidebar-border">
           <SidebarHeader className="border-b border-sidebar-border py-2.5">
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   asChild 
-                  className="h-[19px] hover:bg-transparent cursor-pointer"
+                  className="h-8 hover:bg-transparent cursor-pointer"
                   onClick={() => window.location.href = '/'}
                 >
                   <div className="flex items-center gap-2 px-1">
@@ -343,7 +344,7 @@ function DashboardLayoutContent({
             </SidebarMenu>
           </SidebarHeader>
           
-          <SidebarContent className="py-2">
+          <SidebarContent className="py-1 overflow-y-auto">
             {/* Main Navigation */}
             <SidebarGroup>
               <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
@@ -356,10 +357,10 @@ function DashboardLayoutContent({
                       <SidebarMenuButton
                         onClick={() => navigate(item.path)}
                         isActive={location === item.path}
-                        className="h-[19px] space-y-0.5"
+                        className="h-8"
                       >
                         <item.icon className="h-3.5 w-3.5" />
-                        <span className="text-xs">{item.label}</span>
+                        <span className="text-xs truncate whitespace-nowrap">{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -368,7 +369,7 @@ function DashboardLayoutContent({
             </SidebarGroup>
 
             {/* Insights */}
-            <SidebarGroup className="mt-2">
+            <SidebarGroup className="mt-3">
               <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
                 Insights
               </SidebarGroupLabel>
@@ -379,10 +380,10 @@ function DashboardLayoutContent({
                       <SidebarMenuButton
                         onClick={() => navigate(item.path)}
                         isActive={location === item.path}
-                        className="h-[19px] space-y-0.5"
+                        className="h-8"
                       >
                         <item.icon className="h-3.5 w-3.5" />
-                        <span className="text-xs">{item.label}</span>
+                        <span className="text-xs truncate whitespace-nowrap">{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -391,7 +392,7 @@ function DashboardLayoutContent({
             </SidebarGroup>
 
             {/* Tools */}
-            <SidebarGroup className="mt-2">
+            <SidebarGroup className="mt-3">
               <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
                 Tools
               </SidebarGroupLabel>
@@ -402,10 +403,10 @@ function DashboardLayoutContent({
                       <SidebarMenuButton
                         onClick={() => navigate(item.path)}
                         isActive={location === item.path}
-                        className="h-[19px] space-y-0.5"
+                        className="h-8"
                       >
                         <item.icon className="h-3.5 w-3.5" />
-                        <span className="text-xs">{item.label}</span>
+                        <span className="text-xs truncate whitespace-nowrap">{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -414,7 +415,7 @@ function DashboardLayoutContent({
             </SidebarGroup>
 
             {/* Innovation */}
-            <SidebarGroup className="mt-2">
+            <SidebarGroup className="mt-3">
               <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
                 Innovation
               </SidebarGroupLabel>
@@ -425,10 +426,10 @@ function DashboardLayoutContent({
                       <SidebarMenuButton
                         onClick={() => navigate(item.path)}
                         isActive={location === item.path}
-                        className="h-[19px] space-y-0.5"
+                        className="h-8"
                       >
                         <item.icon className="h-3.5 w-3.5" />
-                        <span className="text-xs">{item.label}</span>
+                        <span className="text-xs truncate whitespace-nowrap">{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -437,7 +438,7 @@ function DashboardLayoutContent({
             </SidebarGroup>
 
             {/* Horizon */}
-            <SidebarGroup className="mt-2">
+            <SidebarGroup className="mt-3">
               <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
                 Horizon
               </SidebarGroupLabel>
@@ -448,10 +449,10 @@ function DashboardLayoutContent({
                       <SidebarMenuButton
                         onClick={() => navigate(item.path)}
                         isActive={location === item.path}
-                        className="h-[19px] space-y-0.5"
+                        className="h-8"
                       >
                         <item.icon className="h-3.5 w-3.5" />
-                        <span className="text-xs">{item.label}</span>
+                        <span className="text-xs truncate whitespace-nowrap">{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -460,7 +461,7 @@ function DashboardLayoutContent({
             </SidebarGroup>
 
             {/* System */}
-            <SidebarGroup className="mt-2">
+            <SidebarGroup className="mt-3">
               <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
                 System
               </SidebarGroupLabel>
@@ -471,10 +472,10 @@ function DashboardLayoutContent({
                       <SidebarMenuButton
                         onClick={() => navigate(item.path)}
                         isActive={location === item.path}
-                        className="h-[19px] space-y-0.5"
+                        className="h-8"
                       >
                         <item.icon className="h-3.5 w-3.5" />
-                        <span className="text-xs">{item.label}</span>
+                        <span className="text-xs truncate whitespace-nowrap">{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -483,7 +484,7 @@ function DashboardLayoutContent({
             </SidebarGroup>
 
             {/* Enterprise */}
-            <SidebarGroup className="mt-2">
+            <SidebarGroup className="mt-3">
               <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-3 py-1">
                 Enterprise
               </SidebarGroupLabel>
@@ -494,10 +495,10 @@ function DashboardLayoutContent({
                       <SidebarMenuButton
                         onClick={() => navigate(item.path)}
                         isActive={location === item.path}
-                        className="h-[19px] space-y-0.5"
+                        className="h-8"
                       >
                         <item.icon className="h-3.5 w-3.5" />
-                        <span className="text-xs">{item.label}</span>
+                        <span className="text-xs truncate whitespace-nowrap">{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
