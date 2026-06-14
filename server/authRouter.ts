@@ -1,4 +1,5 @@
-import { router, publicProcedure } from "./_core/trpc";
+import { router, publicProcedure, protectedProcedure } from "./_core/trpc";
+import { signSession } from "./_core/auth";
 import { z } from "zod";
 import { getDb } from "./db";
 import { users } from "../drizzle/schema";
@@ -6,8 +7,8 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { TRPCError } from "@trpc/server";
 import crypto from "crypto";
-import { sdk } from "./_core/sdk";
-import { getSessionCookieOptions } from "./_core/cookies";
+
+
 import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 
 // Role hierarchy for permission checks
@@ -56,13 +57,17 @@ export const authRouter = router({
 
       await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, user.id));
 
-      const sessionToken = await sdk.signSession(
-        { openId: user.openId, appId: process.env.VITE_APP_ID || "", name: user.name || user.email || "" },
-        { expiresInMs: ONE_YEAR_MS }
+      const sessionToken = await signSession(
+        { userId: user.openId, email: user.email || "", name: user.name || user.email || "" },
+        ONE_YEAR_MS
       );
-
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      ctx.res.cookie(COOKIE_NAME, sessionToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: ONE_YEAR_MS,
+        path: "/",
+      });
 
       return {
         success: true,
@@ -108,13 +113,17 @@ export const authRouter = router({
         .set({ name: input.name, passwordHash, inviteToken: null, inviteTokenExpiry: null, isActive: true, lastSignedIn: new Date() })
         .where(eq(users.id, user.id));
 
-      const sessionToken = await sdk.signSession(
-        { openId: user.openId, appId: process.env.VITE_APP_ID || "", name: input.name },
-        { expiresInMs: ONE_YEAR_MS }
+      const sessionToken = await signSession(
+        { userId: user.openId, email: user.email || "", name: input.name },
+        ONE_YEAR_MS
       );
-
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      ctx.res.cookie(COOKIE_NAME, sessionToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: ONE_YEAR_MS,
+        path: "/",
+      });
 
       return { success: true, user: { id: user.id, name: input.name, email: user.email, role: user.role } };
     }),

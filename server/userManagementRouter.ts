@@ -76,7 +76,7 @@ export const userManagementRouter = router({
         inviteToken,
         inviteTokenExpiry,
         invitedBy: ctx.user.id,
-        loginMethod: "password",
+        authMethod: "password",
         lastSignedIn: new Date(),
       });
 

@@ -9,7 +9,7 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   passwordHash: varchar("passwordHash", { length: 256 }),
-  loginMethod: varchar("loginMethod", { length: 64 }).default("password"),
+  authMethod: varchar("authMethod", { length: 64 }).default("password"),
   role: mysqlEnum("role", ["super_admin", "company_admin", "compliance_manager", "department_user", "auditor", "user", "admin"]).default("department_user").notNull(),
   department: varchar("department", { length: 128 }),
   jobTitle: varchar("jobTitle", { length: 128 }),

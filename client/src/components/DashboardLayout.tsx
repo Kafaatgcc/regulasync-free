@@ -165,7 +165,7 @@ const getDefaultUser = () => {
     email: 'demo@regulasync.com',
     openId: 'user',
     role: 'user' as const,
-    loginMethod: 'production',
+    authMethod: 'password',
     createdAt: new Date(),
     updatedAt: new Date(),
     lastSignedIn: new Date(),
@@ -240,7 +240,7 @@ type AnyUser = {
   role: string;
   department?: string | null;
   jobTitle?: string | null;
-  loginMethod?: string | null;
+  authMethod?: string | null;
   createdAt: Date;
   updatedAt: Date;
   lastSignedIn: Date;
@@ -330,7 +330,7 @@ function DashboardLayoutContent({
                   <div className="flex items-center gap-2 px-1">
                     <div className="w-6 h-6 flex items-center justify-center">
                       <img 
-                        src="/manus-storage/logo_optimized_2040b206.png" 
+                        src="/logo.png" 
                         alt="RegulaSync" 
                         className="w-6 h-6 object-contain"
                       />
