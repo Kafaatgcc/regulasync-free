@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AnimatedLogo from "@/components/AnimatedLogo";
+import { trpc } from "@/lib/trpc";
 import { 
   Shield, 
   Zap, 
@@ -24,29 +25,28 @@ export default function ComingSoon() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const demoSession = trpc.passwordAuth.startDemoSession.useMutation();
 
-  const handleDemoAccess = (e: React.FormEvent) => {
+  const handleDemoAccess = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError("");
 
-    // Simulate a brief loading state
-    setTimeout(() => {
-      if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
-        // Set demo mode and dispatch event to notify App.tsx
-        localStorage.setItem('demoMode', 'true');
-        localStorage.setItem('regulasync_demo_access', 'true');
-        // Dispatch custom event to trigger re-render in App.tsx
-        window.dispatchEvent(new Event('regulasync-access-changed'));
-        // Small delay to ensure state updates, then redirect
-        setTimeout(() => {
-          window.location.href = '/landing';
-        }, 100);
-      } else {
-        setError("Invalid credentials. Please check your demo access details.");
-        setIsLoading(false);
-      }
-    }, 800);
+    if (email !== DEMO_EMAIL || password !== DEMO_PASSWORD) {
+      setError("Invalid credentials. Please check your demo access details.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await demoSession.mutateAsync();
+      localStorage.setItem('demoMode', 'true');
+      localStorage.setItem('regulasync_demo_access', 'true');
+      window.dispatchEvent(new Event('regulasync-access-changed'));
+      window.location.assign('/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to start the demo. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -157,7 +157,7 @@ export default function ComingSoon() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Authenticating...
+                  Opening demo...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">

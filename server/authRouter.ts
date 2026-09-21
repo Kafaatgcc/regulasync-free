@@ -27,6 +27,50 @@ export function hasPermission(userRole: string, requiredRole: string): boolean {
 }
 
 export const authRouter = router({
+  // Prepared demo entry point. The access gate is handled in the client; this
+  // creates a short-lived server session for the seeded demonstration account
+  // so protected demo pages can load without requesting a user login.
+  startDemoSession: publicProcedure
+    .mutation(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Demo is temporarily unavailable" });
+
+      const demoEmail = process.env.DEMO_USER_EMAIL || "superadmin@regulasync.co.uk";
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, demoEmail))
+        .limit(1);
+
+      if (!user || !user.isActive) {
+        throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Demo account is unavailable" });
+      }
+
+      const demoSessionDurationMs = 1000 * 60 * 60 * 8;
+      const sessionToken = await signSession(
+        { userId: user.openId, email: user.email || "", name: user.name || "RegulaSync Demo" },
+        demoSessionDurationMs
+      );
+
+      ctx.res.cookie(COOKIE_NAME, sessionToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: demoSessionDurationMs,
+        path: "/",
+      });
+
+      return {
+        success: true,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      };
+    }),
+
   // Email/password login
   loginWithPassword: publicProcedure
     .input(z.object({

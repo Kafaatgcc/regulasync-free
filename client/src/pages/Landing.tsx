@@ -627,15 +627,16 @@ export default function Landing() {
             Join forward-thinking organizations that are automating compliance 
             and reducing governance risk with RegulaSync.
           </p>
-          <Button 
-            size="lg" 
-            variant="secondary"
-            onClick={() => window.location.href = '/dashboard'}
-            className="text-lg px-8"
-          >
-            Start Your Demo
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          <Link href="/">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="text-lg px-8"
+            >
+              Start Your Demo
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
         </div>
       </section>
 
