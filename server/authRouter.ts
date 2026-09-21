@@ -46,7 +46,7 @@ export const authRouter = router({
         throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Demo account is unavailable" });
       }
 
-      const demoSessionDurationMs = 1000 * 60 * 60 * 8;
+      const demoSessionDurationMs = 1000 * 60 * 10;
       const sessionToken = await signSession(
         { userId: user.openId, email: user.email || "", name: user.name || "RegulaSync Demo" },
         demoSessionDurationMs
