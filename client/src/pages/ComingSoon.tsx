@@ -42,7 +42,7 @@ export default function ComingSoon() {
       localStorage.setItem('demoMode', 'true');
       localStorage.setItem('regulasync_demo_access', 'true');
       window.dispatchEvent(new Event('regulasync-access-changed'));
-      window.location.assign('/dashboard');
+      window.location.assign('/landing');
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to start the demo. Please try again.");
       setIsLoading(false);
@@ -74,7 +74,7 @@ export default function ComingSoon() {
         </div>
 
         {/* Headline */}
-        <h1 className="text-4xl font-bold text-white mb-3 sm:mb-4 leading-tight whitespace-nowrap">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 sm:mb-4 leading-tight">
           AI-Powered Governance Automation
         </h1>
 
@@ -157,7 +157,7 @@ export default function ComingSoon() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Opening demo...
+                  Opening homepage...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">

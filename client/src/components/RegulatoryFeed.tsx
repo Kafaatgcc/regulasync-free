@@ -196,8 +196,8 @@ export default function RegulatoryFeed() {
   const liveSourceCount = sourceStatuses.filter(s => s.status === 'success').length;
 
   return (
-    <section className="py-20 bg-slate-50" id="regulatory-feed">
-      <div className="container mx-auto px-6">
+    <section className="bg-slate-50 py-14 sm:py-20" id="regulatory-feed">
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-navy/10 text-navy hover:bg-navy/20">
@@ -215,7 +215,7 @@ export default function RegulatoryFeed() {
               )}
             </span>
           </Badge>
-          <h2 className="text-4xl font-bold text-navy mb-4">
+          <h2 className="mb-4 text-3xl font-bold text-navy sm:text-4xl">
             UK Regulatory Updates
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -231,7 +231,7 @@ export default function RegulatoryFeed() {
 
         {/* Source Status Indicators */}
         {isLive && sourceStatuses.length > 0 && (
-          <div className="flex justify-center gap-4 mb-8">
+          <div className="mb-8 flex flex-wrap justify-center gap-2 sm:gap-4">
             {sourceStatuses.map((source) => (
               <div 
                 key={source.name}
@@ -287,8 +287,8 @@ export default function RegulatoryFeed() {
         </div>
 
         {/* Last Updated & Refresh */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm text-muted-foreground">
               Last updated: {lastUpdated.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
             </p>
@@ -299,11 +299,12 @@ export default function RegulatoryFeed() {
               </Badge>
             )}
           </div>
-          <Button 
+          <Button
             variant="ghost" 
             size="sm" 
             onClick={handleRefresh}
             disabled={isRefreshing}
+            className="self-start sm:self-auto"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             {isRefreshing ? 'Fetching from FCA, PRA, BOE...' : 'Refresh All Feeds'}

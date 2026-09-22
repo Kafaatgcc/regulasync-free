@@ -172,6 +172,15 @@ const getDefaultUser = () => {
   };
 };
 
+const getPreparedDemoUser = () => ({
+  ...getDefaultUser(),
+  name: "Alex Morgan",
+  email: "alex.morgan@regulasync-demo.co.uk",
+  role: "compliance_manager",
+  department: "Compliance",
+  jobTitle: "Head of Compliance",
+});
+
 export default function DashboardLayout({
   children,
 }: {
@@ -188,9 +197,12 @@ export default function DashboardLayout({
   }, [authUser, authLoading, navigate]);
   // Merge real user with fallback defaults
   const [localName, setLocalName] = useState(() => localStorage.getItem('userName') || '');
-  const user = authUser
-    ? { ...authUser, name: authUser.name || localName || 'User', email: authUser.email || 'user@regulasync.com' }
-    : getDefaultUser();
+  const isPreparedDemo = typeof window !== 'undefined' && localStorage.getItem('regulasync_demo_access') === 'true';
+  const user = isPreparedDemo
+    ? { ...(authUser ?? getPreparedDemoUser()), ...getPreparedDemoUser() }
+    : authUser
+      ? { ...authUser, name: authUser.name || localName || 'User', email: authUser.email || 'user@regulasync.com' }
+      : getDefaultUser();
 
   const updateUserName = useCallback((name: string) => {
     localStorage.setItem('userName', name);
@@ -629,9 +641,9 @@ function UserMenu({
           <div className="px-2 py-1.5">
             <p className="text-sm font-medium">{user?.name || 'User'}</p>
             <p className="text-xs text-muted-foreground">{user?.email}</p>
-            {user?.role && user.role !== 'user' && (
+            {(user?.jobTitle || (user?.role && user.role !== 'user')) && (
               <p className="text-[10px] text-primary font-medium mt-0.5 capitalize">
-                {user.role.replace(/_/g, ' ')}
+                {user.jobTitle || user.role.replace(/_/g, ' ')}
                 {user.department ? ` · ${user.department}` : ''}
               </p>
             )}

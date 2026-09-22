@@ -80,7 +80,7 @@ export default function Dashboard() {
   
   // Check for demo mode
   const isDemoMode = typeof window !== 'undefined' && localStorage.getItem('demoMode') === 'true';
-  const displayName = isDemoMode ? 'Demo User' : (user?.name?.split(' ')[0] || 'User');
+  const displayName = isDemoMode ? 'Alex' : (user?.name?.split(' ')[0] || 'User');
 
   // Compliance Health Scorecard
   const { data: scorecard, isLoading: scorecardLoading } = trpc.healthScorecard.scorecard.useQuery();

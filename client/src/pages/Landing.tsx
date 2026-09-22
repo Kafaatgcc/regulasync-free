@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getLoginUrl } from "@/const";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import AnimatedLogo, { AnimatedLogoSplash } from "@/components/AnimatedLogo";
 import RegulatoryFeed from "@/components/RegulatoryFeed";
@@ -29,7 +29,11 @@ import {
   Linkedin,
   Twitter,
   Moon,
-  Sun
+  Sun,
+  Menu,
+  X,
+  ShieldCheck,
+  Loader2
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -44,18 +48,29 @@ export default function Landing() {
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
-  const [contentVisible, setContentVisible] = useState(false);
-
-  useEffect(() => {
-    // Splash screen shows every time for demo purposes
-    // This ensures the animated logo is always visible to visitors
-  }, []);
+  const hasGateAccess = typeof window !== "undefined" && localStorage.getItem("regulasync_demo_access") === "true";
+  const [showSplash, setShowSplash] = useState(!hasGateAccess);
+  const [contentVisible, setContentVisible] = useState(hasGateAccess);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isOpeningDemo, setIsOpeningDemo] = useState(false);
 
   const handleSplashComplete = () => {
-    // Don't store in sessionStorage - show splash every time
     setShowSplash(false);
     setTimeout(() => setContentVisible(true), 100);
+  };
+
+  const openPreparedDemo = () => {
+    if (!hasGateAccess) {
+      window.location.assign("/");
+      return;
+    }
+    setIsOpeningDemo(true);
+    window.location.assign("/dashboard");
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    setMobileMenuOpen(false);
   };
 
   const submitDemoRequest = trpc.demoRequests.submit.useMutation({
@@ -95,30 +110,30 @@ export default function Landing() {
       <div className={`min-h-screen bg-background transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}>
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <AnimatedLogo size="sm" animate={true} />
-            <span className="text-xl font-bold text-navy">RegulaSync</span>
+        <div className="container mx-auto h-16 flex items-center justify-between gap-3 px-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <AnimatedLogo size="sm" animate={true} className="shrink-0" />
+            <span className="truncate text-lg font-bold text-navy sm:text-xl">RegulaSync</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="hidden xl:flex items-center gap-1">
             <Button 
               variant="ghost" 
               className="text-muted-foreground hover:text-foreground"
-              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => scrollToSection('features')}
             >
               Features
             </Button>
             <Button 
               variant="ghost"
               className="text-muted-foreground hover:text-foreground"
-              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => scrollToSection('how-it-works')}
             >
               How It Works
             </Button>
             <Button 
               variant="ghost"
               className="text-muted-foreground hover:text-foreground"
-              onClick={() => document.getElementById('request-demo')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => scrollToSection('request-demo')}
             >
               Request Demo
             </Button>
@@ -137,21 +152,75 @@ export default function Landing() {
                 Integrations
               </Button>
             </Link>
+          </div>
+          <div className="hidden xl:flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={openPreparedDemo}
+              disabled={isOpeningDemo}
+              className="border-copper text-navy hover:bg-copper/10"
+            >
+              {isOpeningDemo ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShieldCheck className="mr-2 h-4 w-4 text-copper" />}
+              Head of Compliance Demo
+            </Button>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => toggleTheme?.()}
               className="text-muted-foreground hover:text-foreground"
+              aria-label="Toggle colour theme"
             >
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
             <Link href="/login">
-              <Button className="bg-primary hover:bg-primary/90">
+              <Button size="sm" className="bg-primary hover:bg-primary/90">
                 Log In
               </Button>
             </Link>
           </div>
+          <div className="flex items-center gap-1 xl:hidden">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={openPreparedDemo}
+              disabled={isOpeningDemo}
+              className="border-copper px-2 text-xs text-navy sm:px-3"
+            >
+              {isOpeningDemo ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+              <span className="ml-1.5 sm:hidden">Demo</span>
+              <span className="ml-1.5 hidden sm:inline">Head of Compliance</span>
+            </Button>
+            <button
+              type="button"
+              className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              aria-label="Toggle site navigation"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
+        {mobileMenuOpen && (
+          <div className="border-t bg-background px-4 py-3 shadow-lg xl:hidden">
+            <div className="mx-auto grid max-w-xl gap-1">
+              <Button variant="ghost" className="justify-start" onClick={() => scrollToSection('features')}>Features</Button>
+              <Button variant="ghost" className="justify-start" onClick={() => scrollToSection('how-it-works')}>How It Works</Button>
+              <Button variant="ghost" className="justify-start" onClick={() => scrollToSection('request-demo')}>Request Demo</Button>
+              <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}><Button variant="ghost" className="w-full justify-start">Pricing</Button></Link>
+              <Link href="/about" onClick={() => setMobileMenuOpen(false)}><Button variant="ghost" className="w-full justify-start">About</Button></Link>
+              <Link href="/integrations" onClick={() => setMobileMenuOpen(false)}><Button variant="ghost" className="w-full justify-start">Integrations</Button></Link>
+              <div className="mt-2 flex gap-2 border-t pt-3">
+                <Button variant="outline" className="flex-1" onClick={() => toggleTheme?.()}>
+                  {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+                  Theme
+                </Button>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="flex-1"><Button className="w-full">Log In</Button></Link>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
@@ -173,26 +242,35 @@ export default function Landing() {
                 and compliance monitoring with AI-driven intelligence. Reduce risk, 
                 ensure compliance, and streamline decision-making across your organization.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/login">
-                  <Button 
-                    size="lg" 
-                    className="bg-primary hover:bg-primary/90 text-lg px-8"
-                  >
-                    Log In to Platform
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Button
+                  size="lg"
+                  onClick={openPreparedDemo}
+                  disabled={isOpeningDemo}
+                  className="bg-primary px-6 text-base hover:bg-primary/90 sm:px-8 sm:text-lg"
+                >
+                  {isOpeningDemo ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ShieldCheck className="mr-2 h-5 w-5" />}
+                  Open Head of Compliance Demo
+                  {!isOpeningDemo && <ArrowRight className="ml-2 h-5 w-5" />}
+                </Button>
                 <Button 
                   size="lg" 
                   variant="outline"
-                  onClick={() => document.getElementById('request-demo')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-lg px-8"
+                  onClick={() => scrollToSection('request-demo')}
+                  className="px-6 text-base sm:px-8 sm:text-lg"
                 >
                   Request Demo
                 </Button>
+                <Link href="/login" className="sm:hidden">
+                  <Button
+                    variant="ghost"
+                    className="w-full text-muted-foreground"
+                  >
+                    Account login
+                  </Button>
+                </Link>
               </div>
-              <div className="flex items-center gap-8 pt-4">
+              <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8 sm:gap-y-3 sm:pt-4">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-primary" />
                   <span className="text-sm text-muted-foreground">AI-Powered Analysis</span>
@@ -209,23 +287,23 @@ export default function Landing() {
             </div>
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-3xl"></div>
-              <div className="relative bg-card border rounded-2xl shadow-2xl p-8">
-                <div className="space-y-6">
+              <div className="relative rounded-2xl border bg-card p-4 shadow-2xl sm:p-6 lg:p-8">
+                <div className="space-y-4 sm:space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-lg">Compliance Dashboard</h3>
                     <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Live</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-secondary/50 rounded-xl p-4 text-center">
-                      <div className="text-3xl font-bold text-primary">94%</div>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                    <div className="rounded-xl bg-secondary/50 p-2 text-center sm:p-4">
+                      <div className="text-xl font-bold text-primary sm:text-3xl">94%</div>
                       <div className="text-xs text-muted-foreground mt-1">Compliance Score</div>
                     </div>
-                    <div className="bg-secondary/50 rounded-xl p-4 text-center">
-                      <div className="text-3xl font-bold text-copper">127</div>
+                    <div className="rounded-xl bg-secondary/50 p-2 text-center sm:p-4">
+                      <div className="text-xl font-bold text-copper sm:text-3xl">127</div>
                       <div className="text-xs text-muted-foreground mt-1">Active Policies</div>
                     </div>
-                    <div className="bg-secondary/50 rounded-xl p-4 text-center">
-                      <div className="text-3xl font-bold text-green-600">12</div>
+                    <div className="rounded-xl bg-secondary/50 p-2 text-center sm:p-4">
+                      <div className="text-xl font-bold text-green-600 sm:text-3xl">12</div>
                       <div className="text-xs text-muted-foreground mt-1">Pending Reviews</div>
                     </div>
                   </div>
@@ -627,16 +705,16 @@ export default function Landing() {
             Join forward-thinking organizations that are automating compliance 
             and reducing governance risk with RegulaSync.
           </p>
-          <Link href="/">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="text-lg px-8"
-            >
-              Start Your Demo
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+          <Button
+            size="lg"
+            variant="secondary"
+            className="px-6 text-base sm:px-8 sm:text-lg"
+            onClick={openPreparedDemo}
+            disabled={isOpeningDemo}
+          >
+            {isOpeningDemo ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ShieldCheck className="mr-2 h-5 w-5" />}
+            Start Head of Compliance Demo
+          </Button>
         </div>
       </section>
 

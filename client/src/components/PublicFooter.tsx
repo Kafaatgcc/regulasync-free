@@ -51,7 +51,7 @@ export default function PublicFooter() {
           <div>
             <h4 className="font-semibold text-white mb-4">Product</h4>
             <ul className="space-y-3 text-sm text-slate-400">
-              <li><Link href="/dashboard?demo=true" className="hover:text-white transition-colors">Platform Demo</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Prepared Demo</Link></li>
               <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
               <li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
               <li><Link href="/security" className="hover:text-white transition-colors">Security</Link></li>
