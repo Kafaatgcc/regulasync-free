@@ -10,6 +10,7 @@ import {
   Shield, Hash, Brain, FileText, Users, Briefcase, Target
 } from 'lucide-react';
 import { useLocation } from 'wouter';
+import { PRESENTATION_START_EVENT } from '@/lib/presentation';
 
 interface PresentationStep {
   id: number;
@@ -23,14 +24,14 @@ interface PresentationStep {
   icon: typeof Shield;
 }
 
-// Optimized 5-minute presentation focused on core innovations
+// Presenter-led walkthrough for the visa demonstration.
 const presentationSteps: PresentationStep[] = [
   {
     id: 1,
     title: "RegulaSync Overview",
     subtitle: "AI-Powered Regulatory Compliance Platform",
-    route: "/home",
-    duration: 30,
+    route: "/landing",
+    duration: 45,
     icon: Target,
     keyPoints: [
       "Solving £2.8B UK compliance cost problem",
@@ -44,7 +45,7 @@ const presentationSteps: PresentationStep[] = [
     title: "Innovation #1: SVAC",
     subtitle: "Self-Validating Audit Cache",
     route: "/audit-trail",
-    duration: 60,
+    duration: 75,
     icon: Hash,
     innovation: "CORE INNOVATION",
     keyPoints: [
@@ -60,7 +61,7 @@ const presentationSteps: PresentationStep[] = [
     title: "Innovation #2: AI Regulatory Sync",
     subtitle: "Automated Policy Gap Analysis",
     route: "/gap-analysis",
-    duration: 60,
+    duration: 75,
     icon: Brain,
     innovation: "CORE INNOVATION",
     keyPoints: [
@@ -76,7 +77,7 @@ const presentationSteps: PresentationStep[] = [
     title: "Live Regulatory Feeds",
     subtitle: "Real-time UK Regulatory Updates",
     route: "/regulatory-updates",
-    duration: 40,
+    duration: 55,
     icon: FileText,
     keyPoints: [
       "FCA, PRA, BOE, ICO integration",
@@ -91,7 +92,7 @@ const presentationSteps: PresentationStep[] = [
     title: "Compliance Dashboard",
     subtitle: "Executive Visibility & Control",
     route: "/dashboard",
-    duration: 40,
+    duration: 55,
     icon: Shield,
     keyPoints: [
       "Real-time compliance scores",
@@ -106,7 +107,7 @@ const presentationSteps: PresentationStep[] = [
     title: "UK Job Creation",
     subtitle: "Economic Impact & Growth Plan",
     route: "/about",
-    duration: 30,
+    duration: 50,
     icon: Users,
     keyPoints: [
       "Year 1: 6 UK employees",
@@ -121,7 +122,7 @@ const presentationSteps: PresentationStep[] = [
     title: "Market Opportunity",
     subtitle: "£2.8B TAM in UK Financial Services",
     route: "/pricing",
-    duration: 40,
+    duration: 65,
     icon: Briefcase,
     keyPoints: [
       "TAM: £2.8B UK compliance market",
@@ -136,7 +137,7 @@ const presentationSteps: PresentationStep[] = [
     title: "Thank You",
     subtitle: "Ready to Transform UK Compliance",
     route: "/contact",
-    duration: 20,
+    duration: 60,
     icon: Target,
     keyPoints: [
       "Q2 2026 launch",
@@ -154,7 +155,7 @@ export default function PresentationMode() {
   const [timeRemaining, setTimeRemaining] = useState(presentationSteps[0].duration);
   const [showNotes, setShowNotes] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
 
   // Position and size state for dragging and resizing
   const [position, setPosition] = useState({ x: 20, y: 100 });
@@ -237,6 +238,12 @@ export default function PresentationMode() {
     setPendingRoute(presentationSteps[0].route);
   }, []);
 
+  useEffect(() => {
+    const handleStart = () => startPresentation();
+    window.addEventListener(PRESENTATION_START_EVENT, handleStart);
+    return () => window.removeEventListener(PRESENTATION_START_EVENT, handleStart);
+  }, [startPresentation]);
+
   const stopPresentation = useCallback(() => {
     setIsActive(false);
     setIsPaused(false);
@@ -296,8 +303,13 @@ export default function PresentationMode() {
   const step = presentationSteps[currentStep];
   const StepIcon = step.icon;
 
-  // Floating start button when not active
+  const publicRoutes = ["/", "/home", "/landing", "/login", "/forgot-password", "/accept-invite", "/about", "/pricing", "/security", "/integrations", "/case-studies", "/privacy", "/terms", "/cookies", "/careers", "/contact"];
+  const isPublicRoute = publicRoutes.includes(location);
+
+  // Keep the launcher on authenticated platform pages. The landing page has its
+  // own Head of Compliance Demo entry point, which starts this walkthrough.
   if (!isActive) {
+    if (isPublicRoute) return null;
     return (
       <div className="fixed bottom-6 right-24 z-40">
         <Button
@@ -306,7 +318,7 @@ export default function PresentationMode() {
           className="bg-gradient-to-r from-navy to-copper text-white shadow-2xl hover:shadow-copper/30 transition-all duration-300 gap-2 px-6 py-6 rounded-full"
         >
           <Monitor className="w-5 h-5" />
-          <span className="font-semibold">5-Min Demo</span>
+          <span className="font-semibold">8-Min Demo</span>
           <Play className="w-4 h-4" />
         </Button>
       </div>
@@ -319,7 +331,11 @@ export default function PresentationMode() {
       <div
         ref={panelRef}
         className="fixed z-50 bg-background/95 backdrop-blur-md border rounded-lg shadow-2xl"
-        style={{ left: position.x, top: position.y, width: size.width }}
+        style={{
+          left: `max(12px, min(${position.x}px, calc(100vw - ${size.width + 12}px)))`,
+          top: `max(12px, min(${position.y}px, calc(100vh - 72px)))`,
+          width: `min(${size.width}px, calc(100vw - 24px))`,
+        }}
       >
         <div 
           className="flex items-center justify-between p-3 cursor-move"
@@ -350,11 +366,11 @@ export default function PresentationMode() {
     <div
       ref={panelRef}
       className="fixed z-50 bg-background/95 backdrop-blur-md border rounded-xl shadow-2xl flex flex-col overflow-hidden"
-      style={{ 
-        left: position.x, 
-        top: position.y, 
-        width: size.width, 
-        height: size.height 
+      style={{
+        left: `max(12px, min(${position.x}px, calc(100vw - ${size.width + 12}px)))`,
+        top: `max(12px, min(${position.y}px, calc(100vh - ${size.height + 12}px)))`,
+        width: `min(${size.width}px, calc(100vw - 24px))`,
+        height: `min(${size.height}px, calc(100vh - 24px))`,
       }}
     >
       {/* Header - Draggable */}
@@ -365,7 +381,7 @@ export default function PresentationMode() {
         <div className="flex items-center gap-2">
           <GripVertical className="w-4 h-4 text-muted-foreground" />
           <Monitor className="w-4 h-4 text-primary" />
-          <span className="font-semibold text-sm">5-Minute Demo</span>
+          <span className="font-semibold text-sm">8-Minute Guided Demo</span>
         </div>
         <div className="flex items-center gap-1">
           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setIsMinimized(true)}>

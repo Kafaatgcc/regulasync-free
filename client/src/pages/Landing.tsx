@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getLoginUrl } from "@/const";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { launchPresentationDemo } from "@/lib/presentation";
 import AnimatedLogo, { AnimatedLogoSplash } from "@/components/AnimatedLogo";
 import RegulatoryFeed from "@/components/RegulatoryFeed";
 import { toast } from "sonner";
@@ -32,8 +33,7 @@ import {
   Sun,
   Menu,
   X,
-  ShieldCheck,
-  Loader2
+  ShieldCheck
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -52,7 +52,6 @@ export default function Landing() {
   const [showSplash, setShowSplash] = useState(!hasGateAccess);
   const [contentVisible, setContentVisible] = useState(hasGateAccess);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isOpeningDemo, setIsOpeningDemo] = useState(false);
 
   const handleSplashComplete = () => {
     setShowSplash(false);
@@ -64,8 +63,7 @@ export default function Landing() {
       window.location.assign("/");
       return;
     }
-    setIsOpeningDemo(true);
-    window.location.assign("/dashboard");
+    launchPresentationDemo();
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -158,11 +156,10 @@ export default function Landing() {
               variant="outline"
               size="sm"
               onClick={openPreparedDemo}
-              disabled={isOpeningDemo}
               className="border-copper text-navy hover:bg-copper/10"
             >
-              {isOpeningDemo ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShieldCheck className="mr-2 h-4 w-4 text-copper" />}
-              Head of Compliance Demo
+              <ShieldCheck className="mr-2 h-4 w-4 text-copper" />
+              8-Minute Guided Demo
             </Button>
             <Button
               variant="ghost"
@@ -184,12 +181,11 @@ export default function Landing() {
               variant="outline"
               size="sm"
               onClick={openPreparedDemo}
-              disabled={isOpeningDemo}
               className="border-copper px-2 text-xs text-navy sm:px-3"
             >
-              {isOpeningDemo ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+              <ShieldCheck className="h-4 w-4" />
               <span className="ml-1.5 sm:hidden">Demo</span>
-              <span className="ml-1.5 hidden sm:inline">Head of Compliance</span>
+              <span className="ml-1.5 hidden sm:inline">Guided Demo</span>
             </Button>
             <button
               type="button"
@@ -246,12 +242,11 @@ export default function Landing() {
                 <Button
                   size="lg"
                   onClick={openPreparedDemo}
-                  disabled={isOpeningDemo}
                   className="bg-primary px-6 text-base hover:bg-primary/90 sm:px-8 sm:text-lg"
                 >
-                  {isOpeningDemo ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ShieldCheck className="mr-2 h-5 w-5" />}
-                  Open Head of Compliance Demo
-                  {!isOpeningDemo && <ArrowRight className="ml-2 h-5 w-5" />}
+                  <ShieldCheck className="mr-2 h-5 w-5" />
+                  Open 8-Minute Guided Demo
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <Button 
                   size="lg" 
@@ -710,10 +705,9 @@ export default function Landing() {
             variant="secondary"
             className="px-6 text-base sm:px-8 sm:text-lg"
             onClick={openPreparedDemo}
-            disabled={isOpeningDemo}
           >
-            {isOpeningDemo ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ShieldCheck className="mr-2 h-5 w-5" />}
-            Start Head of Compliance Demo
+            <ShieldCheck className="mr-2 h-5 w-5" />
+            Start 8-Minute Guided Demo
           </Button>
         </div>
       </section>

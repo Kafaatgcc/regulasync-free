@@ -126,7 +126,6 @@ function Router() {
     <>
       <ScrollToTop />
       <LiveChat />
-      <PresentationMode />
       <Switch>
         {/* Dashboard Routes — all require login */}
         <Route path="/dashboard">
@@ -396,6 +395,7 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
+          <PresentationMode />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
