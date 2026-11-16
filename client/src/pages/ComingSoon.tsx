@@ -38,7 +38,7 @@ export default function ComingSoon() {
 
     setIsLoading(true);
     try {
-      await demoSession.mutateAsync();
+      await demoSession.mutateAsync({ email, password });
       localStorage.setItem('demoMode', 'true');
       localStorage.setItem('regulasync_demo_access', 'true');
       window.dispatchEvent(new Event('regulasync-access-changed'));

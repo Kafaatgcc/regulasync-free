@@ -17,8 +17,11 @@ export default function Login() {
   const utils = trpc.useUtils();
   const loginMutation = trpc.passwordAuth.loginWithPassword.useMutation({
     onSuccess: async (data) => {
+      localStorage.removeItem('demoMode');
+      localStorage.removeItem('regulasync_demo_access');
       toast.success(`Welcome back, ${data.user.name || data.user.email}!`);
       await utils.auth.me.invalidate();
+      await utils.auth.me.fetch(undefined, { staleTime: 0 });
       setLocation("/dashboard");
     },
     onError: (err) => {

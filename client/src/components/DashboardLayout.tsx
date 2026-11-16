@@ -187,14 +187,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   // Try to get the real authenticated user from the server
-  const { data: authUser, isLoading: authLoading } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 30_000 });
+  const { data: authUser, isLoading: authLoading, isFetching: authFetching } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 30_000 });
   // Redirect to login if not authenticated
   const [, navigate] = useLocation();
   useEffect(() => {
-    if (!authLoading && !authUser) {
+    if (!authLoading && !authFetching && !authUser) {
       navigate('/login');
     }
-  }, [authUser, authLoading, navigate]);
+  }, [authUser, authLoading, authFetching, navigate]);
   // Merge real user with fallback defaults
   const [localName, setLocalName] = useState(() => localStorage.getItem('userName') || '');
   const isPreparedDemo = typeof window !== 'undefined' && localStorage.getItem('regulasync_demo_access') === 'true';
@@ -222,6 +222,8 @@ export default function DashboardLayout({
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
   }, [sidebarWidth]);
+
+  if (authLoading || !authUser) return <DashboardLayoutSkeleton />;
 
   // Production mode - full access
   return (

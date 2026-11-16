@@ -35,7 +35,11 @@ export const appRouter = router({
   passwordAuth: authRouter,
   userManagement: userManagementRouter,
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
+    me: publicProcedure.query(({ ctx }) => {
+      if (!ctx.user) return null;
+      const { passwordHash, inviteToken, passwordResetToken, ...publicUser } = ctx.user;
+      return publicUser;
+    }),
     logout: publicProcedure.mutation(({ ctx }) => {
       ctx.res.clearCookie(COOKIE_NAME, {
         httpOnly: true,

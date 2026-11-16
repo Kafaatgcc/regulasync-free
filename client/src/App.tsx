@@ -79,11 +79,13 @@ function ScrollToTop() {
 
 // Protected route wrapper - checks real server session via trpc.auth.me
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { data: user, isLoading } = trpc.auth.me.useQuery(undefined, {
+  const { data: user, isLoading, isFetching, error, refetch } = trpc.auth.me.useQuery(undefined, {
     retry: false,
-    staleTime: 30_000,
+    staleTime: 0,
+    refetchOnMount: "always",
   });
-  if (isLoading) return null; // brief flash while checking session
+  if (isLoading || (!user && isFetching)) return <div role="status" className="p-6">Checking your session…</div>;
+  if (error) return <div role="alert" className="p-6">Unable to check your session. <button onClick={() => refetch()}>Try again</button></div>;
   if (!user) return <Redirect to="/login" />;
   return <>{children}</>;
 }
@@ -126,6 +128,7 @@ function Router() {
     <>
       <ScrollToTop />
       <LiveChat />
+      <ProtectedRoute>
       <Switch>
         {/* Dashboard Routes — all require login */}
         <Route path="/dashboard">
@@ -384,6 +387,7 @@ function Router() {
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
+      </ProtectedRoute>
     </>
   );
 }

@@ -1,12 +1,14 @@
 import { router, publicProcedure, protectedProcedure } from "./_core/trpc";
-import { signSession } from "./_core/auth";
+import { DEMO_SESSION_DURATION_MS, getRequestSession, signSession } from "./_core/auth";
+import type { TrpcContext } from "./_core/context";
 import { z } from "zod";
 import { getDb } from "./db";
-import { users } from "../drizzle/schema";
+import { users, type User } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { TRPCError } from "@trpc/server";
 import crypto from "crypto";
+import { decodeJwt } from "jose";
 
 
 import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
@@ -26,16 +28,47 @@ export function hasPermission(userRole: string, requiredRole: string): boolean {
   return (ROLE_HIERARCHY[userRole] ?? 0) >= (ROLE_HIERARCHY[requiredRole] ?? 0);
 }
 
+function getDemoUserEmail(): string {
+  return process.env.DEMO_USER_EMAIL || "superadmin@regulasync.co.uk";
+}
+
+async function issueDemoSession(ctx: TrpcContext, user: User) {
+  const sessionToken = await signSession(
+    { userId: user.openId, email: user.email || "", name: user.name || "RegulaSync Demo", kind: "demo" },
+    DEMO_SESSION_DURATION_MS
+  );
+  // Only inspect a token just signed by this server; authorization always verifies it.
+  const expiresAt = decodeJwt(sessionToken).exp! * 1000;
+  ctx.res.cookie(COOKIE_NAME, sessionToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: Math.max(0, expiresAt - Date.now()),
+    path: "/",
+  });
+
+  return {
+    success: true,
+    expiresAt,
+    user: { id: user.id, name: user.name, email: user.email, role: user.role },
+  };
+}
+
 export const authRouter = router({
-  // Prepared demo entry point. The access gate is handled in the client; this
-  // creates a short-lived server session for the seeded demonstration account
-  // so protected demo pages can load without requesting a user login.
+  // The shared access gate is checked on the server before issuing any session.
   startDemoSession: publicProcedure
-    .mutation(async ({ ctx }) => {
+    .input(z.object({ email: z.string(), password: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const accessEmail = process.env.DEMO_ACCESS_EMAIL || "demo@regulasync.co.uk";
+      const accessPassword = process.env.DEMO_ACCESS_PASSWORD || "RS@Demo#2026!Uk";
+      if (input.email !== accessEmail || input.password !== accessPassword) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid demo credentials" });
+      }
+
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Demo is temporarily unavailable" });
 
-      const demoEmail = process.env.DEMO_USER_EMAIL || "superadmin@regulasync.co.uk";
+      const demoEmail = getDemoUserEmail();
       const [user] = await db
         .select()
         .from(users)
@@ -46,29 +79,24 @@ export const authRouter = router({
         throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Demo account is unavailable" });
       }
 
-      const demoSessionDurationMs = 1000 * 60 * 10;
-      const sessionToken = await signSession(
-        { userId: user.openId, email: user.email || "", name: user.name || "RegulaSync Demo" },
-        demoSessionDurationMs
-      );
+      return issueDemoSession(ctx, user);
+    }),
 
-      ctx.res.cookie(COOKIE_NAME, sessionToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: demoSessionDurationMs,
-        path: "/",
-      });
+  renewDemoSession: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const session = await getRequestSession(ctx.req);
+      const demoEmail = getDemoUserEmail();
+      if (
+        session?.kind !== "demo" ||
+        session.userId !== ctx.user.openId ||
+        session.email !== demoEmail ||
+        ctx.user.email !== demoEmail ||
+        !ctx.user.isActive
+      ) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "A valid demo session is required" });
+      }
 
-      return {
-        success: true,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
-      };
+      return issueDemoSession(ctx, ctx.user);
     }),
 
   // Email/password login

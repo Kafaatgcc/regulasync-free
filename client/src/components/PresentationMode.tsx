@@ -10,7 +10,10 @@ import {
   Shield, Hash, Brain, FileText, Users, Briefcase, Target
 } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { PRESENTATION_START_EVENT } from '@/lib/presentation';
+import { PRESENTATION_START_EVENT, PRESENTATION_STOP_EVENT } from '@/lib/presentation';
+import { trpc } from '@/lib/trpc';
+import { prepareDemoPresentation, DEMO_RENEWAL_ERROR } from '@/lib/demoSession';
+import { toast } from 'sonner';
 
 interface PresentationStep {
   id: number;
@@ -156,6 +159,32 @@ export default function PresentationMode() {
   const [showNotes, setShowNotes] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [location, setLocation] = useLocation();
+  const utils = trpc.useUtils();
+  const { mutateAsync: renewDemo } = trpc.passwordAuth.renewDemoSession.useMutation();
+  const sessionFlight = useRef<Promise<unknown> | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
+  const prepareSession = useCallback(() => {
+    if (sessionFlight.current) return sessionFlight.current;
+    const operation = localStorage.getItem('demoMode') === 'true'
+      ? prepareDemoPresentation({
+          cancelAuth: () => utils.auth.me.cancel(),
+          renew: () => renewDemo(),
+          invalidateAuth: () => utils.auth.me.invalidate(undefined, { refetchType: 'none' }),
+          readUser: () => utils.auth.me.fetch(undefined, { staleTime: 0 }),
+        })
+      : utils.auth.me.fetch(undefined, { staleTime: 0 }).then(user => {
+          if (!user) throw new Error('Please sign in before opening the platform demo.');
+          return user;
+        });
+    sessionFlight.current = operation.finally(() => { sessionFlight.current = null; });
+    return sessionFlight.current;
+  }, [utils, renewDemo]);
+  const showSessionError = useCallback(() => {
+    setIsPaused(true);
+    toast.error(DEMO_RENEWAL_ERROR, {
+      action: { label: 'Re-enter access', onClick: () => window.location.assign('/') },
+    });
+  }, []);
 
   // Position and size state for dragging and resizing
   const [position, setPosition] = useState({ x: 20, y: 100 });
@@ -173,11 +202,21 @@ export default function PresentationMode() {
 
   // Handle navigation in useEffect
   useEffect(() => {
-    if (pendingRoute) {
-      setLocation(pendingRoute);
-      setPendingRoute(null);
-    }
-  }, [pendingRoute, setLocation]);
+    if (!pendingRoute) return;
+    let cancelled = false;
+    prepareSession().then(() => {
+      if (!cancelled) {
+        setLocation(pendingRoute);
+        setPendingRoute(null);
+      }
+    }).catch(() => {
+      if (!cancelled) {
+        setPendingRoute(null);
+        showSessionError();
+      }
+    });
+    return () => { cancelled = true; };
+  }, [pendingRoute, setLocation, prepareSession, showSessionError]);
 
   // Dragging logic
   useEffect(() => {
@@ -230,13 +269,25 @@ export default function PresentationMode() {
     setIsResizing(true);
   };
 
-  const startPresentation = useCallback(() => {
-    setIsActive(true);
-    setIsPaused(false);
-    setCurrentStep(0);
-    setTimeRemaining(presentationSteps[0].duration);
-    setPendingRoute(presentationSteps[0].route);
-  }, []);
+  const startFlight = useRef(false);
+  const startPresentation = useCallback(async () => {
+    if (startFlight.current) return;
+    startFlight.current = true;
+    setIsStarting(true);
+    try {
+      await prepareSession();
+      setIsActive(true);
+      setIsPaused(false);
+      setCurrentStep(0);
+      setTimeRemaining(presentationSteps[0].duration);
+      setPendingRoute(presentationSteps[0].route);
+    } catch {
+      showSessionError();
+    } finally {
+      startFlight.current = false;
+      setIsStarting(false);
+    }
+  }, [prepareSession, showSessionError]);
 
   useEffect(() => {
     const handleStart = () => startPresentation();
@@ -249,7 +300,16 @@ export default function PresentationMode() {
     setIsPaused(false);
     setCurrentStep(0);
     setTimeRemaining(presentationSteps[0].duration);
+    setPendingRoute(null);
   }, []);
+
+  useEffect(() => {
+    window.addEventListener(PRESENTATION_STOP_EVENT, stopPresentation);
+    return () => window.removeEventListener(PRESENTATION_STOP_EVENT, stopPresentation);
+  }, [stopPresentation]);
+  useEffect(() => {
+    if (isActive && (location === '/' || location === '/login')) stopPresentation();
+  }, [location, isActive, stopPresentation]);
 
   const nextStep = useCallback(() => {
     if (currentStep < presentationSteps.length - 1) {
@@ -282,17 +342,14 @@ export default function PresentationMode() {
     if (!isActive || isPaused) return;
 
     const timer = setInterval(() => {
-      setTimeRemaining(prev => {
-        if (prev <= 1) {
-          nextStep();
-          return presentationSteps[Math.min(currentStep + 1, presentationSteps.length - 1)].duration;
-        }
-        return prev - 1;
-      });
+      setTimeRemaining(prev => Math.max(0, prev - 1));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isActive, isPaused, currentStep, nextStep]);
+  }, [isActive, isPaused]);
+  useEffect(() => {
+    if (isActive && !isPaused && timeRemaining === 0) nextStep();
+  }, [isActive, isPaused, timeRemaining, nextStep]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -314,6 +371,7 @@ export default function PresentationMode() {
       <div className="fixed bottom-6 right-24 z-40">
         <Button
           onClick={startPresentation}
+          disabled={isStarting}
           size="lg"
           className="bg-gradient-to-r from-navy to-copper text-white shadow-2xl hover:shadow-copper/30 transition-all duration-300 gap-2 px-6 py-6 rounded-full"
         >
