@@ -5,6 +5,14 @@ import { MessageCircle, X, Send, Bot, User, Minimize2, Sparkles, ArrowRight, Lig
 import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
+import {
+  createSpeechOutput,
+  createSpeechRecognition,
+  disposeSpeechRecognition,
+  trySpeechOperation,
+  type SpeechOutput,
+  type SpeechRecognition,
+} from '@/lib/speech';
 
 interface Message {
   id: string;
@@ -256,6 +264,9 @@ export default function LiveChat() {
   const [showVoiceSettings, setShowVoiceSettings] = useState(false);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const speechOutputRef = useRef<SpeechOutput | null>(null);
+  const [canSpeak, setCanSpeak] = useState(false);
+  const [canListen, setCanListen] = useState(false);
 
   // Create user profile - always use Demo User in production mode
   const savedUserName = typeof window !== 'undefined' ? localStorage.getItem('userName') : null;
@@ -270,36 +281,42 @@ export default function LiveChat() {
 
   // Initialize speech synthesis voices
   useEffect(() => {
+    const output = createSpeechOutput();
+    speechOutputRef.current = output;
+    setCanSpeak(!!output);
+    if (!output) return;
+
     const loadVoices = () => {
-      const voices = speechSynthesis.getVoices();
+      if (speechOutputRef.current !== output) return;
+      const voices = output.getVoices();
       setAvailableVoices(voices);
       // Prefer UK English voice
       const ukVoice = voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang.startsWith('en'));
-      if (ukVoice && !voiceSettings.voice) {
-        setVoiceSettings(prev => ({ ...prev, voice: ukVoice }));
+      if (ukVoice) {
+        setVoiceSettings(prev => prev.voice ? prev : { ...prev, voice: ukVoice });
       }
     };
     
     loadVoices();
-    speechSynthesis.onvoiceschanged = loadVoices;
+    const unsubscribe = output.subscribeVoices(loadVoices);
     
     return () => {
-      speechSynthesis.onvoiceschanged = null;
+      speechOutputRef.current = null;
+      unsubscribe();
+      output.cancel();
     };
   }, []);
 
   // Initialize speech recognition
   useEffect(() => {
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = 'en-GB';
-      
-      recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+    setCanListen(false);
+    const recognition = createSpeechRecognition();
+    if (!recognition) return;
+    const initialized = trySpeechOperation(() => {
+      recognition.onresult = (event) => {
+        if (recognitionRef.current !== recognition) return;
         const transcript = Array.from(event.results)
-          .map((result: SpeechRecognitionResult) => result[0].transcript)
+          .map(result => result[0].transcript)
           .join('');
         setInputValue(transcript);
         
@@ -309,63 +326,77 @@ export default function LiveChat() {
         }
       };
       
-      recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
+      recognition.onerror = (event) => {
+        if (recognitionRef.current !== recognition) return;
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
       };
       
-      recognitionRef.current.onend = () => {
+      recognition.onend = () => {
+        if (recognitionRef.current !== recognition) return;
         setIsListening(false);
       };
+    });
+    if (!initialized) {
+      disposeSpeechRecognition(recognition);
+      return;
     }
+    recognitionRef.current = recognition;
+    setCanListen(true);
     
     return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-      }
+      recognitionRef.current = null;
+      disposeSpeechRecognition(recognition);
     };
   }, []);
 
   // Text-to-speech function
   const speak = useCallback((text: string) => {
-    if (!voiceSettings.enabled || !text) return;
-    
-    // Cancel any ongoing speech
-    speechSynthesis.cancel();
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = voiceSettings.voice;
-    utterance.rate = voiceSettings.rate;
-    utterance.pitch = voiceSettings.pitch;
-    
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    
-    speechSynthesis.speak(utterance);
+    const output = speechOutputRef.current;
+    if (!output || !voiceSettings.enabled || !text) return;
+    setIsSpeaking(false);
+    const started = output.speak(text, {
+      voice: voiceSettings.voice,
+      rate: voiceSettings.rate,
+      pitch: voiceSettings.pitch,
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false),
+    });
+    if (!started) {
+      output.cancel();
+      speechOutputRef.current = null;
+      setIsSpeaking(false);
+      setCanSpeak(false);
+    }
   }, [voiceSettings]);
 
   // Stop speaking
   const stopSpeaking = useCallback(() => {
-    speechSynthesis.cancel();
+    const output = speechOutputRef.current;
+    if (output && !output.cancel()) {
+      speechOutputRef.current = null;
+      setCanSpeak(false);
+    }
     setIsSpeaking(false);
   }, []);
 
   // Toggle listening
   const toggleListening = useCallback(() => {
-    if (!recognitionRef.current) {
-      alert('Speech recognition is not supported in your browser.');
-      return;
-    }
+    const recognition = recognitionRef.current;
+    if (!recognition) return;
     
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
-      // Stop any ongoing speech first
-      stopSpeaking();
-      recognitionRef.current.start();
-      setIsListening(true);
+    // Stop any ongoing speech first
+    if (!isListening) stopSpeaking();
+    const succeeded = trySpeechOperation(() => {
+      if (isListening) recognition.stop();
+      else recognition.start();
+    });
+    setIsListening(succeeded && !isListening);
+    if (!succeeded) {
+      recognitionRef.current = null;
+      disposeSpeechRecognition(recognition);
+      setCanListen(false);
     }
   }, [isListening, stopSpeaking]);
 
@@ -670,7 +701,7 @@ export default function LiveChat() {
 
   return (
     <div 
-      className={`fixed bottom-6 right-6 z-50 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 transition-all duration-300 ${
+      className={`fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-50 flex flex-col max-w-[calc(100vw-24px)] max-h-[calc(100dvh-24px)] overflow-hidden bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 transition-all duration-300 ${
         isMinimized ? 'w-80 h-14' : 'w-96 h-[560px]'
       }`}
     >
@@ -695,14 +726,19 @@ export default function LiveChat() {
         </div>
         <div className="flex items-center gap-1">
           {/* Voice toggle */}
-          <button
-            onClick={() => setVoiceSettings(prev => ({ ...prev, enabled: !prev.enabled }))}
-            className={`p-2 rounded-lg transition-colors ${voiceSettings.enabled ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-white/50'}`}
-            aria-label={voiceSettings.enabled ? 'Disable voice' : 'Enable voice'}
-            title={voiceSettings.enabled ? 'Voice enabled' : 'Voice disabled'}
-          >
-            {voiceSettings.enabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-          </button>
+          {canSpeak && (
+            <button
+              onClick={() => {
+                if (voiceSettings.enabled) stopSpeaking();
+                setVoiceSettings(prev => ({ ...prev, enabled: !prev.enabled }));
+              }}
+              className={`p-2 rounded-lg transition-colors ${voiceSettings.enabled ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-white/50'}`}
+              aria-label={voiceSettings.enabled ? 'Disable voice' : 'Enable voice'}
+              title={voiceSettings.enabled ? 'Voice enabled' : 'Voice disabled'}
+            >
+              {voiceSettings.enabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            </button>
+          )}
           <button
             onClick={() => setIsMinimized(!isMinimized)}
             className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -713,6 +749,13 @@ export default function LiveChat() {
           <button
             onClick={() => {
               stopSpeaking();
+              const recognition = recognitionRef.current;
+              if (recognition && isListening && !trySpeechOperation(() => recognition.stop())) {
+                recognitionRef.current = null;
+                disposeSpeechRecognition(recognition);
+                setCanListen(false);
+              }
+              setIsListening(false);
               setIsOpen(false);
             }}
             className="p-2 bg-red-500/80 hover:bg-red-600 rounded-lg transition-colors ml-1"
@@ -756,7 +799,7 @@ export default function LiveChat() {
                         {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                       {/* Speak button for bot messages */}
-                      {message.sender === 'bot' && voiceSettings.enabled && (
+                      {message.sender === 'bot' && canSpeak && voiceSettings.enabled && (
                         <button
                           onClick={() => isSpeaking ? stopSpeaking() : speak(message.text)}
                           className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${
@@ -831,17 +874,19 @@ export default function LiveChat() {
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex gap-2">
               {/* Microphone button */}
-              <button
-                onClick={toggleListening}
-                className={`p-2 rounded-lg transition-all ${
-                  isListening 
-                    ? 'bg-red-500 text-white animate-pulse' 
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-                title={isListening ? 'Stop listening' : 'Speak your message'}
-              >
-                {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-              </button>
+              {canListen && (
+                <button
+                  onClick={toggleListening}
+                  className={`p-2 rounded-lg transition-all ${
+                    isListening
+                      ? 'bg-red-500 text-white animate-pulse'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                  title={isListening ? 'Stop listening' : 'Speak your message'}
+                >
+                  {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                </button>
+              )}
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -859,68 +904,25 @@ export default function LiveChat() {
             </div>
             <div className="flex items-center justify-between mt-2">
               <p className="text-xs text-gray-400">
-                {voiceSettings.enabled ? '🔊 Voice enabled' : '🔇 Voice disabled'} • Powered by RegulaSync AI
+                {canSpeak ? `${voiceSettings.enabled ? '🔊 Voice enabled' : '🔇 Voice disabled'} • ` : ''}Powered by RegulaSync AI
               </p>
-              <button
-                onClick={() => setVoiceSettings(prev => ({ ...prev, autoSpeak: !prev.autoSpeak }))}
-                className={`text-xs px-2 py-1 rounded ${
-                  voiceSettings.autoSpeak 
-                    ? 'bg-[#c9a227]/20 text-[#c9a227]' 
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
-                }`}
-                title={voiceSettings.autoSpeak ? 'Auto-speak enabled' : 'Auto-speak disabled'}
-              >
-                {voiceSettings.autoSpeak ? '🗣️ Auto' : '🔇 Manual'}
-              </button>
+              {canSpeak && (
+                <button
+                  onClick={() => setVoiceSettings(prev => ({ ...prev, autoSpeak: !prev.autoSpeak }))}
+                  className={`text-xs px-2 py-1 rounded ${
+                    voiceSettings.autoSpeak
+                      ? 'bg-[#c9a227]/20 text-[#c9a227]'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
+                  }`}
+                  title={voiceSettings.autoSpeak ? 'Auto-speak enabled' : 'Auto-speak disabled'}
+                >
+                  {voiceSettings.autoSpeak ? '🗣️ Auto' : '🔇 Manual'}
+                </button>
+              )}
             </div>
           </div>
         </>
       )}
     </div>
   );
-}
-
-// Add TypeScript declarations for Web Speech API
-interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
-}
-
-interface SpeechRecognitionErrorEvent extends Event {
-  error: string;
-}
-
-interface SpeechRecognitionResult {
-  0: SpeechRecognitionAlternative;
-  isFinal: boolean;
-  length: number;
-}
-
-interface SpeechRecognitionAlternative {
-  transcript: string;
-  confidence: number;
-}
-
-interface SpeechRecognitionResultList {
-  length: number;
-  item(index: number): SpeechRecognitionResult;
-  [index: number]: SpeechRecognitionResult;
-}
-
-interface SpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  onresult: ((event: SpeechRecognitionEvent) => void) | null;
-  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
-  onend: (() => void) | null;
-  start(): void;
-  stop(): void;
-  abort(): void;
-}
-
-declare global {
-  interface Window {
-    SpeechRecognition: new () => SpeechRecognition;
-    webkitSpeechRecognition: new () => SpeechRecognition;
-  }
 }
