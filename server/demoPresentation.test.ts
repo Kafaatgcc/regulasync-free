@@ -16,7 +16,7 @@ describe('prepared presentation session', () => {
     expect(result).toEqual(user);
   });
   it('does not authorize a missing cookie or fabricated local demo flag', async () => {
-    await expect(prepareDemoPresentation({ cancelAuth: async () => {}, renew: async () => {}, invalidateAuth: async () => {}, readUser: async () => null })).rejects.toThrow('expired');
+    await expect(prepareDemoPresentation({ cancelAuth: async () => {}, renew: async () => {}, invalidateAuth: async () => {}, readUser: async () => null })).rejects.toThrow('browser demo session has ended');
   });
   it('does not continue after rejected renewal', async () => {
     const readUser = vi.fn();

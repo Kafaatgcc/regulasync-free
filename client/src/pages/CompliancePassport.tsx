@@ -16,8 +16,8 @@ const statusColors: Record<string, string> = {
 };
 
 export default function CompliancePassport() {
-  
-  
+
+
   const [verifyHash, setVerifyHash] = useState("");
   const [verifyResult, setVerifyResult] = useState<any>(null);
 
@@ -26,7 +26,7 @@ export default function CompliancePassport() {
   const issuePassport = trpc.passports.issue.useMutation({
     onSuccess: () => {
       refetch();
-      toast.success("Passport issued", { description: "Your compliance passport has been generated and cryptographically signed." });
+      toast.success("Passport issued", { description: "Your illustrative readiness record has been generated with a reference hash; it is not certification." });
     },
     onError: (e) => toast.error(e.message),
   });
@@ -58,7 +58,7 @@ export default function CompliancePassport() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Award className="h-7 w-7 text-blue-600" /> Compliance Passports
           </h1>
-          <p className="text-gray-500 mt-1">Cryptographically-signed, verifiable proof of compliance — no PDFs, no manual audits</p>
+          <p className="text-gray-500 mt-1">Illustrative readiness records — not independent certification or proof of legal compliance</p>
         </div>
         <Button
           className="bg-blue-600 hover:bg-blue-700"
@@ -75,9 +75,9 @@ export default function CompliancePassport() {
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { step: "1", title: "Issue Passport", desc: "RegulaSync analyses your current compliance posture and generates a cryptographically-signed passport" },
-              { step: "2", title: "Share Securely", desc: "Share the passport hash with regulators, partners, or auditors — no sensitive data exposed" },
-              { step: "3", title: "Instant Verification", desc: "Anyone with the hash can instantly verify your compliance status without contacting you" },
+              { step: "1", title: "Issue Passport", desc: "RegulaSync demonstrates a readiness summary with a reference hash; no independent assurance is provided" },
+              { step: "2", title: "Share Securely", desc: "Share a reference only after reviewing the record and disclosure permissions" },
+              { step: "3", title: "Instant Verification", desc: "Look up record validity; this does not verify actual legal compliance" },
             ].map(s => (
               <div key={s.step} className="flex gap-3">
                 <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">{s.step}</div>
@@ -95,7 +95,7 @@ export default function CompliancePassport() {
       <Card>
         <CardHeader>
           <CardTitle>Verify a Passport</CardTitle>
-          <CardDescription>Enter a passport hash to verify its authenticity and compliance status</CardDescription>
+          <CardDescription>Enter a reference hash to check record validity, not certification or compliance</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-3">
@@ -121,7 +121,7 @@ export default function CompliancePassport() {
                   <XCircle className="h-5 w-5 text-red-600" />
                 )}
                 <p className={`font-medium ${verifyResult.valid ? "text-green-800" : "text-red-800"}`}>
-                  {verifyResult.valid ? "Passport Valid — Compliance Verified" : "Invalid or Expired Passport"}
+                  {verifyResult.valid ? "Record Valid — Compliance Not Independently Verified" : "Invalid or Expired Passport"}
                 </p>
               </div>
               {verifyResult.valid && verifyResult.passport && (
@@ -136,7 +136,7 @@ export default function CompliancePassport() {
                   </div>
                   <div>
                     <p className="text-gray-500">Frameworks</p>
-                    <p className="font-bold text-gray-900">{(verifyResult.passport.frameworks || []).join(", ")}</p>
+                    <p className="font-bold text-gray-900">{(verifyResult.passport.frameworks || []).map((f: any) => typeof f === "string" ? f : f.name).join(", ")}</p>
                   </div>
                   <div>
                     <p className="text-gray-500">Issued</p>
@@ -162,7 +162,7 @@ export default function CompliancePassport() {
             <div className="text-center py-12 text-gray-400">
               <Award className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p className="font-medium">No passports issued yet</p>
-              <p className="text-sm mt-1">Issue your first compliance passport to share verifiable proof of compliance</p>
+              <p className="text-sm mt-1">Create an illustrative readiness record; no Cyber Essentials certificate is claimed</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -194,8 +194,8 @@ export default function CompliancePassport() {
 
                   {passport.frameworks && passport.frameworks.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-2">
-                      {passport.frameworks.map((f: string) => (
-                        <Badge key={f} variant="outline" className="text-xs">{f}</Badge>
+                      {passport.frameworks.map((f: any) => (
+                        <Badge key={typeof f === "string" ? f : f.name} variant="outline" className="text-xs">{typeof f === "string" ? f : f.name} — illustrative</Badge>
                       ))}
                     </div>
                   )}

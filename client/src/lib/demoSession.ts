@@ -1,4 +1,4 @@
-export const DEMO_RENEWAL_ERROR = "Your demo access has expired. Enter the access credentials again to restart the demo.";
+export const DEMO_RENEWAL_ERROR = "Your browser demo session has ended. Re-enter the same assessment access code to restart; the code has no scheduled expiry.";
 
 export async function prepareDemoPresentation<T>(operations: {
   cancelAuth: () => Promise<unknown>;

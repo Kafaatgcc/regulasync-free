@@ -29,117 +29,17 @@ import {
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 
-interface TimelineEvent {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  type: 'regulatory' | 'internal' | 'deadline' | 'milestone';
-  source: 'FCA' | 'PRA' | 'ICO' | 'BOE' | 'Internal';
-  priority: 'critical' | 'high' | 'medium' | 'low';
-  status: 'upcoming' | 'in-progress' | 'completed' | 'overdue';
-  affectedPolicies: string[];
-  actionRequired: boolean;
-}
-
-const timelineEvents: TimelineEvent[] = [
-  {
-    id: '1',
-    title: 'FCA Consumer Duty Annual Board Report',
-    description: 'Annual board report on Consumer Duty implementation and outcomes must be submitted to FCA.',
-    date: '2026-01-31',
-    type: 'deadline',
-    source: 'FCA',
-    priority: 'critical',
-    status: 'upcoming',
-    affectedPolicies: ['Consumer Duty Policy', 'Product Governance Framework', 'Vulnerable Customer Policy'],
-    actionRequired: true
-  },
-  {
-    id: '2',
-    title: 'PRA Operational Resilience Self-Assessment',
-    description: 'Complete self-assessment against PRA operational resilience requirements.',
-    date: '2026-02-15',
-    type: 'regulatory',
-    source: 'PRA',
-    priority: 'high',
-    status: 'upcoming',
-    affectedPolicies: ['Business Continuity Policy', 'IT Disaster Recovery Plan'],
-    actionRequired: true
-  },
-  {
-    id: '3',
-    title: 'Q1 AML Risk Assessment Due',
-    description: 'Quarterly anti-money laundering risk assessment and reporting.',
-    date: '2026-01-15',
-    type: 'internal',
-    source: 'Internal',
-    priority: 'high',
-    status: 'in-progress',
-    affectedPolicies: ['AML Policy', 'KYC Procedures', 'Transaction Monitoring Policy'],
-    actionRequired: true
-  },
-  {
-    id: '4',
-    title: 'ICO Data Protection Impact Assessment Review',
-    description: 'Annual review of DPIA processes and documentation.',
-    date: '2026-03-01',
-    type: 'regulatory',
-    source: 'ICO',
-    priority: 'medium',
-    status: 'upcoming',
-    affectedPolicies: ['Data Protection Policy', 'Privacy Notice', 'Data Retention Policy'],
-    actionRequired: false
-  },
-  {
-    id: '5',
-    title: 'Bank of England Stress Testing Submission',
-    description: 'Submit annual stress testing results to Bank of England.',
-    date: '2026-03-31',
-    type: 'deadline',
-    source: 'BOE',
-    priority: 'high',
-    status: 'upcoming',
-    affectedPolicies: ['Capital Adequacy Policy', 'Liquidity Risk Policy'],
-    actionRequired: true
-  },
-  {
-    id: '6',
-    title: 'FCA SMCR Annual Certification',
-    description: 'Complete annual certification of certified persons under SM&CR.',
-    date: '2026-04-01',
-    type: 'deadline',
-    source: 'FCA',
-    priority: 'critical',
-    status: 'upcoming',
-    affectedPolicies: ['SM&CR Policy', 'Fitness and Propriety Policy', 'Conduct Rules Policy'],
-    actionRequired: true
-  },
-  {
-    id: '7',
-    title: 'Internal Audit - Compliance Function Review',
-    description: 'Annual internal audit of compliance function effectiveness.',
-    date: '2026-02-28',
-    type: 'internal',
-    source: 'Internal',
-    priority: 'medium',
-    status: 'upcoming',
-    affectedPolicies: ['Compliance Monitoring Plan', 'Internal Audit Charter'],
-    actionRequired: false
-  },
-  {
-    id: '8',
-    title: 'FCA Financial Promotions Rules Update',
-    description: 'New FCA rules on financial promotions come into effect.',
-    date: '2026-04-15',
-    type: 'regulatory',
-    source: 'FCA',
-    priority: 'high',
-    status: 'upcoming',
-    affectedPolicies: ['Marketing Policy', 'Financial Promotions Approval Process'],
-    actionRequired: true
-  }
-];
+import {
+  REGULATORY_DEMO_NOTICE,
+  calendarDateKey,
+  createRegulatoryDemoCalendar,
+  createRegulatoryDemoEvents,
+  formatUtcDate,
+  getUtcDaysUntil,
+  parseUtcDateOnly,
+  toCalendarDate,
+  type TimelineEvent,
+} from '@shared/regulatoryDemoDates';
 
 function LiveChangeTrackerSection() {
   const { data, isLoading } = trpc.changeTracker.timeline.useQuery();
@@ -229,24 +129,25 @@ function LiveChangeTrackerSection() {
 }
 
 export default function RegulatoryTimeline() {
+  // Keep one UTC reference date for a consistent schedule throughout this page visit.
+  const [referenceDate] = useState(() => new Date());
+  const timelineEvents = createRegulatoryDemoEvents(referenceDate);
   const [filter, setFilter] = useState<'all' | 'critical' | 'action-required'>('all');
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(() =>
+    toCalendarDate([...timelineEvents].sort((a, b) => a.date.localeCompare(b.date))[0].date)
+  );
   const [viewMode, setViewMode] = useState<'timeline' | 'calendar'>('timeline');
 
   const filteredEvents = timelineEvents.filter(event => {
     if (filter === 'critical') return event.priority === 'critical';
     if (filter === 'action-required') return event.actionRequired;
     return true;
-  }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }).sort((a, b) =>
+    (parseUtcDateOnly(a.date)?.getTime() ?? Infinity) - (parseUtcDateOnly(b.date)?.getTime() ?? Infinity)
+  );
 
-  const getDaysUntil = (date: string) => {
-    const today = new Date();
-    const eventDate = new Date(date);
-    const diffTime = eventDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
+  const getDaysUntil = (date: string) => getUtcDaysUntil(date, referenceDate);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -321,7 +222,7 @@ export default function RegulatoryTimeline() {
     if (!reminderEvent) {
       return;
     }
-    
+
     // Check if in demo mode
     const isDemo = window.location.search.includes('demo=true');
     if (isDemo) {
@@ -332,7 +233,7 @@ export default function RegulatoryTimeline() {
       setReminderMutation.mutate({
         eventTitle: reminderEvent.title,
         eventDate: reminderEvent.date,
-        eventDescription: reminderEvent.description,
+        eventDescription: `${REGULATORY_DEMO_NOTICE}\n\n${reminderEvent.description}`,
         reminderTime,
         reminderType,
       });
@@ -341,57 +242,33 @@ export default function RegulatoryTimeline() {
 
   const handleExportCalendar = () => {
     // Generate ICS file content
-    const icsContent = generateICSContent(filteredEvents);
+    const icsContent = createRegulatoryDemoCalendar(filteredEvents);
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'regulatory-timeline.ics';
+    link.download = 'illustrative-regulatory-schedule.ics';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    
+
     toast.success('Calendar Exported', {
-      description: 'Regulatory timeline exported to .ics format'
+      description: 'Illustrative demonstration schedule exported; dates are not verified statutory deadlines.'
     });
-  };
-
-  // Generate ICS file content
-  const generateICSContent = (events: TimelineEvent[]) => {
-    const lines = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//RegulaSync//Regulatory Timeline//EN',
-      'CALSCALE:GREGORIAN',
-      'METHOD:PUBLISH'
-    ];
-
-    events.forEach(event => {
-      const eventDate = new Date(event.date);
-      const dateStr = eventDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-      
-      lines.push('BEGIN:VEVENT');
-      lines.push(`DTSTART:${dateStr}`);
-      lines.push(`DTEND:${dateStr}`);
-      lines.push(`SUMMARY:${event.title}`);
-      lines.push(`DESCRIPTION:${event.description}\\n\\nSource: ${event.source}\\nPriority: ${event.priority}\\nAffected Policies: ${event.affectedPolicies.join(', ')}`);
-      lines.push(`UID:${event.id}@regulasync.com`);
-      lines.push('END:VEVENT');
-    });
-
-    lines.push('END:VCALENDAR');
-    return lines.join('\r\n');
   };
 
   // Get events for a specific date
   const getEventsForDate = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = calendarDateKey(date);
     return filteredEvents.filter(event => event.date === dateStr);
   };
 
   // Get dates that have events
-  const eventDates = filteredEvents.map(event => new Date(event.date));
+  const getCalendarDates = (events: TimelineEvent[]) => events
+    .map(event => toCalendarDate(event.date))
+    .filter((date): date is Date => date !== undefined);
+  const eventDates = getCalendarDates(filteredEvents);
 
   // Handle date selection in calendar
   const handleDateSelect = (date: Date | undefined) => {
@@ -408,7 +285,7 @@ export default function RegulatoryTimeline() {
 
   // Group events by month
   const eventsByMonth = filteredEvents.reduce((acc, event) => {
-    const month = new Date(event.date).toLocaleString('default', { month: 'long', year: 'numeric' });
+    const month = formatUtcDate(event.date, { day: undefined, month: 'long', year: 'numeric' });
     if (!acc[month]) acc[month] = [];
     acc[month].push(event);
     return acc;
@@ -417,8 +294,8 @@ export default function RegulatoryTimeline() {
   // Custom day content for calendar to show event indicators
   const modifiers = {
     hasEvent: eventDates,
-    critical: filteredEvents.filter(e => e.priority === 'critical').map(e => new Date(e.date)),
-    high: filteredEvents.filter(e => e.priority === 'high').map(e => new Date(e.date)),
+    critical: getCalendarDates(filteredEvents.filter(e => e.priority === 'critical')),
+    high: getCalendarDates(filteredEvents.filter(e => e.priority === 'high')),
   };
 
   const modifiersStyles = {
@@ -437,18 +314,18 @@ export default function RegulatoryTimeline() {
             Regulatory Timeline
           </h1>
           <p className="text-muted-foreground mt-1">
-            Track upcoming regulatory deadlines and compliance milestones
+            Explore upcoming compliance preparation tasks in an illustrative schedule
           </p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant={viewMode === 'timeline' ? 'default' : 'outline'} 
+          <Button
+            variant={viewMode === 'timeline' ? 'default' : 'outline'}
             onClick={() => setViewMode('timeline')}
           >
             Timeline View
           </Button>
-          <Button 
-            variant={viewMode === 'calendar' ? 'default' : 'outline'} 
+          <Button
+            variant={viewMode === 'calendar' ? 'default' : 'outline'}
             onClick={() => setViewMode('calendar')}
           >
             Calendar View
@@ -460,6 +337,12 @@ export default function RegulatoryTimeline() {
         </div>
       </div>
 
+      <div role="note" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <p className="font-semibold">Illustrative demonstration schedule — synthetic data</p>
+        <p className="mt-1">{REGULATORY_DEMO_NOTICE}</p>
+        <p className="mt-1">Regulator names indicate example policy topics, not endorsement or verified sources. Recorded changes below are separate from these sample tasks.</p>
+      </div>
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
@@ -469,7 +352,7 @@ export default function RegulatoryTimeline() {
             </div>
             <div>
               <p className="text-2xl font-bold">{timelineEvents.filter(e => e.priority === 'critical').length}</p>
-              <p className="text-sm text-muted-foreground">Critical Deadlines</p>
+              <p className="text-sm text-muted-foreground">Critical Sample Targets</p>
             </div>
           </CardContent>
         </Card>
@@ -479,8 +362,11 @@ export default function RegulatoryTimeline() {
               <Clock className="w-6 h-6 text-amber-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{timelineEvents.filter(e => getDaysUntil(e.date) <= 30 && getDaysUntil(e.date) > 0).length}</p>
-              <p className="text-sm text-muted-foreground">Due This Month</p>
+              <p className="text-2xl font-bold">{timelineEvents.filter(e => {
+                const days = getDaysUntil(e.date);
+                return days !== null && days > 0 && days <= 30;
+              }).length}</p>
+              <p className="text-sm text-muted-foreground">Next 30 Days (Sample)</p>
             </div>
           </CardContent>
         </Card>
@@ -527,12 +413,13 @@ export default function RegulatoryTimeline() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="w-5 h-5" />
-                    Regulatory Calendar
+                    Illustrative Regulatory Calendar
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-center">
                   <CalendarComponent
                     mode="single"
+                    defaultMonth={selectedDate}
                     selected={selectedDate}
                     onSelect={handleDateSelect}
                     modifiers={modifiers}
@@ -545,12 +432,12 @@ export default function RegulatoryTimeline() {
                   <CardContent className="pt-0">
                     <div className="border-t pt-4">
                       <h4 className="font-medium mb-3">
-                        Events on {selectedDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                        Sample tasks on {formatUtcDate(calendarDateKey(selectedDate) ?? '', { weekday: 'long' })}
                       </h4>
                       {getEventsForDate(selectedDate).length > 0 ? (
                         <div className="space-y-2">
                           {getEventsForDate(selectedDate).map(event => (
-                            <div 
+                            <div
                               key={event.id}
                               className={`p-3 rounded-lg cursor-pointer transition-all hover:shadow-md ${selectedEvent?.id === event.id ? 'ring-2 ring-copper' : 'bg-secondary/30'}`}
                               onClick={() => setSelectedEvent(event)}
@@ -559,6 +446,7 @@ export default function RegulatoryTimeline() {
                                 <span className="text-lg">{getSourceIcon(event.source)}</span>
                                 <span className="font-medium">{event.title}</span>
                                 <Badge className={getPriorityColor(event.priority) + ' text-white ml-auto'}>{event.priority}</Badge>
+                                <Badge variant="outline">Synthetic</Badge>
                               </div>
                             </div>
                           ))}
@@ -586,8 +474,8 @@ export default function RegulatoryTimeline() {
                     {events.map((event) => {
                       const daysUntil = getDaysUntil(event.date);
                       return (
-                        <Card 
-                          key={event.id} 
+                        <Card
+                          key={event.id}
                           className={`cursor-pointer transition-all hover:shadow-md ${selectedEvent?.id === event.id ? 'ring-2 ring-copper' : ''}`}
                           onClick={() => setSelectedEvent(event)}
                         >
@@ -595,7 +483,7 @@ export default function RegulatoryTimeline() {
                             <div className="flex items-start gap-4">
                               {/* Priority Indicator */}
                               <div className={`w-1 h-full min-h-[80px] rounded-full ${getPriorityColor(event.priority)}`} />
-                              
+
                               {/* Content */}
                               <div className="flex-1">
                                 <div className="flex items-start justify-between">
@@ -608,15 +496,16 @@ export default function RegulatoryTimeline() {
                                   </div>
                                   <ChevronRight className="w-5 h-5 text-muted-foreground" />
                                 </div>
-                                
+
                                 <div className="flex items-center gap-2 mt-3 flex-wrap">
-                                  <Badge variant="outline">{event.source}</Badge>
+                                  <Badge variant="outline">Topic: {event.source}</Badge>
+                                  <Badge variant="outline">Synthetic</Badge>
                                   <Badge className={getStatusColor(event.status)}>{event.status}</Badge>
                                   {event.actionRequired && (
                                     <Badge className="bg-amber-100 text-amber-700">Action Required</Badge>
                                   )}
                                   <span className="text-sm text-muted-foreground ml-auto">
-                                    {daysUntil > 0 ? `${daysUntil} days left` : daysUntil === 0 ? 'Today' : `${Math.abs(daysUntil)} days overdue`}
+                                    {daysUntil === null ? 'Date unavailable' : daysUntil > 0 ? `${daysUntil} days left` : daysUntil === 0 ? 'Today' : `${Math.abs(daysUntil)} days overdue`}
                                   </span>
                                 </div>
                               </div>
@@ -641,7 +530,7 @@ export default function RegulatoryTimeline() {
                   <span className="text-2xl">{getSourceIcon(selectedEvent.source)}</span>
                   <div>
                     <CardTitle className="text-lg">{selectedEvent.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{selectedEvent.source}</p>
+                    <p className="text-sm text-muted-foreground">Example topic: {selectedEvent.source} · Synthetic task</p>
                   </div>
                 </div>
               </CardHeader>
@@ -650,17 +539,12 @@ export default function RegulatoryTimeline() {
                   <p className="text-sm font-medium text-muted-foreground">Description</p>
                   <p className="text-sm mt-1">{selectedEvent.description}</p>
                 </div>
-                
+
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Due Date</p>
+                  <p className="text-sm font-medium text-muted-foreground">Illustrative Target Date (UTC)</p>
                   <p className="text-sm mt-1 flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
-                    {new Date(selectedEvent.date).toLocaleDateString('en-GB', { 
-                      weekday: 'long', 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
+                    {formatUtcDate(selectedEvent.date, { weekday: 'long' })}
                   </p>
                 </div>
 
@@ -732,16 +616,16 @@ export default function RegulatoryTimeline() {
               <p className="text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1">
                   <Bell className="w-3 h-3" />
-                  {reminderType === 'email' ? 'Email notification' : 
-                   reminderType === 'notification' ? 'In-app notification' : 
+                  {reminderType === 'email' ? 'Email notification' :
+                   reminderType === 'notification' ? 'In-app notification' :
                    'Email and in-app notification'}
                 </span>
               </p>
               <p className="text-xs text-amber-600 mt-4 bg-amber-50 p-2 rounded">
                 Demo Mode: In production, this would send actual notifications.
               </p>
-              <Button 
-                className="mt-4" 
+              <Button
+                className="mt-4"
                 onClick={() => {
                   setReminderDialogOpen(false);
                   setReminderSuccess(false);
@@ -759,21 +643,16 @@ export default function RegulatoryTimeline() {
                   Set Reminder
                 </DialogTitle>
                 <DialogDescription>
-                  Configure when and how you want to be reminded about this event.
+                  Configure a reminder for this synthetic sample task, not a verified statutory deadline.
                 </DialogDescription>
               </DialogHeader>
-              
+
               {reminderEvent && (
                 <div className="space-y-4 py-4">
                   <div className="bg-muted/50 p-3 rounded-lg">
                     <h4 className="font-medium text-sm">{reminderEvent.title}</h4>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Due: {new Date(reminderEvent.date).toLocaleDateString('en-GB', {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                      })}
+                      Illustrative target (UTC): {formatUtcDate(reminderEvent.date, { weekday: 'long' })}
                     </p>
                   </div>
 

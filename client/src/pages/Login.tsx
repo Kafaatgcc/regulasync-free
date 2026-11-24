@@ -17,8 +17,9 @@ export default function Login() {
   const utils = trpc.useUtils();
   const loginMutation = trpc.passwordAuth.loginWithPassword.useMutation({
     onSuccess: async (data) => {
-      localStorage.removeItem('demoMode');
-      localStorage.removeItem('regulasync_demo_access');
+      await utils.auth.me.cancel();
+      localStorage.removeItem("demoMode");
+      localStorage.removeItem("regulasync_demo_access");
       toast.success(`Welcome back, ${data.user.name || data.user.email}!`);
       await utils.auth.me.invalidate();
       await utils.auth.me.fetch(undefined, { staleTime: 0 });
@@ -38,16 +39,14 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[#0f172a] flex flex-col">
       {/* Top navigation bar with logo and back link */}
-      <nav className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-white/10">
-        <Link href="/">
-          <a className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm font-medium">
+      <nav className="relative z-10 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-white/10">
+        <Link href="/landing" className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-xs sm:text-sm font-medium">
             <ChevronLeft className="h-4 w-4" />
             Back to RegulaSync
-          </a>
         </Link>
         <div className="flex items-center gap-2">
           <img
-            src="/logo.png"
+            src="/api/brand/logo.png"
             alt="RegulaSync"
             className="h-8 w-8 object-contain"
           />
@@ -55,7 +54,7 @@ export default function Login() {
             Regula<span className="text-amber-500">Sync</span>
           </span>
         </div>
-        <div className="w-[120px]" /> {/* spacer for centering */}
+        <div className="hidden sm:block w-[120px]" aria-hidden="true" />
       </nav>
 
       {/* Background gradients */}
@@ -147,8 +146,8 @@ export default function Login() {
           </div>
 
           <p className="text-center text-xs text-slate-500 mt-6">
-            © 2026 RegulaSync Ltd ·{" "}
-            <a href="/privacy-policy" className="hover:text-slate-400 transition-colors">Privacy</a>
+            © 2026 RegulaSync ·{" "}
+            <a href="/privacy" className="hover:text-slate-400 transition-colors">Privacy</a>
             {" · "}
             <a href="/terms" className="hover:text-slate-400 transition-colors">Terms</a>
           </p>

@@ -1,14 +1,14 @@
 /**
  * Database Seeding Script
- * 
+ *
  * Populates the database with initial data for testing and demo purposes.
  */
 
 import { getDb } from "./db";
-import { 
-  policies, 
-  delegationAuthority, 
-  complianceRecords, 
+import {
+  policies,
+  delegationAuthority,
+  complianceRecords,
   regulatoryUpdates,
   departments,
   aiRecommendations,
@@ -16,6 +16,7 @@ import {
 } from "../drizzle/schema";
 import { createAuditEntryWithHash } from "./auditCache";
 import { eq } from "drizzle-orm";
+import { samplePolicyLifecycleDates, sampleDelegationPeriods } from "../shared/sampleDates";
 
 /**
  * Seed initial policies
@@ -38,8 +39,8 @@ export async function seedPolicies(userId: number, userName: string) {
       category: "compliance" as const,
       status: "active" as const,
       priority: "critical" as const,
-      effectiveDate: new Date("2024-01-01"),
-      reviewDate: new Date("2025-01-01"),
+      effectiveDate: new Date(samplePolicyLifecycleDates[0].effectiveDate),
+      reviewDate: new Date(samplePolicyLifecycleDates[0].reviewDate),
       ownerId: userId,
       departmentScope: "All Departments",
       complianceScore: 92,
@@ -51,8 +52,8 @@ export async function seedPolicies(userId: number, userName: string) {
       category: "data_protection" as const,
       status: "active" as const,
       priority: "critical" as const,
-      effectiveDate: new Date("2024-03-15"),
-      reviewDate: new Date("2025-03-15"),
+      effectiveDate: new Date(samplePolicyLifecycleDates[1].effectiveDate),
+      reviewDate: new Date(samplePolicyLifecycleDates[1].reviewDate),
       ownerId: userId,
       departmentScope: "IT, Legal, Operations",
       complianceScore: 88,
@@ -64,8 +65,8 @@ export async function seedPolicies(userId: number, userName: string) {
       category: "financial" as const,
       status: "active" as const,
       priority: "high" as const,
-      effectiveDate: new Date("2024-02-01"),
-      reviewDate: new Date("2025-02-01"),
+      effectiveDate: new Date(samplePolicyLifecycleDates[2].effectiveDate),
+      reviewDate: new Date(samplePolicyLifecycleDates[2].reviewDate),
       ownerId: userId,
       departmentScope: "Finance, Compliance, Operations",
       complianceScore: 85,
@@ -77,8 +78,8 @@ export async function seedPolicies(userId: number, userName: string) {
       category: "risk_management" as const,
       status: "active" as const,
       priority: "high" as const,
-      effectiveDate: new Date("2024-01-15"),
-      reviewDate: new Date("2025-01-15"),
+      effectiveDate: new Date(samplePolicyLifecycleDates[3].effectiveDate),
+      reviewDate: new Date(samplePolicyLifecycleDates[3].reviewDate),
       ownerId: userId,
       departmentScope: "All Departments",
       complianceScore: 78,
@@ -90,8 +91,8 @@ export async function seedPolicies(userId: number, userName: string) {
       category: "it_security" as const,
       status: "pending_review" as const,
       priority: "critical" as const,
-      effectiveDate: new Date("2024-06-01"),
-      reviewDate: new Date("2025-06-01"),
+      effectiveDate: new Date(samplePolicyLifecycleDates[4].effectiveDate),
+      reviewDate: new Date(samplePolicyLifecycleDates[4].reviewDate),
       ownerId: userId,
       departmentScope: "IT, Security",
       complianceScore: 72,
@@ -103,8 +104,8 @@ export async function seedPolicies(userId: number, userName: string) {
       category: "compliance" as const,
       status: "draft" as const,
       priority: "critical" as const,
-      effectiveDate: new Date("2025-01-01"),
-      reviewDate: new Date("2026-01-01"),
+      effectiveDate: new Date(samplePolicyLifecycleDates[5].effectiveDate),
+      reviewDate: new Date(samplePolicyLifecycleDates[5].reviewDate),
       ownerId: userId,
       departmentScope: "Customer Service, Sales, Compliance",
       complianceScore: 0,
@@ -113,8 +114,11 @@ export async function seedPolicies(userId: number, userName: string) {
   ];
 
   for (const policy of policiesData) {
-    const [inserted] = await db.insert(policies).values(policy).$returningId();
-    
+    const [inserted] = await db.insert(policies).values({
+      ...policy,
+      description: `Illustrative 2026 example; internal planning dates, not statutory deadlines. ${policy.description}`,
+    }).$returningId();
+
     // Create audit entry for each policy
     await createAuditEntryWithHash(db, {
       entityType: "policy",
@@ -286,7 +290,7 @@ export async function seedComplianceRecords() {
 
   // Get policies first
   const allPolicies = await db.select().from(policies);
-  
+
   const records = [
     { department: "Compliance", complianceStatus: "compliant" as const, score: 92, findings: "All controls operating effectively", remediation: null },
     { department: "Finance", complianceStatus: "compliant" as const, score: 88, findings: "Minor documentation gaps identified", remediation: "Update procedure documentation by Q1 2025" },
@@ -406,8 +410,8 @@ export async function seedDelegations(userId: number) {
       thresholdCurrency: "GBP",
       conditions: "Standard approval process applies",
       status: "active" as const,
-      effectiveFrom: new Date("2024-01-01"),
-      effectiveTo: new Date("2025-12-31"),
+      effectiveFrom: new Date(sampleDelegationPeriods[0].effectiveFrom),
+      effectiveTo: new Date(sampleDelegationPeriods[0].effectiveTo),
     },
     {
       title: "Compliance Exception Authority",
@@ -419,8 +423,8 @@ export async function seedDelegations(userId: number) {
       thresholdCurrency: "GBP",
       conditions: "Requires documented risk assessment and time-limited approval",
       status: "active" as const,
-      effectiveFrom: new Date("2024-01-01"),
-      effectiveTo: new Date("2025-12-31"),
+      effectiveFrom: new Date(sampleDelegationPeriods[4].effectiveFrom),
+      effectiveTo: new Date(sampleDelegationPeriods[4].effectiveTo),
     },
     {
       title: "Contract Signing Authority",
@@ -432,13 +436,16 @@ export async function seedDelegations(userId: number) {
       thresholdCurrency: "GBP",
       conditions: "Legal review required for contracts over £25,000",
       status: "active" as const,
-      effectiveFrom: new Date("2024-01-01"),
-      effectiveTo: new Date("2025-12-31"),
+      effectiveFrom: new Date(sampleDelegationPeriods[1].effectiveFrom),
+      effectiveTo: new Date(sampleDelegationPeriods[1].effectiveTo),
     },
   ];
 
   for (const del of delegations) {
-    await db.insert(delegationAuthority).values(del);
+    await db.insert(delegationAuthority).values({
+      ...del,
+      description: `Illustrative 2026 example; not live authority or a statutory deadline. ${del.description}`,
+    });
   }
 
   return delegations.length;
@@ -449,7 +456,7 @@ export async function seedDelegations(userId: number) {
  */
 export async function seedAllData(userId: number, userName: string) {
   console.log("Starting database seeding...");
-  
+
   const results = {
     policies: await seedPolicies(userId, userName),
     regulatoryUpdates: await seedRegulatoryUpdates(),

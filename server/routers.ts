@@ -1,3 +1,5 @@
+import { clearDemoGrant } from "./demoSessions";
+import { contactAdminProcedure } from "./contactAccess";
 import { COOKIE_NAME } from "@shared/const";
 
 import { systemRouter } from "./_core/systemRouter";
@@ -41,6 +43,7 @@ export const appRouter = router({
       return publicUser;
     }),
     logout: publicProcedure.mutation(({ ctx }) => {
+      clearDemoGrant(ctx);
       ctx.res.clearCookie(COOKIE_NAME, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -63,13 +66,13 @@ export const appRouter = router({
     list: protectedProcedure.query(async () => {
       return await db.getPolicies();
     }),
-    
+
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {
         return await db.getPolicyById(input.id);
       }),
-    
+
     create: protectedProcedure
       .input(z.object({
         title: z.string(),
@@ -86,7 +89,7 @@ export const appRouter = router({
           status: "draft",
         });
       }),
-    
+
     update: protectedProcedure
       .input(z.object({
         id: z.number(),
@@ -193,13 +196,13 @@ export const appRouter = router({
     list: protectedProcedure.query(async () => {
       return await db.getDelegations();
     }),
-    
+
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {
         return await db.getDelegationById(input.id);
       }),
-    
+
     create: protectedProcedure
       .input(z.object({
         title: z.string(),
@@ -217,7 +220,7 @@ export const appRouter = router({
           status: "pending",
         });
       }),
-    
+
     update: protectedProcedure
       .input(z.object({
         id: z.number(),
@@ -236,7 +239,7 @@ export const appRouter = router({
     list: protectedProcedure.query(async () => {
       return await db.getApprovalRequests();
     }),
-    
+
     create: protectedProcedure
       .input(z.object({
         title: z.string(),
@@ -254,7 +257,7 @@ export const appRouter = router({
           status: "pending",
         });
       }),
-    
+
     approve: protectedProcedure
       .input(z.object({
         id: z.number(),
@@ -268,7 +271,7 @@ export const appRouter = router({
           comments: input.comments,
         });
       }),
-    
+
     reject: protectedProcedure
       .input(z.object({
         id: z.number(),
@@ -322,7 +325,7 @@ export const appRouter = router({
     list: protectedProcedure.query(async () => {
       return await db.getComplianceRecords();
     }),
-    
+
     create: protectedProcedure
       .input(z.object({
         policyId: z.number().optional(),
@@ -339,7 +342,7 @@ export const appRouter = router({
           lastAssessmentDate: new Date(),
         });
       }),
-    
+
     update: protectedProcedure
       .input(z.object({
         id: z.number(),
@@ -365,7 +368,7 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await db.getAuditTrail(input?.limit || 100);
       }),
-    
+
     // Create new audit entry with hash chain
     log: protectedProcedure
       .input(z.object({
@@ -383,27 +386,27 @@ export const appRouter = router({
         });
         return { success: true, ...result };
       }),
-    
+
     // Verify the entire audit chain integrity
     verifyChain: protectedProcedure
       .query(async () => {
         const result = await db.verifyAuditChainIntegrity();
         return result;
       }),
-    
+
     // Get a single entry with verification status
     getVerified: protectedProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {
         return await db.getAuditEntryVerified(input.id);
       }),
-    
+
     // Get audit chain statistics
     statistics: protectedProcedure
       .query(async () => {
         return await db.getAuditStatistics();
       }),
-    
+
     // Export audit trail with verification for compliance
     exportVerified: protectedProcedure
       .mutation(async () => {
@@ -416,7 +419,7 @@ export const appRouter = router({
     list: protectedProcedure.query(async () => {
       return await db.getRegulatoryUpdates();
     }),
-    
+
     create: protectedProcedure
       .input(z.object({
         title: z.string(),
@@ -433,7 +436,7 @@ export const appRouter = router({
           status: "new",
         });
       }),
-    
+
     update: protectedProcedure
       .input(z.object({
         id: z.number(),
@@ -524,7 +527,7 @@ export const appRouter = router({
     list: protectedProcedure.query(async () => {
       return await db.getAIRecommendations();
     }),
-    
+
     create: protectedProcedure
       .input(z.object({
         title: z.string(),
@@ -542,19 +545,19 @@ export const appRouter = router({
           status: "new",
         });
       }),
-    
+
     acknowledge: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         return await db.updateAIRecommendation(input.id, { status: "acknowledged" });
       }),
-    
+
     implement: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         return await db.updateAIRecommendation(input.id, { status: "implemented" });
       }),
-    
+
     dismiss: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
@@ -668,7 +671,7 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         // Save to database
         const result = await db.createContactSubmission(input);
-        
+
         // Notify owner about new contact submission
         const inquiryTypeLabels: Record<string, string> = {
           demo: "Demo Request",
@@ -678,7 +681,7 @@ export const appRouter = router({
           general: "General Inquiry",
           media: "Media & Press",
         };
-        
+
         try {
           await notifyOwner({
             title: `New Contact: ${inquiryTypeLabels[input.inquiryType] || input.inquiryType}`,
@@ -691,12 +694,12 @@ export const appRouter = router({
           // Log but don't fail the submission if notification fails
           console.warn("[Contact] Failed to send owner notification:", error);
         }
-        
+
         return { success: true, id: result.id };
       }),
-    
+
     // Admin endpoints for managing contact submissions
-    list: protectedProcedure
+    list: contactAdminProcedure
       .input(z.object({
         status: z.enum(["new", "read", "replied", "resolved", "archived"]).optional(),
         limit: z.number().min(1).max(100).optional(),
@@ -704,14 +707,14 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await db.getContactSubmissions(input);
       }),
-    
-    get: protectedProcedure
+
+    get: contactAdminProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {
         return await db.getContactSubmissionById(input.id);
       }),
-    
-    update: protectedProcedure
+
+    update: contactAdminProcedure
       .input(z.object({
         id: z.number(),
         status: z.enum(["new", "read", "replied", "resolved", "archived"]).optional(),
@@ -722,8 +725,8 @@ export const appRouter = router({
         const { id, ...updates } = input;
         return await db.updateContactSubmission(id, updates);
       }),
-    
-    stats: protectedProcedure.query(async () => {
+
+    stats: contactAdminProcedure.query(async () => {
       return await db.getContactSubmissionStats();
     }),
   }),
@@ -750,14 +753,14 @@ export const appRouter = router({
       const parseRSS = (xmlText: string, source: 'FCA' | 'PRA' | 'BOE', maxItems = 5): RegulatoryItem[] => {
         const items: RegulatoryItem[] = [];
         const itemMatches = xmlText.match(/<item>[\s\S]*?<\/item>/g) || [];
-        
+
         itemMatches.slice(0, maxItems).forEach((itemXml, index) => {
           const titleMatch = itemXml.match(/<title>([\s\S]*?)<\/title>/);
           const linkMatch = itemXml.match(/<link>([\s\S]*?)<\/link>/);
           const descMatch = itemXml.match(/<description>([\s\S]*?)<\/description>/);
           const dateMatch = itemXml.match(/<pubDate>([\s\S]*?)<\/pubDate>/);
           const categoryMatch = itemXml.match(/<category>([\s\S]*?)<\/category>/);
-          
+
           if (titleMatch && linkMatch) {
             const title = titleMatch[1].trim().replace(/<!\[CDATA\[|\]\]>/g, '');
             let priority: 'high' | 'medium' | 'low' = 'medium';
@@ -770,7 +773,7 @@ export const appRouter = router({
                        lowerTitle.includes('discussion')) {
               priority = 'low';
             }
-            
+
             let dateStr = new Date().toISOString().split('T')[0];
             if (dateMatch) {
               try {
@@ -780,7 +783,7 @@ export const appRouter = router({
                 }
               } catch { /* use default */ }
             }
-            
+
             items.push({
               id: `${source.toLowerCase()}-${index + 1}-${Date.now()}`,
               title,
@@ -836,7 +839,7 @@ export const appRouter = router({
       allItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
       const successCount = sources.filter(s => s.status === 'success').length;
-      
+
       return {
         success: successCount > 0,
         sources,
@@ -911,19 +914,19 @@ Keep responses under 150 words unless detailed explanation is needed.`;
         try {
           const response = await invokeLLM({ messages });
           const assistantMessage = response.choices[0]?.message?.content;
-          
+
           if (typeof assistantMessage === 'string') {
             return { success: true, response: assistantMessage };
           } else if (Array.isArray(assistantMessage)) {
             const textContent = assistantMessage.find(c => c.type === 'text');
             return { success: true, response: textContent?.text || 'I apologize, but I could not generate a response.' };
           }
-          
+
           return { success: true, response: 'I apologize, but I could not generate a response.' };
         } catch (error) {
           console.error('[AI Chat] LLM error:', error);
-          return { 
-            success: false, 
+          return {
+            success: false,
             response: 'I apologize, but I\'m having trouble connecting right now. Please try again in a moment.',
             error: error instanceof Error ? error.message : 'Unknown error'
           };
@@ -946,7 +949,7 @@ Keep responses under 150 words unless detailed explanation is needed.`;
       }))
       .mutation(async ({ input, ctx }) => {
         const { createReminder } = await import('./notificationService');
-        
+
         // Calculate trigger time based on reminderTime
         const eventDate = new Date(input.eventDate);
         const triggerOffsets = {
@@ -956,7 +959,7 @@ Keep responses under 150 words unless detailed explanation is needed.`;
           "1_week": 7 * 24 * 60 * 60 * 1000,
         };
         const triggerAt = new Date(eventDate.getTime() - triggerOffsets[input.reminderTime]);
-        
+
         const reminder = await createReminder({
           userId: ctx.user.id,
           title: input.eventTitle,
@@ -1001,7 +1004,7 @@ Keep responses under 150 words unless detailed explanation is needed.`;
           const { cancelReminder } = await import('./notificationService');
           await cancelReminder(input.reminderId, ctx.user.id);
         }
-        
+
         return {
           success: true,
           message: `Reminder has been cancelled.`,
@@ -1085,7 +1088,7 @@ Keep responses under 150 words unless detailed explanation is needed.`;
     list: protectedProcedure.query(async () => {
       return await db.getDepartments();
     }),
-    
+
     create: protectedProcedure
       .input(z.object({
         name: z.string(),
@@ -1129,7 +1132,7 @@ Keep responses under 150 words unless detailed explanation is needed.`;
       .mutation(async ({ input, ctx }) => {
         const { createCheckoutSession } = await import('./stripe/stripeService');
         const origin = ctx.req.headers.origin || ctx.req.headers.referer?.replace(/\/[^/]*$/, '') || 'http://localhost:3000';
-        
+
         return await createCheckoutSession({
           userId: ctx.user.id,
           email: ctx.user.email || '',
@@ -1146,11 +1149,11 @@ Keep responses under 150 words unless detailed explanation is needed.`;
       .mutation(async ({ ctx }) => {
         const { getUserSubscription, createBillingPortalSession } = await import('./stripe/stripeService');
         const { subscription } = await getUserSubscription(ctx.user.id);
-        
+
         if (!subscription?.stripeCustomerId) {
           throw new Error('No active subscription found');
         }
-        
+
         const origin = ctx.req.headers.origin || ctx.req.headers.referer?.replace(/\/[^/]*$/, '') || 'http://localhost:3000';
         const url = await createBillingPortalSession(subscription.stripeCustomerId, `${origin}/billing`);
         return { url };
@@ -1162,11 +1165,11 @@ Keep responses under 150 words unless detailed explanation is needed.`;
       .mutation(async ({ input, ctx }) => {
         const { getUserSubscription, cancelSubscription } = await import('./stripe/stripeService');
         const { subscription } = await getUserSubscription(ctx.user.id);
-        
+
         if (!subscription?.stripeSubscriptionId) {
           throw new Error('No active subscription found');
         }
-        
+
         await cancelSubscription(subscription.stripeSubscriptionId, input.immediately);
         return { success: true };
       }),
@@ -1176,11 +1179,11 @@ Keep responses under 150 words unless detailed explanation is needed.`;
       .mutation(async ({ ctx }) => {
         const { getUserSubscription, resumeSubscription } = await import('./stripe/stripeService');
         const { subscription } = await getUserSubscription(ctx.user.id);
-        
+
         if (!subscription?.stripeSubscriptionId) {
           throw new Error('No active subscription found');
         }
-        
+
         await resumeSubscription(subscription.stripeSubscriptionId);
         return { success: true };
       }),

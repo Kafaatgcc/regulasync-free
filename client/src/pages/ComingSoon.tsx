@@ -4,9 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AnimatedLogo from "@/components/AnimatedLogo";
 import { trpc } from "@/lib/trpc";
-import { 
-  Shield, 
-  Zap, 
+import {
+  Shield,
+  Zap,
   Lock,
   Mail,
   KeyRound,
@@ -16,32 +16,21 @@ import {
 
 } from "lucide-react";
 
-// Demo credentials
-const DEMO_EMAIL = "demo@regulasync.co.uk";
-const DEMO_PASSWORD = "RS@Demo#2026!Uk";
-
 export default function ComingSoon() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const demoSession = trpc.passwordAuth.startDemoSession.useMutation();
 
+  const demoSession = trpc.passwordAuth.startDemoSession.useMutation();
   const handleDemoAccess = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    if (email !== DEMO_EMAIL || password !== DEMO_PASSWORD) {
-      setError("Invalid credentials. Please check your demo access details.");
-      return;
-    }
-
     setIsLoading(true);
+    setError("");
     try {
-      await demoSession.mutateAsync({ email, password });
-      localStorage.setItem('demoMode', 'true');
+      const result = await demoSession.mutateAsync({ email: email.trim(), password });
+      localStorage.setItem('demoMode', String(result.isDemo));
       localStorage.setItem('regulasync_demo_access', 'true');
-      window.dispatchEvent(new Event('regulasync-access-changed'));
       window.location.assign('/landing');
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to start the demo. Please try again.");
@@ -74,13 +63,13 @@ export default function ComingSoon() {
         </div>
 
         {/* Headline */}
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 sm:mb-4 leading-tight">
+        <h1 className="text-[clamp(1rem,4vw,2.25rem)] font-bold text-white mb-3 sm:mb-4 leading-tight whitespace-nowrap">
           AI-Powered Governance Automation
         </h1>
 
         {/* Subtitle */}
         <p className="text-sm sm:text-base text-slate-400 mb-6 sm:mb-8 max-w-md mx-auto leading-relaxed px-2">
-          Transforming regulatory compliance for UK businesses. 
+          Transforming regulatory compliance for UK businesses.
           Automated policy management, real-time regulatory updates, and intelligent audit trails.
         </p>
 
@@ -157,7 +146,7 @@ export default function ComingSoon() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Opening homepage...
+                  Authenticating...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
@@ -174,8 +163,8 @@ export default function ComingSoon() {
           <p className="text-xs sm:text-sm text-slate-400 mb-2 sm:mb-3">
             Interested in learning more about RegulaSync?
           </p>
-          <a 
-            href="mailto:hello@regulasync.co.uk" 
+          <a
+            href="mailto:hello@regulasync.co.uk"
             className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 transition-colors text-sm sm:text-base"
           >
             <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />

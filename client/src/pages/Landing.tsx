@@ -10,12 +10,12 @@ import RegulatoryFeed from "@/components/RegulatoryFeed";
 import { toast } from "sonner";
 import { Link } from "wouter";
 import PublicFooter from "@/components/PublicFooter";
-import { 
-  Shield, 
-  GitBranch, 
-  BarChart3, 
-  Brain, 
-  FileCheck, 
+import {
+  Shield,
+  GitBranch,
+  BarChart3,
+  Brain,
+  FileCheck,
   Clock,
   CheckCircle2,
   ArrowRight,
@@ -40,6 +40,10 @@ import { useTheme } from "@/contexts/ThemeContext";
 export default function Landing() {
 
   const { theme, toggleTheme } = useTheme();
+  const { data: user } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 30_000 });
+  const utils = trpc.useUtils();
+  const [isOpeningDemo, setIsOpeningDemo] = useState(false);
+  const accountPath = user ? "/dashboard" : "/login";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -58,12 +62,17 @@ export default function Landing() {
     setTimeout(() => setContentVisible(true), 100);
   };
 
-  const openPreparedDemo = () => {
-    if (!hasGateAccess) {
-      window.location.assign("/");
-      return;
-    }
-    launchPresentationDemo();
+  const openPreparedDemo = async () => {
+    if (isOpeningDemo) return;
+    setIsOpeningDemo(true);
+    try {
+      // A fast click during the initial auth query is not evidence of logout.
+      const verifiedUser = hasGateAccess ? user : await utils.auth.me.fetch(undefined, { staleTime: 0 });
+      if (!hasGateAccess && !verifiedUser) { window.location.assign("/"); return; }
+      launchPresentationDemo();
+    } catch {
+      toast.error("Unable to check demo access. Please try again.");
+    } finally { setIsOpeningDemo(false); }
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -84,7 +93,7 @@ export default function Landing() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       await submitDemoRequest.mutateAsync({
         name: formData.name,
@@ -104,7 +113,7 @@ export default function Landing() {
     <>
       {/* Animated Splash Screen */}
       {showSplash && <AnimatedLogoSplash onComplete={handleSplashComplete} />}
-      
+
       <div className={`min-h-screen bg-background transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}>
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
@@ -113,45 +122,7 @@ export default function Landing() {
             <AnimatedLogo size="sm" animate={true} className="shrink-0" />
             <span className="truncate text-lg font-bold text-navy sm:text-xl">RegulaSync</span>
           </div>
-          <div className="hidden xl:flex items-center gap-1">
-            <Button 
-              variant="ghost" 
-              className="text-muted-foreground hover:text-foreground"
-              onClick={() => scrollToSection('features')}
-            >
-              Features
-            </Button>
-            <Button 
-              variant="ghost"
-              className="text-muted-foreground hover:text-foreground"
-              onClick={() => scrollToSection('how-it-works')}
-            >
-              How It Works
-            </Button>
-            <Button 
-              variant="ghost"
-              className="text-muted-foreground hover:text-foreground"
-              onClick={() => scrollToSection('request-demo')}
-            >
-              Request Demo
-            </Button>
-            <Link href="/pricing">
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                Pricing
-              </Button>
-            </Link>
-            <Link href="/about">
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                About
-              </Button>
-            </Link>
-            <Link href="/integrations">
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                Integrations
-              </Button>
-            </Link>
-          </div>
-          <div className="hidden xl:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -159,7 +130,7 @@ export default function Landing() {
               className="border-copper text-navy hover:bg-copper/10"
             >
               <ShieldCheck className="mr-2 h-4 w-4 text-copper" />
-              8-Minute Guided Demo
+              <span className="hidden xl:inline">8-Minute Guided Demo</span><span className="xl:hidden">8-Min Demo</span>
             </Button>
             <Button
               variant="ghost"
@@ -170,13 +141,13 @@ export default function Landing() {
             >
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
-            <Link href="/login">
+            <Link href={accountPath}>
               <Button size="sm" className="bg-primary hover:bg-primary/90">
-                Log In
+                {user ? "Dashboard" : "Log In"}
               </Button>
             </Link>
           </div>
-          <div className="flex items-center gap-1 xl:hidden">
+          <div className="flex items-center gap-1 md:hidden">
             <Button
               variant="outline"
               size="sm"
@@ -198,8 +169,47 @@ export default function Landing() {
             </button>
           </div>
         </div>
+          <div className="hidden md:flex items-center justify-center gap-1 border-t py-1">
+            <Button
+              variant="ghost"
+              className="text-muted-foreground hover:text-foreground px-3 h-9 text-sm"
+              onClick={() => scrollToSection('features')}
+            >
+              Features
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-muted-foreground hover:text-foreground px-3 h-9 text-sm"
+              onClick={() => scrollToSection('how-it-works')}
+            >
+              How It Works
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-muted-foreground hover:text-foreground px-3 h-9 text-sm"
+              onClick={() => scrollToSection('request-demo')}
+            >
+              Request Demo
+            </Button>
+            <Link href="/pricing">
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground px-3 h-9 text-sm">
+                Pricing
+              </Button>
+            </Link>
+            <Link href="/about">
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground px-3 h-9 text-sm">
+                About
+              </Button>
+            </Link>
+            <Link href="/integrations">
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground px-3 h-9 text-sm">
+                Integrations
+              </Button>
+            </Link>
+          </div>
+
         {mobileMenuOpen && (
-          <div className="border-t bg-background px-4 py-3 shadow-lg xl:hidden">
+          <div className="border-t bg-background px-4 py-3 shadow-lg md:hidden">
             <div className="mx-auto grid max-w-xl gap-1">
               <Button variant="ghost" className="justify-start" onClick={() => scrollToSection('features')}>Features</Button>
               <Button variant="ghost" className="justify-start" onClick={() => scrollToSection('how-it-works')}>How It Works</Button>
@@ -212,7 +222,7 @@ export default function Landing() {
                   {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
                   Theme
                 </Button>
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="flex-1"><Button className="w-full">Log In</Button></Link>
+                <Link href={accountPath} onClick={() => setMobileMenuOpen(false)} className="flex-1"><Button className="w-full">{user ? "Dashboard" : "Log In"}</Button></Link>
               </div>
             </div>
           </div>
@@ -220,9 +230,9 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 px-6">
+      <section className="pt-24 md:pt-36 pb-16 px-6">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-w-0">
             <div className="space-y-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium">
                 <Zap className="h-4 w-4" />
@@ -234,8 +244,8 @@ export default function Landing() {
                 Operations
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
-                RegulaSync automates policy enforcement, delegation of authority, 
-                and compliance monitoring with AI-driven intelligence. Reduce risk, 
+                RegulaSync automates policy enforcement, delegation of authority,
+                and compliance monitoring with AI-driven intelligence. Reduce risk,
                 ensure compliance, and streamline decision-making across your organization.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -248,20 +258,20 @@ export default function Landing() {
                   Open 8-Minute Guided Demo
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   variant="outline"
                   onClick={() => scrollToSection('request-demo')}
                   className="px-6 text-base sm:px-8 sm:text-lg"
                 >
                   Request Demo
                 </Button>
-                <Link href="/login" className="sm:hidden">
+                <Link href={accountPath} className="sm:hidden">
                   <Button
                     variant="ghost"
                     className="w-full text-muted-foreground"
                   >
-                    Account login
+                    {user ? "Return to Dashboard" : "Account login"}
                   </Button>
                 </Link>
               </div>
@@ -337,20 +347,20 @@ export default function Landing() {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-bold">85%</div>
-              <div className="text-sm opacity-80 mt-2">Reduction in Compliance Time</div>
+              <div className="text-4xl md:text-5xl font-bold">Workflow</div>
+              <div className="text-sm opacity-80 mt-2">Workflow automation — design goal</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold">99.9%</div>
-              <div className="text-sm opacity-80 mt-2">Audit Trail Accuracy</div>
+              <div className="text-4xl md:text-5xl font-bold">Integrity</div>
+              <div className="text-sm opacity-80 mt-2">Tamper-evident audit design</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold">60%</div>
-              <div className="text-sm opacity-80 mt-2">Faster Policy Approvals</div>
+              <div className="text-4xl md:text-5xl font-bold">Approvals</div>
+              <div className="text-sm opacity-80 mt-2">Approval workflow prototype</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold">24/7</div>
-              <div className="text-sm opacity-80 mt-2">Automated Monitoring</div>
+              <div className="text-4xl md:text-5xl font-bold">Monitoring</div>
+              <div className="text-sm opacity-80 mt-2">Regulatory monitoring prototype</div>
             </div>
           </div>
         </div>
@@ -368,32 +378,32 @@ export default function Landing() {
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FeatureCard 
+            <FeatureCard
               icon={Shield}
               title="Policy Management"
               description="Create, track, and automate policies with intelligent workflow management and version control."
             />
-            <FeatureCard 
+            <FeatureCard
               icon={GitBranch}
               title="Delegation of Authority"
               description="Visual approval chains and authority matrices that ensure proper governance at every level."
             />
-            <FeatureCard 
+            <FeatureCard
               icon={BarChart3}
               title="Compliance Monitoring"
               description="Real-time compliance tracking across departments with automated alerts and risk indicators."
             />
-            <FeatureCard 
+            <FeatureCard
               icon={Brain}
               title="AI Recommendations"
               description="Intelligent suggestions for policy updates, risk mitigation, and compliance improvements."
             />
-            <FeatureCard 
+            <FeatureCard
               icon={FileCheck}
               title="Self-Validating Audit Cache"
               description="Immutable audit trail with blockchain-inspired hash verification for complete transparency."
             />
-            <FeatureCard 
+            <FeatureCard
               icon={Clock}
               title="Regulatory Updates"
               description="Stay ahead with real-time regulatory monitoring and impact analysis for your policies."
@@ -414,17 +424,17 @@ export default function Landing() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <StepCard 
+            <StepCard
               number="01"
               title="Connect & Configure"
               description="Import your existing policies and configure your organizational structure and authority matrix."
             />
-            <StepCard 
+            <StepCard
               number="02"
               title="Automate & Monitor"
               description="Set up automated workflows, approval chains, and compliance monitoring rules."
             />
-            <StepCard 
+            <StepCard
               number="03"
               title="Analyze & Optimize"
               description="Receive AI-powered insights and recommendations to continuously improve governance."
@@ -441,7 +451,7 @@ export default function Landing() {
               Built for Regulated Industries
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Trusted by organizations in the most demanding regulatory environments
+              Built for organisations in demanding regulatory environments
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -465,11 +475,11 @@ export default function Landing() {
               Join Our Pilot Program
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We're partnering with forward-thinking organisations to shape the future of governance automation. 
+              We're partnering with forward-thinking organisations to shape the future of governance automation.
               Be among the first to experience RegulaSync.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             <div className="bg-white rounded-xl p-8 shadow-lg border text-center">
               <div className="w-16 h-16 bg-[#1e3a5f]/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -484,7 +494,7 @@ export default function Landing() {
                 2 Spots Available
               </div>
             </div>
-            
+
             <div className="bg-white rounded-xl p-8 shadow-lg border text-center">
               <div className="w-16 h-16 bg-[#1e3a5f]/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <FileCheck className="w-8 h-8 text-[#1e3a5f]" />
@@ -498,7 +508,7 @@ export default function Landing() {
                 3 Spots Available
               </div>
             </div>
-            
+
             <div className="bg-white rounded-xl p-8 shadow-lg border text-center">
               <div className="w-16 h-16 bg-[#1e3a5f]/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Shield className="w-8 h-8 text-[#1e3a5f]" />
@@ -513,7 +523,7 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2d5a87] rounded-2xl p-8 md:p-12 text-white">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
@@ -539,10 +549,10 @@ export default function Landing() {
               </div>
               <div className="text-center md:text-right">
                 <p className="text-white/80 mb-4">
-                  Limited to 10 pilot partners for Q2 2026 launch
+                  Limited to 10 pilot partners for Q2 2027 launch
                 </p>
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-[#b87333] hover:bg-[#a06329] text-white"
                   onClick={() => document.getElementById('request-demo')?.scrollIntoView({ behavior: 'smooth' })}
                 >
@@ -567,8 +577,8 @@ export default function Landing() {
                 Request a Personalized Demo
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                See how RegulaSync can transform your organization's governance operations. 
-                Our team will provide a tailored demonstration based on your specific industry 
+                See how RegulaSync can transform your organization's governance operations.
+                Our team will provide a tailored demonstration based on your specific industry
                 and compliance requirements.
               </p>
               <div className="space-y-4 pt-4">
@@ -609,7 +619,7 @@ export default function Landing() {
                       <User className="h-4 w-4 text-muted-foreground" />
                       Full Name *
                     </label>
-                    <Input 
+                    <Input
                       placeholder="John Smith"
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -621,7 +631,7 @@ export default function Landing() {
                       <Mail className="h-4 w-4 text-muted-foreground" />
                       Work Email *
                     </label>
-                    <Input 
+                    <Input
                       type="email"
                       placeholder="john@company.com"
                       value={formData.email}
@@ -636,7 +646,7 @@ export default function Landing() {
                       <Building className="h-4 w-4 text-muted-foreground" />
                       Company *
                     </label>
-                    <Input 
+                    <Input
                       placeholder="Company Ltd"
                       value={formData.company}
                       onChange={(e) => setFormData({...formData, company: e.target.value})}
@@ -648,7 +658,7 @@ export default function Landing() {
                       <Phone className="h-4 w-4 text-muted-foreground" />
                       Phone Number
                     </label>
-                    <Input 
+                    <Input
                       type="tel"
                       placeholder="+44 20 1234 5678"
                       value={formData.phone}
@@ -658,16 +668,16 @@ export default function Landing() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Tell us about your compliance challenges</label>
-                  <Textarea 
+                  <Textarea
                     placeholder="What governance or compliance challenges are you looking to solve?"
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({...formData, message: e.target.value})}
                   />
                 </div>
-                <Button 
-                  type="submit" 
-                  size="lg" 
+                <Button
+                  type="submit"
+                  size="lg"
                   className="w-full bg-primary hover:bg-primary/90"
                   disabled={isSubmitting}
                 >
@@ -681,7 +691,7 @@ export default function Landing() {
                   )}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
-                  By submitting this form, you agree to our privacy policy. 
+                  By submitting this form, you agree to our privacy policy.
                   We'll respond within 24 hours.
                 </p>
               </form>
@@ -697,7 +707,7 @@ export default function Landing() {
             Ready to Transform Your Governance?
           </h2>
           <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-            Join forward-thinking organizations that are automating compliance 
+            Join forward-thinking organizations that are automating compliance
             and reducing governance risk with RegulaSync.
           </p>
           <Button

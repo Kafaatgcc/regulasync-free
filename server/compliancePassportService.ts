@@ -2,7 +2,7 @@
  * Compliance Passport Service
  *
  * Issues cryptographically signed, shareable compliance passports
- * that serve as instant proof of compliance status.
+ * that represent illustrative, unverified readiness records, not certification.
  */
 import { getDb } from "./db";
 import { compliancePassports, organizations, users, policies, complianceRecords } from "../drizzle/schema";
@@ -33,7 +33,7 @@ export async function issuePassport(data: {
   const activePolicies = allPolicies.filter(p => p.status === "active");
   const overallScore = activePolicies.length > 0
     ? Math.round(activePolicies.reduce((sum, p) => sum + (p.complianceScore || 0), 0) / activePolicies.length)
-    : 75;
+    : 0;
 
   const passportHash = crypto
     .createHash("sha256")
@@ -50,8 +50,8 @@ export async function issuePassport(data: {
   ];
 
   const certifications = [
-    { name: "Cyber Essentials", status: "active", issuedDate: new Date().toISOString().split("T")[0] },
-    { name: "GDPR Readiness", status: "active", issuedDate: new Date().toISOString().split("T")[0] },
+    { name: "Cyber Essentials", status: "planned", note: "No certificate evidenced" },
+    { name: "GDPR Readiness", status: "unverified", note: "Readiness checklist, not GDPR certification" },
   ];
 
   const [result] = await db.insert(compliancePassports).values({
@@ -83,5 +83,5 @@ export async function verifyPassport(passportHash: string) {
     await db.update(compliancePassports).set({ status: "expired" }).where(eq(compliancePassports.id, passport.id));
     return { valid: false, reason: "Passport has expired" };
   }
-  return { valid: true, passport };
+  return { valid: true, passport, assurance: "Record validity only; no legal compliance or certification has been verified" };
 }

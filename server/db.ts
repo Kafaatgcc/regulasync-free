@@ -1,13 +1,13 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { 
-  InsertUser, 
-  users, 
-  policies, 
+import {
+  InsertUser,
+  users,
+  policies,
   delegationAuthority,
   approvalRequests,
-  complianceRecords, 
-  auditTrail, 
+  complianceRecords,
+  auditTrail,
   regulatoryUpdates,
   aiRecommendations,
   departments,
@@ -112,7 +112,7 @@ export async function getUserByOpenId(openId: string) {
 export async function getPolicies() {
   const db = await getDb();
   if (!db) return [];
-  
+
   const result = await db.select().from(policies).orderBy(desc(policies.updatedAt));
   return result;
 }
@@ -120,7 +120,7 @@ export async function getPolicies() {
 export async function getPolicyById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
-  
+
   const result = await db.select().from(policies).where(eq(policies.id, id)).limit(1);
   return result.length > 0 ? result[0] : undefined;
 }
@@ -128,7 +128,7 @@ export async function getPolicyById(id: number) {
 export async function createPolicy(policy: InsertPolicy) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const result = await db.insert(policies).values(policy);
   return result;
 }
@@ -136,7 +136,7 @@ export async function createPolicy(policy: InsertPolicy) {
 export async function updatePolicy(id: number, policy: Partial<InsertPolicy>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   await db.update(policies).set({ ...policy, updatedAt: new Date() }).where(eq(policies.id, id));
 }
 
@@ -144,7 +144,7 @@ export async function updatePolicy(id: number, policy: Partial<InsertPolicy>) {
 export async function getDelegations() {
   const db = await getDb();
   if (!db) return [];
-  
+
   const result = await db.select().from(delegationAuthority).orderBy(desc(delegationAuthority.createdAt));
   return result;
 }
@@ -152,7 +152,7 @@ export async function getDelegations() {
 export async function getDelegationById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
-  
+
   const result = await db.select().from(delegationAuthority).where(eq(delegationAuthority.id, id)).limit(1);
   return result.length > 0 ? result[0] : undefined;
 }
@@ -160,7 +160,7 @@ export async function getDelegationById(id: number) {
 export async function createDelegation(delegation: InsertDelegationAuthority) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const result = await db.insert(delegationAuthority).values(delegation);
   return result;
 }
@@ -168,7 +168,7 @@ export async function createDelegation(delegation: InsertDelegationAuthority) {
 export async function updateDelegation(id: number, delegation: Partial<InsertDelegationAuthority>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   await db.update(delegationAuthority).set({ ...delegation, updatedAt: new Date() }).where(eq(delegationAuthority.id, id));
 }
 
@@ -176,7 +176,7 @@ export async function updateDelegation(id: number, delegation: Partial<InsertDel
 export async function getApprovalRequests() {
   const db = await getDb();
   if (!db) return [];
-  
+
   const result = await db.select().from(approvalRequests).orderBy(desc(approvalRequests.createdAt));
   return result;
 }
@@ -184,7 +184,7 @@ export async function getApprovalRequests() {
 export async function createApprovalRequest(request: InsertApprovalRequest) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const result = await db.insert(approvalRequests).values(request);
   return result;
 }
@@ -192,7 +192,7 @@ export async function createApprovalRequest(request: InsertApprovalRequest) {
 export async function updateApprovalRequest(id: number, request: Partial<InsertApprovalRequest>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   await db.update(approvalRequests).set({ ...request, updatedAt: new Date() }).where(eq(approvalRequests.id, id));
 }
 
@@ -200,7 +200,7 @@ export async function updateApprovalRequest(id: number, request: Partial<InsertA
 export async function getComplianceRecords() {
   const db = await getDb();
   if (!db) return [];
-  
+
   const result = await db.select().from(complianceRecords).orderBy(desc(complianceRecords.lastAssessmentDate));
   return result;
 }
@@ -208,7 +208,7 @@ export async function getComplianceRecords() {
 export async function createComplianceRecord(record: InsertComplianceRecord) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const result = await db.insert(complianceRecords).values(record);
   return result;
 }
@@ -216,24 +216,24 @@ export async function createComplianceRecord(record: InsertComplianceRecord) {
 export async function updateComplianceRecord(id: number, record: Partial<InsertComplianceRecord>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   await db.update(complianceRecords).set({ ...record, updatedAt: new Date() }).where(eq(complianceRecords.id, id));
 }
 
 // Audit Trail functions - Self-Validating Audit Cache
-import { 
-  createAuditEntryWithHash, 
-  verifyAuditChain, 
+import {
+  createAuditEntryWithHash,
+  verifyAuditChain,
   getAuditEntryWithVerification,
   getChainStatistics,
   exportAuditTrailWithVerification,
-  ChainVerificationResult 
+  ChainVerificationResult
 } from './auditCache';
 
 export async function getAuditTrail(limit: number = 100) {
   const db = await getDb();
   if (!db) return [];
-  
+
   const result = await db.select().from(auditTrail).orderBy(desc(auditTrail.createdAt)).limit(limit);
   return result;
 }
@@ -241,7 +241,7 @@ export async function getAuditTrail(limit: number = 100) {
 export async function createAuditEntry(entry: InsertAuditTrail) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   // Use the hash-based audit entry creation
   const result = await createAuditEntryWithHash(db, entry);
   return result;
@@ -260,7 +260,7 @@ export async function verifyAuditChainIntegrity(): Promise<ChainVerificationResu
       chainIntegrity: 'empty',
     };
   }
-  
+
   return await verifyAuditChain(db);
 }
 
@@ -268,7 +268,7 @@ export async function verifyAuditChainIntegrity(): Promise<ChainVerificationResu
 export async function getAuditEntryVerified(entryId: number) {
   const db = await getDb();
   if (!db) return null;
-  
+
   return await getAuditEntryWithVerification(db, entryId);
 }
 
@@ -284,7 +284,7 @@ export async function getAuditStatistics() {
       entitiesBreakdown: {},
     };
   }
-  
+
   return await getChainStatistics(db);
 }
 
@@ -299,7 +299,7 @@ export async function exportAuditTrailVerified() {
       verificationHash: '',
     };
   }
-  
+
   return await exportAuditTrailWithVerification(db);
 }
 
@@ -307,7 +307,7 @@ export async function exportAuditTrailVerified() {
 export async function getRegulatoryUpdates() {
   const db = await getDb();
   if (!db) return [];
-  
+
   const result = await db.select().from(regulatoryUpdates).orderBy(desc(regulatoryUpdates.createdAt));
   return result;
 }
@@ -315,7 +315,7 @@ export async function getRegulatoryUpdates() {
 export async function createRegulatoryUpdate(update: InsertRegulatoryUpdate) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const result = await db.insert(regulatoryUpdates).values(update);
   return result;
 }
@@ -323,7 +323,7 @@ export async function createRegulatoryUpdate(update: InsertRegulatoryUpdate) {
 export async function updateRegulatoryUpdate(id: number, update: Partial<InsertRegulatoryUpdate>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   await db.update(regulatoryUpdates).set({ ...update, updatedAt: new Date() }).where(eq(regulatoryUpdates.id, id));
 }
 
@@ -331,7 +331,7 @@ export async function updateRegulatoryUpdate(id: number, update: Partial<InsertR
 export async function getAIRecommendations() {
   const db = await getDb();
   if (!db) return [];
-  
+
   const result = await db.select().from(aiRecommendations).orderBy(desc(aiRecommendations.createdAt));
   return result;
 }
@@ -339,7 +339,7 @@ export async function getAIRecommendations() {
 export async function createAIRecommendation(recommendation: InsertAIRecommendation) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const result = await db.insert(aiRecommendations).values(recommendation);
   return result;
 }
@@ -347,7 +347,7 @@ export async function createAIRecommendation(recommendation: InsertAIRecommendat
 export async function updateAIRecommendation(id: number, recommendation: Partial<InsertAIRecommendation>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   await db.update(aiRecommendations).set({ ...recommendation, updatedAt: new Date() }).where(eq(aiRecommendations.id, id));
 }
 
@@ -355,7 +355,7 @@ export async function updateAIRecommendation(id: number, recommendation: Partial
 export async function getDepartments() {
   const db = await getDb();
   if (!db) return [];
-  
+
   const result = await db.select().from(departments).orderBy(departments.name);
   return result;
 }
@@ -363,7 +363,7 @@ export async function getDepartments() {
 export async function createDepartment(department: InsertDepartment) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const result = await db.insert(departments).values(department);
   return result;
 }
@@ -383,27 +383,27 @@ export async function getDashboardStats() {
       criticalAlerts: 0,
     };
   }
-  
+
   const [policyStats] = await db.select({
     total: sql<number>`count(*)`,
     active: sql<number>`sum(case when status = 'active' then 1 else 0 end)`,
     pending: sql<number>`sum(case when status = 'pending_review' then 1 else 0 end)`,
   }).from(policies);
-  
+
   const [delegationStats] = await db.select({
     total: sql<number>`count(*)`,
     active: sql<number>`sum(case when status = 'active' then 1 else 0 end)`,
   }).from(delegationAuthority);
-  
+
   const [complianceStats] = await db.select({
     avgScore: sql<number>`avg(score)`,
   }).from(complianceRecords);
-  
+
   const [recommendationStats] = await db.select({
     open: sql<number>`sum(case when status = 'new' then 1 else 0 end)`,
     critical: sql<number>`sum(case when priority = 'critical' and status = 'new' then 1 else 0 end)`,
   }).from(aiRecommendations);
-  
+
   return {
     totalPolicies: policyStats?.total || 0,
     activePolicies: policyStats?.active || 0,
@@ -420,7 +420,7 @@ export async function getDashboardStats() {
 export async function createDemoRequest(request: InsertDemoRequest) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const result = await db.insert(demoRequests).values(request);
   return { id: Number(result[0].insertId) };
 }
@@ -428,7 +428,7 @@ export async function createDemoRequest(request: InsertDemoRequest) {
 export async function getDemoRequests() {
   const db = await getDb();
   if (!db) return [];
-  
+
   const result = await db.select().from(demoRequests).orderBy(desc(demoRequests.createdAt));
   return result;
 }
@@ -441,8 +441,8 @@ export async function getNotifications(userId: number) {
     {
       id: 1,
       userId,
-      title: "FCA Filing Due in 5 Days",
-      message: "Your quarterly FCA regulatory filing is due on January 6, 2026",
+      title: "Illustrative Reporting Preparation Reminder",
+      message: `Demo internal preparation target: ${new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10)}. This is not an official FCA filing deadline.`,
       type: "regulatory_deadline",
       priority: "critical",
       isRead: false,
@@ -461,8 +461,8 @@ export async function getNotifications(userId: number) {
     {
       id: 3,
       userId,
-      title: "Annual Risk Assessment Due",
-      message: "Complete your annual risk assessment by January 15, 2026",
+      title: "Illustrative Risk Assessment Reminder",
+      message: `Demo internal risk review target: ${new Date(Date.now() + 45 * 86400000).toISOString().slice(0, 10)}. Verify real obligations separately.`,
       type: "compliance_alert",
       priority: "high",
       isRead: false,
@@ -527,7 +527,7 @@ export async function createContactSubmission(submission: {
     console.log("[Contact] Demo mode - submission logged:", submission.email);
     return { id: Date.now(), success: true };
   }
-  
+
   try {
     const result = await db.insert(contactSubmissions).values({
       name: submission.name,
@@ -556,24 +556,24 @@ export async function getContactSubmissions(options?: {
 }) {
   const db = await getDb();
   if (!db) return [];
-  
+
   let query = db.select().from(contactSubmissions);
-  
+
   if (options?.status) {
     query = query.where(eq(contactSubmissions.status, options.status)) as typeof query;
   }
-  
+
   const result = await query
     .orderBy(desc(contactSubmissions.createdAt))
     .limit(options?.limit || 100);
-  
+
   return result;
 }
 
 export async function getContactSubmissionById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
-  
+
   const result = await db.select().from(contactSubmissions).where(eq(contactSubmissions.id, id)).limit(1);
   return result.length > 0 ? result[0] : undefined;
 }
@@ -588,11 +588,11 @@ export async function updateContactSubmission(id: number, updates: {
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   await db.update(contactSubmissions)
     .set({ ...updates, updatedAt: new Date() })
     .where(eq(contactSubmissions.id, id));
-  
+
   return { success: true };
 }
 
@@ -608,7 +608,7 @@ export async function getContactSubmissionStats() {
       archived: 0,
     };
   }
-  
+
   const [stats] = await db.select({
     total: sql<number>`count(*)`,
     new: sql<number>`sum(case when status = 'new' then 1 else 0 end)`,
@@ -617,7 +617,7 @@ export async function getContactSubmissionStats() {
     resolved: sql<number>`sum(case when status = 'resolved' then 1 else 0 end)`,
     archived: sql<number>`sum(case when status = 'archived' then 1 else 0 end)`,
   }).from(contactSubmissions);
-  
+
   return {
     total: stats?.total || 0,
     new: stats?.new || 0,

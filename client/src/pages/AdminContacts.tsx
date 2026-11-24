@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,11 +27,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  Users, 
-  Mail, 
-  Phone, 
-  Building2, 
+import {
+  Users,
+  Mail,
+  Phone,
+  Building2,
   Calendar,
   MessageSquare,
   Search,
@@ -46,83 +47,18 @@ import {
 } from "lucide-react";
 import { toast } from 'sonner';
 
-// Demo contact submissions data
-const demoContacts = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    email: "sarah.johnson@barclays.co.uk",
-    company: "Barclays PLC",
-    phone: "+44 20 7116 1234",
-    inquiryType: "demo",
-    subject: "Enterprise Demo Request",
-    message: "We're looking to implement a governance automation solution across our compliance department. Would like to schedule a demo for our team of 15 compliance officers.",
-    status: "new",
-    priority: "high",
-    createdAt: "2026-01-01T09:30:00Z",
-    notes: ""
-  },
-  {
-    id: 2,
-    name: "Michael Chen",
-    email: "m.chen@hsbc.com",
-    company: "HSBC Holdings",
-    phone: "+44 20 7991 8888",
-    inquiryType: "pricing",
-    subject: "Enterprise Pricing Inquiry",
-    message: "Interested in understanding the pricing structure for 200+ users. We have multiple entities across the UK and EU that would need access.",
-    status: "in_progress",
-    priority: "high",
-    createdAt: "2025-12-30T14:15:00Z",
-    notes: "Scheduled call for Jan 3rd"
-  },
-  {
-    id: 3,
-    name: "Emma Williams",
-    email: "emma.w@nationwide.co.uk",
-    company: "Nationwide Building Society",
-    phone: "+44 1onal 123 4567",
-    inquiryType: "general",
-    subject: "Integration with Existing Systems",
-    message: "We currently use ServiceNow for IT service management. Would like to understand how RegulaSync integrates with existing enterprise systems.",
-    status: "resolved",
-    priority: "medium",
-    createdAt: "2025-12-28T11:00:00Z",
-    notes: "Sent integration documentation"
-  },
-  {
-    id: 4,
-    name: "James Thompson",
-    email: "j.thompson@lloyds.com",
-    company: "Lloyds Banking Group",
-    phone: "+44 20 7626 1500",
-    inquiryType: "demo",
-    subject: "Pilot Program Interest",
-    message: "Saw your early access program. We'd like to be considered as a pilot partner for Q2 2026. Our compliance team has been struggling with manual policy tracking.",
-    status: "new",
-    priority: "high",
-    createdAt: "2026-01-01T08:45:00Z",
-    notes: ""
-  },
-  {
-    id: 5,
-    name: "Lisa Anderson",
-    email: "l.anderson@santander.co.uk",
-    company: "Santander UK",
-    phone: "+44 800 389 7000",
-    inquiryType: "support",
-    subject: "Technical Documentation",
-    message: "Looking for technical documentation about your API capabilities and security architecture for our IT security review.",
-    status: "in_progress",
-    priority: "low",
-    createdAt: "2025-12-29T16:30:00Z",
-    notes: "Sent security whitepaper"
-  }
-];
+type ContactRecord = {
+  id: number; name: string; email: string; company: string; phone: string;
+  inquiryType: string; subject: string; message: string;
+  status: "new" | "read" | "replied" | "resolved" | "archived";
+  priority: "high" | "medium" | "low"; createdAt: Date; notes: string;
+};
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   new: { label: "New", color: "bg-blue-100 text-blue-700", icon: <AlertCircle className="h-3 w-3" /> },
-  in_progress: { label: "In Progress", color: "bg-amber-100 text-amber-700", icon: <Clock className="h-3 w-3" /> },
+  read: { label: "Read", color: "bg-amber-100 text-amber-700", icon: <Clock className="h-3 w-3" /> },
+  replied: { label: "Replied", color: "bg-purple-100 text-purple-700", icon: <Mail className="h-3 w-3" /> },
+  archived: { label: "Archived", color: "bg-gray-100 text-gray-700", icon: <CheckCircle2 className="h-3 w-3" /> },
   resolved: { label: "Resolved", color: "bg-green-100 text-green-700", icon: <CheckCircle2 className="h-3 w-3" /> },
 };
 
@@ -138,18 +74,26 @@ const inquiryTypeConfig: Record<string, string> = {
   general: "General Question",
   support: "Technical Support",
   partnership: "Partnership",
+  media: "Media & Press",
 };
 
 export default function AdminContacts() {
-  const [contacts, setContacts] = useState(demoContacts);
-  const [selectedContact, setSelectedContact] = useState<typeof demoContacts[0] | null>(null);
+  const query = trpc.contact.list.useQuery({ limit: 100 }, { retry: false });
+  const utils = trpc.useUtils();
+  const contacts: ContactRecord[] = (query.data ?? []).map(contact => ({ ...contact,
+    company: contact.company ?? "", phone: contact.phone ?? "", notes: contact.notes ?? "" }));
+  const [selectedContact, setSelectedContact] = useState<ContactRecord | null>(null);
+  const updateContact = trpc.contact.update.useMutation({
+    onSuccess: () => { void utils.contact.list.invalidate(); toast.success("Inquiry updated"); },
+    onError: error => toast.error(error.message || "Unable to save inquiry changes"),
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [notes, setNotes] = useState("");
 
   const filteredContacts = contacts.filter(contact => {
-    const matchesSearch = 
+    const matchesSearch =
       contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       contact.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       contact.company.toLowerCase().includes(searchQuery.toLowerCase());
@@ -161,38 +105,25 @@ export default function AdminContacts() {
   const stats = {
     total: contacts.length,
     new: contacts.filter(c => c.status === "new").length,
-    inProgress: contacts.filter(c => c.status === "in_progress").length,
+    inProgress: contacts.filter(c => c.status === "read" || c.status === "replied").length,
     resolved: contacts.filter(c => c.status === "resolved").length,
     highPriority: contacts.filter(c => c.priority === "high").length,
   };
 
-  const handleStatusChange = (contactId: number, newStatus: string) => {
-    setContacts(prev => prev.map(c => 
-      c.id === contactId ? { ...c, status: newStatus } : c
-    ));
-    toast.success("Status Updated", {
-      description: `Contact status changed to ${statusConfig[newStatus].label}`
-    });
+  const handleStatusChange = async (contactId: number, newStatus: string) => {
+    const status = newStatus as ContactRecord["status"];
+    try { await updateContact.mutateAsync({ id: contactId, status });
+      setSelectedContact(current => current?.id === contactId ? { ...current, status } : current);
+    } catch { /* Mutation displays the error; do not pretend it saved. */ }
   };
-
-  const handlePriorityChange = (contactId: number, newPriority: string) => {
-    setContacts(prev => prev.map(c => 
-      c.id === contactId ? { ...c, priority: newPriority } : c
-    ));
-    toast.success("Priority Updated", {
-      description: `Contact priority changed to ${priorityConfig[newPriority].label}`
-    });
+  const handlePriorityChange = async (contactId: number, newPriority: string) => {
+    const priority = newPriority as ContactRecord["priority"];
+    try { await updateContact.mutateAsync({ id: contactId, priority });
+      setSelectedContact(current => current?.id === contactId ? { ...current, priority } : current);
+    } catch { /* Mutation displays the error. */ }
   };
-
   const handleSaveNotes = () => {
-    if (selectedContact) {
-      setContacts(prev => prev.map(c => 
-        c.id === selectedContact.id ? { ...c, notes } : c
-      ));
-      toast.success("Notes Saved", {
-        description: "Contact notes have been updated"
-      });
-    }
+    if (selectedContact) updateContact.mutate({ id: selectedContact.id, notes });
   };
 
   const handleExportCSV = () => {
@@ -208,15 +139,17 @@ export default function AdminContacts() {
       priorityConfig[c.priority].label,
       new Date(c.createdAt).toLocaleDateString()
     ]);
-    
-    const csv = [headers.join(","), ...rows.map(r => r.map(cell => `"${cell}"`).join(","))].join("\n");
+
+    const csvCell = (cell: unknown) => { const value = String(cell ?? ""); return `"${(/^[=+@\-]/.test(value) ? "'" : "") + value.replaceAll('"', '""')}"`; };
+    const csv = [headers.join(","), ...rows.map(r => r.map(csvCell).join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `contact-submissions-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
-    
+    URL.revokeObjectURL(url);
+
     toast.success("Export Complete", {
       description: "Contact submissions exported to CSV"
     });
@@ -231,14 +164,16 @@ export default function AdminContacts() {
             <Users className="h-6 w-6" />
             Contact Submissions
           </h1>
-          <p className="text-muted-foreground">Manage and respond to contact form inquiries</p>
+          <p className="text-muted-foreground">Manage saved contact and guided-demo inquiries (latest 100 records).</p>
         </div>
-        <Button onClick={handleExportCSV}>
+        <div className="flex gap-2"><Button variant="outline" onClick={() => void query.refetch()} disabled={query.isFetching}>Refresh</Button><Button onClick={handleExportCSV} disabled={!contacts.length}>
           <Download className="h-4 w-4 mr-2" />
           Export CSV
-        </Button>
+        </Button></div>
       </div>
 
+      {query.isLoading && <p role="status">Loading saved inquiries…</p>}
+      {query.error && <p role="alert" className="text-red-600">Unable to load saved inquiries: {query.error.message}</p>}
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card>
@@ -318,7 +253,9 @@ export default function AdminContacts() {
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="new">New</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
+                <SelectItem value="read">Read</SelectItem>
+                <SelectItem value="replied">Replied</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
                 <SelectItem value="resolved">Resolved</SelectItem>
               </SelectContent>
             </Select>
@@ -359,6 +296,7 @@ export default function AdminContacts() {
               </TableRow>
             </TableHeader>
             <TableBody>
+              {!query.isLoading && !query.error && !filteredContacts.length && <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No saved inquiries match these filters.</TableCell></TableRow>}
               {filteredContacts.map((contact) => (
                 <TableRow key={contact.id}>
                   <TableCell>
@@ -398,8 +336,9 @@ export default function AdminContacts() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      aria-label={`View inquiry from ${contact.name}`}
+                      variant="ghost"
                       size="sm"
                       onClick={() => {
                         setSelectedContact(contact);
@@ -425,7 +364,7 @@ export default function AdminContacts() {
               View and manage contact submission
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedContact && (
             <div className="space-y-6">
               {/* Contact Info */}
@@ -464,11 +403,11 @@ export default function AdminContacts() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Status</p>
-                  <Select 
-                    value={selectedContact.status} 
+                  <Select
+                    disabled={updateContact.isPending}
+                    value={selectedContact.status}
                     onValueChange={(value) => {
-                      handleStatusChange(selectedContact.id, value);
-                      setSelectedContact({ ...selectedContact, status: value });
+                      void handleStatusChange(selectedContact.id, value);
                     }}
                   >
                     <SelectTrigger>
@@ -476,18 +415,20 @@ export default function AdminContacts() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="new">New</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="read">Read</SelectItem>
+                <SelectItem value="replied">Replied</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
                       <SelectItem value="resolved">Resolved</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Priority</p>
-                  <Select 
-                    value={selectedContact.priority} 
+                  <Select
+                    disabled={updateContact.isPending}
+                    value={selectedContact.priority}
                     onValueChange={(value) => {
-                      handlePriorityChange(selectedContact.id, value);
-                      setSelectedContact({ ...selectedContact, priority: value });
+                      void handlePriorityChange(selectedContact.id, value);
                     }}
                   >
                     <SelectTrigger>
@@ -511,7 +452,7 @@ export default function AdminContacts() {
                   placeholder="Add notes about this contact..."
                   rows={3}
                 />
-                <Button size="sm" onClick={handleSaveNotes}>
+                <Button size="sm" disabled={updateContact.isPending} onClick={handleSaveNotes}>
                   Save Notes
                 </Button>
               </div>

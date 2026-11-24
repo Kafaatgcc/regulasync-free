@@ -25,15 +25,15 @@ import {
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { 
-  LayoutDashboard, 
-  LogOut, 
-  PanelLeft, 
-  FileText, 
-  GitBranch, 
-  Shield, 
-  Brain, 
-  History, 
+import {
+  LayoutDashboard,
+  LogOut,
+  PanelLeft,
+  FileText,
+  GitBranch,
+  Shield,
+  Brain,
+  History,
   BarChart3,
   Bell,
   Settings,
@@ -165,21 +165,12 @@ const getDefaultUser = () => {
     email: 'demo@regulasync.com',
     openId: 'user',
     role: 'user' as const,
-    authMethod: 'password',
+    loginMethod: 'production',
     createdAt: new Date(),
     updatedAt: new Date(),
     lastSignedIn: new Date(),
   };
 };
-
-const getPreparedDemoUser = () => ({
-  ...getDefaultUser(),
-  name: "Alex Morgan",
-  email: "alex.morgan@regulasync-demo.co.uk",
-  role: "compliance_manager",
-  department: "Compliance",
-  jobTitle: "Head of Compliance",
-});
 
 export default function DashboardLayout({
   children,
@@ -187,22 +178,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   // Try to get the real authenticated user from the server
-  const { data: authUser, isLoading: authLoading, isFetching: authFetching } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 30_000 });
-  // Redirect to login if not authenticated
-  const [, navigate] = useLocation();
-  useEffect(() => {
-    if (!authLoading && !authFetching && !authUser) {
-      navigate('/login');
-    }
-  }, [authUser, authLoading, authFetching, navigate]);
+  const { data: authUser, isLoading: authLoading } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 30_000 });
+  // The parent ProtectedRoute owns session redirects; a transient query error
+  // must not send an authenticated user back to the credential screen.
   // Merge real user with fallback defaults
   const [localName, setLocalName] = useState(() => localStorage.getItem('userName') || '');
-  const isPreparedDemo = typeof window !== 'undefined' && localStorage.getItem('regulasync_demo_access') === 'true';
-  const user = isPreparedDemo
-    ? { ...(authUser ?? getPreparedDemoUser()), ...getPreparedDemoUser() }
-    : authUser
-      ? { ...authUser, name: authUser.name || localName || 'User', email: authUser.email || 'user@regulasync.com' }
-      : getDefaultUser();
+  const user = authUser
+    ? { ...authUser, name: authUser.name || localName || 'User', email: authUser.email || 'user@regulasync.com' }
+    : getDefaultUser();
 
   const updateUserName = useCallback((name: string) => {
     localStorage.setItem('userName', name);
@@ -223,8 +206,6 @@ export default function DashboardLayout({
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
   }, [sidebarWidth]);
 
-  if (authLoading || !authUser) return <DashboardLayoutSkeleton />;
-
   // Production mode - full access
   return (
     <SidebarProvider
@@ -234,7 +215,7 @@ export default function DashboardLayout({
         } as CSSProperties
       }
     >
-      <DashboardLayoutContent 
+      <DashboardLayoutContent
         setSidebarWidth={setSidebarWidth}
         user={user}
         onUpdateUserName={updateUserName}
@@ -254,7 +235,7 @@ type AnyUser = {
   role: string;
   department?: string | null;
   jobTitle?: string | null;
-  authMethod?: string | null;
+  loginMethod?: string | null;
   createdAt: Date;
   updatedAt: Date;
   lastSignedIn: Date;
@@ -278,6 +259,7 @@ function DashboardLayoutContent({
   const logoutMutation = trpc.auth.logout.useMutation({
     onSettled: () => {
       localStorage.removeItem('regulasync_demo_access');
+      localStorage.removeItem('demoMode');
       localStorage.removeItem('userName');
       window.location.href = '/';
     },
@@ -336,16 +318,16 @@ function DashboardLayoutContent({
           <SidebarHeader className="border-b border-sidebar-border py-2.5">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild 
+                <SidebarMenuButton
+                  asChild
                   className="h-8 hover:bg-transparent cursor-pointer"
-                  onClick={() => window.location.href = '/'}
+                  onClick={() => navigate('/dashboard')}
                 >
                   <div className="flex items-center gap-2 px-1">
                     <div className="w-6 h-6 flex items-center justify-center">
-                      <img 
-                        src="/logo.png" 
-                        alt="RegulaSync" 
+                      <img
+                        src="/api/brand/logo.png"
+                        alt="RegulaSync"
                         className="w-6 h-6 object-contain"
                       />
                     </div>
@@ -357,7 +339,7 @@ function DashboardLayoutContent({
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarHeader>
-          
+
           <SidebarContent className="py-1 overflow-y-auto">
             {/* Main Navigation */}
             <SidebarGroup>
@@ -520,11 +502,11 @@ function DashboardLayoutContent({
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
-          
+
           <SidebarFooter className="border-t border-sidebar-border py-2">
             <SidebarMenu>
               <SidebarMenuItem>
-                <UserMenu 
+                <UserMenu
                   user={currentUser}
                   onUpdateUserName={onUpdateUserName}
                   onResetData={onResetData}
@@ -534,14 +516,14 @@ function DashboardLayoutContent({
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
-        
+
         {/* Resize handle */}
         <div
           className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors z-50"
           onMouseDown={handleMouseDown}
         />
       </div>
-      
+
       <SidebarInset>
         {/* Dashboard Header with Navigation */}
         <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
@@ -549,7 +531,7 @@ function DashboardLayoutContent({
             <div className="flex items-center gap-4">
               <SidebarTrigger className="h-8 w-8" />
               <nav className="hidden md:flex items-center gap-4 text-sm">
-                <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">Home</Link>
+                <Link href="/home" className="text-muted-foreground hover:text-foreground transition-colors">Home</Link>
                 <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link>
                 <Link href="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
                 <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
@@ -568,17 +550,18 @@ function DashboardLayoutContent({
             </div>
           </div>
         </header>
-        
+
         <main className="flex-1 p-4 md:p-6">
+          <p role="note" className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">Pre-launch assessment prototype. Sample scores, records and timelines are illustrative unless entered by you. No certification, customer endorsement or official regulatory deadline is implied.</p>
           {children}
         </main>
-        
+
         {/* Dashboard Footer */}
         <footer className="border-t py-4 px-6 text-center text-xs text-muted-foreground">
           <p>© 2026 RegulaSync. All rights reserved.</p>
         </footer>
       </SidebarInset>
-      
+
       {/* Guided Tour */}
       <GuidedTour isDemoMode={false} />
     </>
@@ -586,12 +569,12 @@ function DashboardLayoutContent({
 }
 
 // User Menu Component
-function UserMenu({ 
-  user, 
+function UserMenu({
+  user,
   onUpdateUserName,
   onResetData,
   onSignOut
-}: { 
+}: {
   user: AnyUser | null;
   onUpdateUserName: (name: string) => void;
   onResetData: () => void;
@@ -602,7 +585,7 @@ function UserMenu({
   const [newName, setNewName] = useState('');
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  
+
   const handleSaveName = () => {
     if (newName.trim()) {
       onUpdateUserName(newName.trim());
@@ -634,18 +617,18 @@ function UserMenu({
             {!isCollapsed && <ChevronRight className="h-4 w-4 ml-auto" />}
           </SidebarMenuButton>
         </DropdownMenuTrigger>
-        <DropdownMenuContent 
-          side="right" 
-          align="end" 
+        <DropdownMenuContent
+          side="right"
+          align="end"
           className="w-56"
           sideOffset={8}
         >
           <div className="px-2 py-1.5">
             <p className="text-sm font-medium">{user?.name || 'User'}</p>
             <p className="text-xs text-muted-foreground">{user?.email}</p>
-            {(user?.jobTitle || (user?.role && user.role !== 'user')) && (
+            {user?.role && user.role !== 'user' && (
               <p className="text-[10px] text-primary font-medium mt-0.5 capitalize">
-                {user.jobTitle || user.role.replace(/_/g, ' ')}
+                {user.role.replace(/_/g, ' ')}
                 {user.department ? ` · ${user.department}` : ''}
               </p>
             )}
@@ -660,7 +643,7 @@ function UserMenu({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      
+
       {/* Name Edit Dialog */}
       <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
         <DialogContent>

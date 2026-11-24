@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Joyride, STATUS } from 'react-joyride';
 import type { Step, EventData } from 'react-joyride';
 import { useLocation } from 'wouter';
+import { PLAN_PRICING, ANNUAL_BILLING_EXPLANATION, USER_BILLING_EXPLANATION, formatGBP } from '@shared/planPricing';
 
 const TOUR_COMPLETED_KEY = 'regulasync-tour-completed';
 
@@ -13,7 +14,7 @@ const dashboardSteps: Step[] = [
       <div className="text-left">
         <h3 className="font-bold text-lg mb-2">Welcome to RegulaSync! 🎉</h3>
         <p className="text-sm text-muted-foreground">
-          Let's take a quick tour of the AI-powered governance automation platform. 
+          Let's take a quick tour of the AI-powered governance automation platform.
           This demo showcases how RegulaSync transforms compliance operations for regulated industries.
         </p>
       </div>
@@ -26,7 +27,7 @@ const dashboardSteps: Step[] = [
       <div className="text-left">
         <h3 className="font-bold text-lg mb-2">Real-Time Compliance Score</h3>
         <p className="text-sm text-muted-foreground">
-          Your organization's overall compliance health at a glance. 
+          Your organization's overall compliance health at a glance.
           RegulaSync continuously monitors policies and regulations to calculate this score.
         </p>
       </div>
@@ -39,7 +40,7 @@ const dashboardSteps: Step[] = [
       <div className="text-left">
         <h3 className="font-bold text-lg mb-2">AI-Powered Recommendations</h3>
         <p className="text-sm text-muted-foreground">
-          Our AI analyzes regulatory changes and your policies to provide actionable recommendations. 
+          Our AI analyzes regulatory changes and your policies to provide actionable recommendations.
           Each suggestion includes a confidence score and priority level.
         </p>
       </div>
@@ -52,7 +53,7 @@ const dashboardSteps: Step[] = [
       <div className="text-left">
         <h3 className="font-bold text-lg mb-2">Activity Timeline</h3>
         <p className="text-sm text-muted-foreground">
-          Track all governance activities in real-time. Every action is logged with 
+          Track all governance activities in real-time. Every action is logged with
           cryptographic hashes for complete audit trail integrity.
         </p>
       </div>
@@ -87,10 +88,12 @@ const dashboardSteps: Step[] = [
           RegulaSync is available on three plans, all built for UK regulated businesses:
         </p>
         <ul className="text-sm text-muted-foreground space-y-1">
-          <li>• <strong>Core — £90/month</strong>: Up to 5 users, 3 frameworks, basic SVAC audit trail</li>
-          <li>• <strong>Professional — £175/month</strong>: Up to 25 users, AI policy drafting, predictive risk, board reports</li>
-          <li>• <strong>Enterprise — £350/month</strong>: Unlimited users, white-label, API access, webhooks, dedicated manager</li>
+          <li>• <strong>Core — {formatGBP(PLAN_PRICING.core.monthlyPence)} per user/month</strong>: 3 frameworks, basic SVAC audit trail</li>
+          <li>• <strong>Professional — {formatGBP(PLAN_PRICING.professional.monthlyPence)} per user/month</strong>: AI policy drafting, predictive risk, board reports</li>
+          <li>• <strong>Enterprise — {formatGBP(PLAN_PRICING.enterprise.monthlyPence)} per user/month</strong>: White-label, API access, webhooks, dedicated manager</li>
         </ul>
+        <p className="text-xs text-muted-foreground mt-2">{USER_BILLING_EXPLANATION}</p>
+        <p className="text-xs text-muted-foreground mt-2">{ANNUAL_BILLING_EXPLANATION}</p>
         <p className="text-xs text-muted-foreground mt-2">Navigate to <strong>Subscription Plans</strong> in the sidebar to compare features.</p>
       </div>
     ),
@@ -178,7 +181,7 @@ export default function GuidedTour({ isDemoMode }: GuidedTourProps) {
 
   const handleJoyrideCallback = (data: EventData) => {
     const { status, index, type } = data;
-    
+
     if (type === 'step:after') {
       setStepIndex(index + 1);
     }

@@ -1,3 +1,4 @@
+const exampleReportDate = (days: number) => new Date(Date.now() + days * 86400000).toISOString().slice(0,10);
 import { useState } from "react";
 import {
   Dialog,
@@ -25,8 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  FileText, 
+import {
+  FileText,
   Download,
   Calendar,
   Clock,
@@ -51,7 +52,7 @@ const reportTemplates = [
     description: "High-level overview of compliance status for board and executive review",
     category: "compliance",
     format: "pdf",
-    lastGenerated: "2024-12-20",
+    lastGenerated: exampleReportDate(-2),
     frequency: "monthly",
     icon: FilePieChart,
   },
@@ -61,7 +62,7 @@ const reportTemplates = [
     description: "Detailed audit trail of all policy changes and approvals",
     category: "audit",
     format: "pdf",
-    lastGenerated: "2024-12-18",
+    lastGenerated: exampleReportDate(-3),
     frequency: "weekly",
     icon: FileText,
   },
@@ -71,7 +72,7 @@ const reportTemplates = [
     description: "Complete matrix of all delegations, limits, and approval chains",
     category: "delegation",
     format: "xlsx",
-    lastGenerated: "2024-12-15",
+    lastGenerated: exampleReportDate(-4),
     frequency: "monthly",
     icon: FileSpreadsheet,
   },
@@ -81,7 +82,7 @@ const reportTemplates = [
     description: "Assessment of recent regulatory changes and their impact on policies",
     category: "regulatory",
     format: "pdf",
-    lastGenerated: "2024-12-22",
+    lastGenerated: exampleReportDate(-5),
     frequency: "weekly",
     icon: BarChart3,
   },
@@ -91,7 +92,7 @@ const reportTemplates = [
     description: "Employee training completion status and compliance metrics",
     category: "training",
     format: "pdf",
-    lastGenerated: "2024-12-19",
+    lastGenerated: exampleReportDate(-6),
     frequency: "monthly",
     icon: TrendingUp,
   },
@@ -101,7 +102,7 @@ const reportTemplates = [
     description: "Comprehensive risk assessment across all governance areas",
     category: "risk",
     format: "pdf",
-    lastGenerated: "2024-12-21",
+    lastGenerated: exampleReportDate(-7),
     frequency: "quarterly",
     icon: PieChart,
   },
@@ -113,7 +114,7 @@ const scheduledReports = [
     name: "Weekly Compliance Digest",
     recipients: ["cco@company.com", "board@company.com"],
     schedule: "Every Monday 9:00 AM",
-    nextRun: "2024-12-30 09:00",
+    nextRun: exampleReportDate(12),
     status: "active",
   },
   {
@@ -121,7 +122,7 @@ const scheduledReports = [
     name: "Monthly Board Report",
     recipients: ["board@company.com"],
     schedule: "1st of every month",
-    nextRun: "2025-01-01 08:00",
+    nextRun: exampleReportDate(13),
     status: "active",
   },
   {
@@ -129,7 +130,7 @@ const scheduledReports = [
     name: "Quarterly Regulatory Filing",
     recipients: ["compliance@company.com", "legal@company.com"],
     schedule: "End of quarter",
-    nextRun: "2024-12-31 17:00",
+    nextRun: exampleReportDate(14),
     status: "active",
   },
 ];
@@ -137,8 +138,8 @@ const scheduledReports = [
 const recentReports = [
   {
     id: 1,
-    name: "Executive Compliance Summary - December 2024",
-    generatedAt: "2024-12-20 14:30",
+    name: "Illustrative Executive Compliance Summary — 2026",
+    generatedAt: exampleReportDate(-8),
     generatedBy: "Sarah Chen",
     size: "2.4 MB",
     format: "pdf",
@@ -146,24 +147,24 @@ const recentReports = [
   {
     id: 2,
     name: "Policy Audit Report - Week 51",
-    generatedAt: "2024-12-18 09:15",
-    generatedBy: "System (Scheduled)",
+    generatedAt: exampleReportDate(-9),
+    generatedBy: "System (Illustrative schedule)",
     size: "1.8 MB",
     format: "pdf",
   },
   {
     id: 3,
-    name: "DoA Matrix Export - Q4 2024",
-    generatedAt: "2024-12-15 16:45",
+    name: "Illustrative DoA Matrix Export — 2026",
+    generatedAt: exampleReportDate(-10),
     generatedBy: "Michael Brown",
     size: "856 KB",
     format: "xlsx",
   },
   {
     id: 4,
-    name: "Training Compliance - November 2024",
-    generatedAt: "2024-12-01 10:00",
-    generatedBy: "System (Scheduled)",
+    name: "Illustrative Training Compliance — 2026",
+    generatedAt: exampleReportDate(-11),
+    generatedBy: "System (Illustrative schedule)",
     size: "1.2 MB",
     format: "pdf",
   },
@@ -198,7 +199,7 @@ export default function Reports() {
 
   const handleGenerateReport = async (reportId: number) => {
     setGeneratingReport(reportId);
-    
+
     try {
       // Use live DB data for report id=1 (Executive Compliance Summary), fallback to sample
       let reportData = getSampleReportData();
@@ -221,7 +222,7 @@ export default function Reports() {
         };
       }
       const pdfBlob = await generateCompliancePDF(reportData);
-      
+
       // Create download link
       const url = URL.createObjectURL(pdfBlob);
       const link = document.createElement('a');
@@ -231,7 +232,7 @@ export default function Reports() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      
+
       toast.success('Report generated successfully!');
     } catch (error) {
       console.error('Error generating report:', error);
@@ -366,8 +367,8 @@ export default function Reports() {
                           </div>
                         </div>
                         <div className="flex gap-2 mt-4">
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             className="flex-1"
                             onClick={() => handleGenerateReport(template.id)}
                             disabled={isGenerating}
@@ -511,7 +512,7 @@ export default function Reports() {
                 onChange={(e) => setCustomReportConfig({...customReportConfig, name: e.target.value})}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label>Include Sections</Label>
               <div className="grid grid-cols-2 gap-3">
@@ -550,7 +551,7 @@ export default function Reports() {
                 ))}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Date Range</Label>
@@ -601,11 +602,11 @@ export default function Reports() {
               }
               toast.info("Generating custom report...");
               setCustomReportOpen(false);
-              
+
               // Generate the PDF
               const reportData = getSampleReportData();
               const pdfBlob = await generateCompliancePDF(reportData);
-              
+
               const url = URL.createObjectURL(pdfBlob);
               const link = document.createElement('a');
               link.href = url;
@@ -614,7 +615,7 @@ export default function Reports() {
               link.click();
               document.body.removeChild(link);
               URL.revokeObjectURL(url);
-              
+
               toast.success("Custom report generated successfully!");
               setCustomReportConfig({ name: "", sections: [], dateRange: "last_month", format: "pdf" });
             }}>

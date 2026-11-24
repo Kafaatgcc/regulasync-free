@@ -63,7 +63,7 @@ const recentActivities = [
 ];
 
 const aiRecommendations = [
-  { id: 1, title: "Update AML Policy", description: "New FCA guidance requires policy update by Q2 2026", priority: "high", confidence: 92 },
+  { id: 1, title: "Update AML Policy", description: "Illustrative 2026 AML policy review — no official FCA deadline implied", priority: "high", confidence: 92 },
   { id: 2, title: "Review Delegation Limits", description: "3 delegations expiring in the next 30 days", priority: "medium", confidence: 88 },
   { id: 3, title: "Compliance Training", description: "15 employees due for annual compliance training", priority: "medium", confidence: 95 },
 ];
@@ -77,7 +77,7 @@ const chartConfig = {
 
 export default function Dashboard() {
   const { user } = useAuth();
-  
+
   // Check for demo mode
   const isDemoMode = typeof window !== 'undefined' && localStorage.getItem('demoMode') === 'true';
   const displayName = isDemoMode ? 'Alex' : (user?.name?.split(' ')[0] || 'User');
@@ -92,7 +92,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Welcome back, {displayName}</h1>
-          <p className="text-muted-foreground">Here's your governance overview for today</p>
+          <p className="text-muted-foreground">Illustrative assessment overview — sample scores and activities are not actual compliance assurance</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" size="sm">
@@ -170,12 +170,12 @@ export default function Dashboard() {
                 <XAxis dataKey="month" axisLine={false} tickLine={false} />
                 <YAxis domain={[70, 100]} axisLine={false} tickLine={false} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Area 
-                  type="monotone" 
-                  dataKey="score" 
-                  stroke="hsl(var(--chart-1))" 
+                <Area
+                  type="monotone"
+                  dataKey="score"
+                  stroke="hsl(var(--chart-1))"
                   strokeWidth={2}
-                  fill="url(#colorScore)" 
+                  fill="url(#colorScore)"
                 />
               </AreaChart>
             </ChartContainer>
@@ -390,29 +390,29 @@ export default function Dashboard() {
   );
 }
 
-function MetricCard({ 
-  title, 
-  value, 
-  change, 
-  trend, 
-  icon: Icon, 
+function MetricCard({
+  title,
+  value,
+  change,
+  trend,
+  icon: Icon,
   description,
   variant = "default",
   href
-}: { 
-  title: string; 
-  value: string; 
-  change: string; 
-  trend: "up" | "down"; 
-  icon: any; 
+}: {
+  title: string;
+  value: string;
+  change: string;
+  trend: "up" | "down";
+  icon: any;
   description: string;
   variant?: "default" | "warning";
   href?: string;
 }) {
   const [, setLocation] = useLocation();
-  
+
   return (
-    <Card 
+    <Card
       className={href ? "cursor-pointer hover:shadow-md transition-shadow" : ""}
       onClick={href ? () => setLocation(href) : undefined}
     >

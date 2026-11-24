@@ -15,9 +15,9 @@ const sizeMap = {
   hero: { logo: 140, text: 'text-5xl' },
 };
 
-export default function AnimatedLogo({ 
-  size = 'md', 
-  animate = true, 
+export default function AnimatedLogo({
+  size = 'md',
+  animate = true,
   showText = false,
   className = ''
 }: AnimatedLogoProps) {
@@ -31,13 +31,13 @@ export default function AnimatedLogo({
   }, []);
 
   return (
-    <div 
+    <div
       className={`flex items-center gap-3 ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Animated Logo with orbital rings */}
-      <div 
+      <div
         className={`relative transition-all duration-700 ${
           isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
         }`}
@@ -45,7 +45,7 @@ export default function AnimatedLogo({
       >
         {/* Outer rotating ring - copper */}
         {animate && (
-          <div 
+          <div
             className="absolute rounded-full animate-spin-slow"
             style={{
               inset: '-6px',
@@ -55,10 +55,10 @@ export default function AnimatedLogo({
             }}
           />
         )}
-        
+
         {/* Inner rotating ring - silver (opposite direction) */}
         {animate && (
-          <div 
+          <div
             className="absolute rounded-full animate-spin-reverse"
             style={{
               inset: '-3px',
@@ -71,7 +71,7 @@ export default function AnimatedLogo({
 
         {/* Pulsing glow effect */}
         {animate && (
-          <div 
+          <div
             className="absolute inset-0 rounded-full animate-pulse-glow"
             style={{
               background: 'radial-gradient(circle, rgba(184, 115, 51, 0.2) 0%, transparent 70%)',
@@ -82,19 +82,19 @@ export default function AnimatedLogo({
         )}
 
         {/* Main logo image with subtle rotation */}
-        <img 
-          src="/logo.png" 
+        <img
+          src="/api/brand/logo.png"
           alt="RegulaSync"
           className="w-full h-full object-contain transition-all duration-500"
           style={{
-            filter: isHovered 
-              ? 'drop-shadow(0 0 20px rgba(184, 115, 51, 0.7))' 
+            filter: isHovered
+              ? 'drop-shadow(0 0 20px rgba(184, 115, 51, 0.7))'
               : 'drop-shadow(0 4px 12px rgba(184, 115, 51, 0.3))',
           }}
         />
 
         {/* Hover burst effect */}
-        <div 
+        <div
           className={`absolute inset-0 rounded-full transition-all duration-300 ${
             isHovered ? 'opacity-100 scale-150' : 'opacity-0 scale-100'
           }`}
@@ -149,7 +149,7 @@ export function AnimatedLogoSplash({ onComplete }: { onComplete?: () => void }) 
           phase >= 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
         }`}>
           {/* Outer rotating ring */}
-          <div 
+          <div
             className="absolute inset-[-30px] rounded-full animate-spin-slow"
             style={{
               border: '2px solid transparent',
@@ -157,9 +157,9 @@ export function AnimatedLogoSplash({ onComplete }: { onComplete?: () => void }) 
               borderRightColor: 'rgba(184, 115, 51, 0.4)',
             }}
           />
-          
+
           {/* Second rotating ring (opposite direction) */}
-          <div 
+          <div
             className="absolute inset-[-50px] rounded-full animate-spin-reverse"
             style={{
               border: '1px solid transparent',
@@ -167,9 +167,9 @@ export function AnimatedLogoSplash({ onComplete }: { onComplete?: () => void }) 
               borderLeftColor: 'rgba(139, 157, 195, 0.3)',
             }}
           />
-          
+
           {/* Third decorative ring */}
-          <div 
+          <div
             className="absolute inset-[-70px] rounded-full animate-spin-slower"
             style={{
               border: '1px dashed rgba(184, 115, 51, 0.2)',
@@ -178,17 +178,17 @@ export function AnimatedLogoSplash({ onComplete }: { onComplete?: () => void }) 
 
           {/* Main logo image */}
           <div className="relative">
-            <img 
-              src="/logo.png" 
+            <img
+              src="/api/brand/logo.png"
               alt="RegulaSync"
               className="w-36 h-36 object-contain animate-logo-float"
               style={{
                 filter: 'drop-shadow(0 8px 32px rgba(184, 115, 51, 0.4))',
               }}
             />
-            
+
             {/* Glow effect behind logo */}
-            <div 
+            <div
               className="absolute inset-0 animate-pulse-glow"
               style={{
                 background: 'radial-gradient(circle, rgba(184, 115, 51, 0.3) 0%, transparent 60%)',
@@ -224,9 +224,9 @@ export function AnimatedLogoSplash({ onComplete }: { onComplete?: () => void }) 
               <div
                 key={i}
                 className="w-2.5 h-2.5 rounded-full animate-bounce"
-                style={{ 
+                style={{
                   backgroundColor: '#b87333',
-                  animationDelay: `${i * 0.15}s` 
+                  animationDelay: `${i * 0.15}s`
                 }}
               />
             ))}

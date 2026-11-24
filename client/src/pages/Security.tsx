@@ -5,57 +5,57 @@ import { Shield, Lock, Server, FileCheck, Eye, Users, Globe, CheckCircle2, Alert
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const certifications = [
+const assurancePlans = [
   {
     name: "ISO 27001",
     status: "Planned",
-    description: "RegulaSync plans to pursue Information Security Management System certification",
-    timeline: "Target: Q3 2026",
+    description: "Planned information security management system certification; no certificate is evidenced here.",
+    plannedPhase: "Security management system preparation",
     icon: Shield },
   {
     name: "SOC 2 Type II",
     status: "Planned",
-    description: "RegulaSync plans to pursue Service Organisation Control audit for security, availability, and confidentiality",
-    timeline: "Target: Q4 2026",
+    description: "Planned independent attestation report, not a certification; no SOC 2 report is evidenced here.",
+    plannedPhase: "Operating effectiveness review",
     icon: FileCheck },
   {
-    name: "GDPR Compliant Design",
-    status: "In Development",
-    description: "RegulaSync is being designed with GDPR compliance principles built into the architecture",
-    timeline: "From Launch",
+    name: "UK GDPR Obligations",
+    status: "Ongoing obligation",
+    description: "UK GDPR is a legal obligation, not a certification. Relevant duties apply regardless of planned privacy work.",
+    plannedPhase: "Privacy governance review",
     icon: Lock },
   {
     name: "Cyber Essentials Plus",
     status: "Planned",
-    description: "RegulaSync plans to pursue UK Government-backed cyber security certification",
-    timeline: "Target: Q2 2026",
+    description: "Planned Cyber Essentials preparation followed by independent Cyber Essentials Plus assessment; neither certificate is evidenced here.",
+    plannedPhase: "Foundation controls and technical verification",
     icon: CheckCircle2 },
 ];
 
 const securityFeatures = [
   {
     title: "Data Encryption",
-    description: "All data encrypted at rest (AES-256) and in transit (TLS 1.3). Database encryption with customer-managed keys available for Enterprise.",
+    description: "Planned review of encryption in transit and at rest, including hosting and database configuration. Algorithm, key-management and deployment guarantees require verification.",
     icon: Lock },
   {
     title: "Access Control",
-    description: "Role-based access control (RBAC), multi-factor authentication (MFA), and single sign-on (SSO) integration with major identity providers.",
+    description: "Planned validation of role-based access controls and account security. MFA and SSO are roadmap considerations, not assurances of current availability.",
     icon: Users },
   {
     title: "Audit Logging",
-    description: "Comprehensive audit trails with tamper-evident logging. All user actions recorded with timestamps and IP addresses.",
+    description: "The prototype illustrates audit-trail workflows. Coverage, retention and tamper resistance require validation before production assurance claims can be made.",
     icon: Eye },
   {
     title: "Infrastructure Security",
-    description: "Hosted on enterprise-grade cloud infrastructure. Regular security reviews and vulnerability assessments planned as part of our security roadmap.",
+    description: "Infrastructure configuration reviews and vulnerability assessments are planned. Hosting alone does not demonstrate independently assessed platform security.",
     icon: Server },
   {
     title: "Data Residency",
-    description: "UK data residency options available. All customer data stored within UK/EU data centres for regulatory compliance.",
+    description: "Hosting locations, subprocessors and international transfers need verification before production use. No UK-only or UK/EU-only data residency guarantee is made here.",
     icon: Globe },
   {
     title: "Incident Response",
-    description: "Security monitoring with defined incident response procedures. We are committed to timely breach notification in line with applicable data protection requirements.",
+    description: "Monitoring coverage and incident response procedures are planned review areas. Notification responsibilities must reflect applicable law, processing roles and customer contracts.",
     icon: AlertTriangle },
 ];
 
@@ -109,8 +109,8 @@ export default function Security() {
             Security & Compliance
           </h1>
           <p className="text-xl text-white/80 max-w-3xl mx-auto">
-            Built from the ground up for regulated industries. RegulaSync implements 
-            enterprise-grade security controls to protect your most sensitive governance data.
+            RegulaSync is a prototype for regulated governance workflows. This page outlines
+            planned security and assurance work, not certified controls or a compliance guarantee.
           </p>
         </div>
       </section>
@@ -120,20 +120,20 @@ export default function Security() {
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-wrap items-center justify-center gap-8 text-slate-600">
             <div className="flex items-center gap-2">
-              <Lock className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium">256-bit Encryption</span>
+              <Lock className="w-5 h-5 text-primary" />
+              <span className="text-sm font-medium">Encryption Review Planned</span>
             </div>
             <div className="flex items-center gap-2">
               <Server className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium">UK Data Centres</span>
+              <span className="text-sm font-medium">Residency Review Planned</span>
             </div>
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium">Privacy by Design</span>
+              <span className="text-sm font-medium">Privacy Review Planned</span>
             </div>
             <div className="flex items-center gap-2">
               <Eye className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium">24/7 Monitoring</span>
+              <span className="text-sm font-medium">Monitoring Review Planned</span>
             </div>
           </div>
         </div>
@@ -143,25 +143,24 @@ export default function Security() {
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold text-slate-900 text-center mb-4">
-            Certifications & Compliance
+            Planned Assurance & Legal Obligations
           </h2>
           <p className="text-slate-600 text-center mb-12 max-w-2xl mx-auto">
-            We are committed to achieving and maintaining industry-leading security certifications 
-            to meet the requirements of regulated financial services organisations.
+            Certifications and independent reports are future plans, subject to scope, evidence and assessment.
+            No certification or SOC 2 report is evidenced here. Prototype checklist progress is illustrative only,
+            not actual certification readiness or proof of legal compliance. No calendar dates are committed.
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {certifications.map((cert) => {
+            {assurancePlans.map((cert) => {
               const IconComponent = cert.icon;
-              const isDesignedFor = cert.status === "Designed For";
-              const isRoadmap = cert.status === "Roadmap";
+              const isPlanned = cert.status === "Planned";
               return (
                 <Card key={cert.name} className="border shadow-lg">
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between mb-2">
-                      <IconComponent className={`w-8 h-8 ${isDesignedFor ? 'text-green-600' : isRoadmap ? 'text-amber-500' : 'text-slate-400'}`} />
+                      <IconComponent className={`w-8 h-8 ${isPlanned ? 'text-amber-500' : 'text-slate-400'}`} />
                       <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                        isDesignedFor ? 'bg-green-100 text-green-700' : 
-                        isRoadmap ? 'bg-amber-100 text-amber-700' : 
+                        isPlanned ? 'bg-amber-100 text-amber-700' :
                         'bg-slate-100 text-slate-600'
                       }`}>
                         {cert.status}
@@ -172,7 +171,7 @@ export default function Security() {
                   <CardContent>
                     <p className="text-sm text-slate-600 mb-2">{cert.description}</p>
                     <p className="text-xs text-slate-500">
-                      {cert.timeline}
+                      Planned phase: {cert.plannedPhase}
                     </p>
                   </CardContent>
                 </Card>
@@ -186,11 +185,11 @@ export default function Security() {
       <section className="py-20 px-4 bg-slate-50">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold text-slate-900 text-center mb-4">
-            Security Architecture
+            Planned Security Reviews
           </h2>
           <p className="text-slate-600 text-center mb-12 max-w-2xl mx-auto">
-            Our security-first approach ensures your governance data is protected 
-            at every layer of the platform.
+            These are review priorities, not independently verified production controls.
+            Demo screens and illustrative data do not establish operational security assurance.
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {securityFeatures.map((feature) => {
@@ -216,8 +215,9 @@ export default function Security() {
             UK Regulatory Support
           </h2>
           <p className="text-slate-600 text-center mb-12 max-w-2xl mx-auto">
-            RegulaSync is designed to help organisations meet the requirements of 
-            UK financial services regulators.
+            Illustrative governance workflow areas for review against relevant UK regulatory requirements.
+            This is not regulator approval, a legal assessment or a guarantee of compliance;
+            organisations remain responsible for their obligations.
           </p>
           <div className="grid md:grid-cols-2 gap-8">
             {regulatoryCompliance.map((reg) => (
@@ -229,7 +229,7 @@ export default function Security() {
                   <ul className="space-y-2">
                     {reg.requirements.map((req, index) => (
                       <li key={index} className="flex items-center gap-2 text-sm text-slate-600">
-                        <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <FileCheck className="w-4 h-4 text-primary flex-shrink-0" />
                         {req}
                       </li>
                     ))}
@@ -251,39 +251,41 @@ export default function Security() {
             <div className="prose prose-slate max-w-none">
               <h3 className="text-xl font-semibold text-slate-900 mb-4">Our GDPR Commitment</h3>
               <p className="text-slate-600 mb-6">
-                RegulaSync is fully committed to compliance with the UK GDPR and Data Protection Act 2018. 
-                We act as a data processor on behalf of our customers and implement appropriate technical 
-                and organisational measures to ensure the security of personal data.
+                UK GDPR and the Data Protection Act 2018 impose legal obligations; they are not certifications.
+                Applicable duties must be met for relevant processing now, not deferred until a roadmap phase.
+                Before production processing, roles, contracts and technical and organisational measures
+                require review. The prototype does not demonstrate complete legal compliance.
               </p>
-              
-              <h4 className="font-semibold text-slate-900 mb-2">Key Commitments:</h4>
+
+              <h4 className="font-semibold text-slate-900 mb-2">Planned Review Areas:</h4>
               <ul className="space-y-2 text-slate-600 mb-6">
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>Data Processing Agreements (DPAs) available for all customers</span>
+                  <FileCheck className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>Confirm processing roles and prepare appropriate data processing agreements</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>Data minimisation principles applied throughout the platform</span>
+                  <FileCheck className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>Review data minimisation, lawful processing and retention requirements</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>Right to erasure and data portability supported</span>
+                  <FileCheck className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>Validate procedures for data subject rights, including erasure and portability where applicable</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>72-hour breach notification commitment</span>
+                  <FileCheck className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>Document breach response and notification responsibilities under applicable law and contracts</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>Regular privacy impact assessments conducted</span>
+                  <FileCheck className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>Assess when data protection impact assessments and a data protection officer are required</span>
                 </li>
               </ul>
 
-              <h4 className="font-semibold text-slate-900 mb-2">Sub-processors:</h4>
+              <h4 className="font-semibold text-slate-900 mb-2">Sub-processor Review:</h4>
               <p className="text-slate-600">
-                We maintain a list of approved sub-processors and notify customers of any changes. 
-                All sub-processors are contractually bound to equivalent data protection standards.
+                Planned work includes verifying subprocessors, processing locations, contractual safeguards
+                and applicable customer notification requirements. No approved sub-processor register or
+                executed customer safeguards are evidenced on this page.
               </p>
             </div>
           </div>
@@ -295,8 +297,8 @@ export default function Security() {
         <div className="container mx-auto max-w-4xl text-center text-white">
           <h2 className="text-3xl font-bold mb-6">Security Questions?</h2>
           <p className="text-xl text-white/80 mb-8">
-            Our security team is available to answer questions about our security practices, 
-            provide documentation, or discuss your specific compliance requirements.
+            Contact us to discuss the prototype, planned security reviews and your evidence requirements.
+            Any production assurance claims will need supporting documentation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/#request-demo">

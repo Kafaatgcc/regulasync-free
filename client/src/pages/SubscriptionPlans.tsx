@@ -1,24 +1,24 @@
-import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Zap, Building2, Globe } from "lucide-react";
-import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
+import { PLAN_PRICING, MONTHLY_PRICE_PERIOD, ANNUAL_PRICE_PERIOD, ANNUAL_BILLING_EXPLANATION, USER_BILLING_EXPLANATION, formatGBP } from "@shared/planPricing";
 
 const PLANS = [
   {
     id: "core",
     name: "Core",
     tagline: "For small compliance teams getting started",
-    price: "£90",
-    period: "/month",
+    price: formatGBP(PLAN_PRICING.core.monthlyPence),
+    period: MONTHLY_PRICE_PERIOD,
+    annualPrice: `${formatGBP(PLAN_PRICING.core.annualPence)}${ANNUAL_PRICE_PERIOD}`,
     highlight: false,
     icon: Zap,
     color: "text-slate-400",
     borderColor: "border-border",
     features: [
-      { label: "Up to 5 users", included: true },
+      { label: "Per-user licensing", included: true },
       { label: "3 regulatory frameworks", included: true },
       { label: "Core policy management", included: true },
       { label: "Basic audit trail", included: true },
@@ -36,14 +36,15 @@ const PLANS = [
     id: "professional",
     name: "Professional",
     tagline: "For growing compliance functions",
-    price: "£175",
-    period: "/month",
+    price: formatGBP(PLAN_PRICING.professional.monthlyPence),
+    period: MONTHLY_PRICE_PERIOD,
+    annualPrice: `${formatGBP(PLAN_PRICING.professional.annualPence)}${ANNUAL_PRICE_PERIOD}`,
     highlight: true,
     icon: Building2,
     color: "text-blue-400",
     borderColor: "border-blue-500/50",
     features: [
-      { label: "Up to 25 users", included: true },
+      { label: "Per-user licensing", included: true },
       { label: "Unlimited frameworks", included: true },
       { label: "Full policy management", included: true },
       { label: "Full audit trail", included: true },
@@ -61,14 +62,15 @@ const PLANS = [
     id: "enterprise",
     name: "Enterprise",
     tagline: "For large regulated firms requiring full capability",
-    price: "£350",
-    period: "",
+    price: formatGBP(PLAN_PRICING.enterprise.monthlyPence),
+    period: MONTHLY_PRICE_PERIOD,
+    annualPrice: `${formatGBP(PLAN_PRICING.enterprise.annualPence)}${ANNUAL_PRICE_PERIOD}`,
     highlight: false,
     icon: Globe,
     color: "text-amber-400",
     borderColor: "border-amber-500/40",
     features: [
-      { label: "Unlimited users", included: true },
+      { label: "Per-user licensing", included: true },
       { label: "Unlimited frameworks", included: true },
       { label: "Full policy management", included: true },
       { label: "Full audit trail", included: true },
@@ -86,7 +88,7 @@ const PLANS = [
 
 const FEATURE_COMPARISON = [
   { category: "Users & Access", features: [
-    { name: "Users", starter: "5", professional: "25", enterprise: "Unlimited" },
+    { name: "User licensing", starter: "Per user", professional: "Per user", enterprise: "Per user" },
     { name: "Roles", starter: "5", professional: "5", enterprise: "5 + Custom" },
     { name: "SSO / SAML", starter: "—", professional: "—", enterprise: "✓" },
   ]},
@@ -122,19 +124,16 @@ const FEATURE_COMPARISON = [
 ];
 
 export default function SubscriptionPlans() {
-  const { user } = useAuth();
-  const { data: orgs } = trpc.superAdmin.listOrgs.useQuery(undefined, { enabled: user?.role === "super_admin" });
-
-  const currentPlan = "professional"; // Would come from org data in production
-
   return (
     <div className="space-y-12 p-6">
       {/* Header */}
       <div className="text-center">
         <h1 className="text-3xl font-bold text-foreground">Subscription Plans</h1>
         <p className="text-muted-foreground mt-2 max-w-xl mx-auto">
-          Choose the plan that fits your compliance function. All plans include a 30-day free trial.
-          No credit card required.
+          Compare published plans for your compliance function. {USER_BILLING_EXPLANATION}
+        </p>
+        <p className="text-sm text-muted-foreground mt-2 max-w-xl mx-auto">
+          {ANNUAL_BILLING_EXPLANATION} VAT may apply. This comparison does not show a live subscription or change your billing.
         </p>
       </div>
 
@@ -142,7 +141,6 @@ export default function SubscriptionPlans() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {PLANS.map((plan) => {
           const Icon = plan.icon;
-          const isCurrent = plan.id === currentPlan;
           return (
             <Card
               key={plan.id}
@@ -151,11 +149,6 @@ export default function SubscriptionPlans() {
               {plan.highlight && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <Badge className="bg-blue-600 text-white text-xs px-3">Most Popular</Badge>
-                </div>
-              )}
-              {isCurrent && (
-                <div className="absolute -top-3 right-4">
-                  <Badge className="bg-green-600 text-white text-xs px-3">Current Plan</Badge>
                 </div>
               )}
               <CardHeader className="pb-4">
@@ -168,6 +161,7 @@ export default function SubscriptionPlans() {
                   <span className="text-3xl font-bold text-foreground">{plan.price}</span>
                   <span className="text-muted-foreground text-sm">{plan.period}</span>
                 </div>
+                <p className="text-sm text-muted-foreground">{plan.annualPrice}</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -185,23 +179,19 @@ export default function SubscriptionPlans() {
                 </div>
                 <Button
                   className={`w-full ${
-                    isCurrent ? "bg-muted text-muted-foreground cursor-default" :
                     plan.highlight ? "bg-blue-600 hover:bg-blue-700 text-white" :
                     plan.id === "enterprise" ? "bg-amber-600 hover:bg-amber-700 text-white" :
                     "bg-muted hover:bg-muted/80 text-foreground"
                   }`}
-                  disabled={isCurrent}
                   onClick={() => {
                     if (plan.id === "enterprise") {
-                      toast.info("Contact sales@regulasync.co.uk for Enterprise pricing");
+                      toast.info("Contact sales@regulasync.co.uk for an Enterprise team quote. Published rates are per user/month.");
                     } else {
-                      toast.info("Billing integration coming soon. Contact sales@regulasync.co.uk");
+                      toast.info("This comparison does not change your subscription. Contact sales@regulasync.co.uk for a team quote or visit Pricing for a single-user checkout.");
                     }
                   }}
                 >
-                  {isCurrent ? "Current Plan" :
-                   plan.id === "enterprise" ? "Contact Sales" :
-                   "Upgrade"}
+                  {plan.id === "enterprise" ? "Contact Sales" : "Enquire About Plan"}
                 </Button>
               </CardContent>
             </Card>
@@ -263,7 +253,7 @@ export default function SubscriptionPlans() {
       <div className="text-center p-8 rounded-2xl bg-gradient-to-r from-amber-500/10 to-amber-600/5 border border-amber-500/20">
         <h3 className="text-xl font-bold text-foreground mb-2">Need a custom solution?</h3>
         <p className="text-muted-foreground mb-4">
-          Enterprise clients receive custom pricing, dedicated onboarding, and SLA-backed support.
+          Discuss Enterprise onboarding and support requirements. Published pricing remains {formatGBP(PLAN_PRICING.enterprise.monthlyPence)} per user/month unless different terms are agreed in writing.
         </p>
         <Button
           className="bg-amber-600 hover:bg-amber-700 text-white"

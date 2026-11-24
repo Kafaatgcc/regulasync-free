@@ -11,9 +11,9 @@ export default function PublicFooter() {
           {/* Brand Column */}
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4">
-              <img 
-                src="/logo.png" 
-                alt="RegulaSync" 
+              <img
+                src="/api/brand/logo.png"
+                alt="RegulaSync"
                 className="h-10 w-auto"
               />
               <span className="text-xl font-bold text-white">RegulaSync</span>
@@ -22,23 +22,23 @@ export default function PublicFooter() {
               AI-Powered Governance Automation for modern organizations.
             </p>
             <div className="flex gap-4">
-              <a 
-                href="https://www.linkedin.com/company/regulasync" 
-                target="_blank" 
+              <a
+                href="https://www.linkedin.com/company/regulasync"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a 
-                href="https://twitter.com/regulasync" 
-                target="_blank" 
+              <a
+                href="https://twitter.com/regulasync"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors"
               >
                 <Twitter className="w-5 h-5" />
               </a>
-              <a 
+              <a
                 href="mailto:hello@regulasync.co.uk"
                 className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors"
               >
@@ -51,7 +51,7 @@ export default function PublicFooter() {
           <div>
             <h4 className="font-semibold text-white mb-4">Product</h4>
             <ul className="space-y-3 text-sm text-slate-400">
-              <li><Link href="/" className="hover:text-white transition-colors">Prepared Demo</Link></li>
+              <li><Link href="/dashboard?demo=true" className="hover:text-white transition-colors">Platform Demo</Link></li>
               <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
               <li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
               <li><Link href="/security" className="hover:text-white transition-colors">Security</Link></li>

@@ -1,8 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  CheckCircle2, 
-  XCircle, 
+import {
+  CheckCircle2,
+  XCircle,
   Minus,
   Trophy,
   Zap,
@@ -30,19 +30,19 @@ const competitorData: CompetitorFeature[] = [
   { feature: 'AI-Powered Regulatory Gap Analysis', regulasync: 'unique', diligent: 'none', workiva: 'none', clausematch: 'partial', logicgate: 'none', onetrust: 'partial', category: 'Core Innovation' },
   { feature: 'Blockchain-Inspired Tamper Detection', regulasync: 'unique', diligent: 'none', workiva: 'none', clausematch: 'none', logicgate: 'none', onetrust: 'none', category: 'Core Innovation' },
   { feature: 'Real-Time Policy Enforcement', regulasync: 'full', diligent: 'partial', workiva: 'none', clausematch: 'partial', logicgate: 'partial', onetrust: 'none', category: 'Core Innovation' },
-  
+
   // UK Regulatory Focus
   { feature: 'FCA Compliance Templates', regulasync: 'full', diligent: 'partial', workiva: 'partial', clausematch: 'full', logicgate: 'partial', onetrust: 'partial', category: 'UK Focus' },
   { feature: 'PRA Regulatory Monitoring', regulasync: 'full', diligent: 'partial', workiva: 'none', clausematch: 'full', logicgate: 'none', onetrust: 'partial', category: 'UK Focus' },
   { feature: 'SM&CR Support', regulasync: 'full', diligent: 'partial', workiva: 'none', clausematch: 'full', logicgate: 'none', onetrust: 'none', category: 'UK Focus' },
   { feature: 'UK GDPR / ICO Compliance', regulasync: 'full', diligent: 'partial', workiva: 'partial', clausematch: 'partial', logicgate: 'partial', onetrust: 'full', category: 'UK Focus' },
-  
+
   // Governance Features
   { feature: 'Policy Management', regulasync: 'full', diligent: 'full', workiva: 'partial', clausematch: 'full', logicgate: 'full', onetrust: 'partial', category: 'Governance' },
   { feature: 'Delegation of Authority', regulasync: 'full', diligent: 'full', workiva: 'none', clausematch: 'partial', logicgate: 'partial', onetrust: 'none', category: 'Governance' },
   { feature: 'Workflow Automation', regulasync: 'full', diligent: 'full', workiva: 'partial', clausematch: 'partial', logicgate: 'full', onetrust: 'partial', category: 'Governance' },
   { feature: 'Audit Trail', regulasync: 'full', diligent: 'full', workiva: 'full', clausematch: 'full', logicgate: 'full', onetrust: 'full', category: 'Governance' },
-  
+
   // Pricing & Accessibility
   { feature: 'SME-Friendly Pricing', regulasync: 'full', diligent: 'none', workiva: 'none', clausematch: 'partial', logicgate: 'partial', onetrust: 'none', category: 'Accessibility' },
   { feature: 'Quick Implementation (<30 days)', regulasync: 'full', diligent: 'none', workiva: 'none', clausematch: 'partial', logicgate: 'partial', onetrust: 'none', category: 'Accessibility' },
@@ -227,12 +227,12 @@ export default function CompetitorComparison() {
               <div className="text-sm text-muted-foreground mt-1">UK Compliance Market Size</div>
             </div>
             <div className="text-center p-6 border rounded-lg">
-              <div className="text-4xl font-bold text-primary">85%</div>
-              <div className="text-sm text-muted-foreground mt-1">Time Reduction vs Manual</div>
+              <div className="text-4xl font-bold text-primary">Workflow</div>
+              <div className="text-sm text-muted-foreground mt-1">Efficiency depends on your assumptions</div>
             </div>
             <div className="text-center p-6 border rounded-lg">
-              <div className="text-4xl font-bold text-primary">99.9%</div>
-              <div className="text-sm text-muted-foreground mt-1">Audit Accuracy with SVAC</div>
+              <div className="text-4xl font-bold text-primary">Integrity</div>
+              <div className="text-sm text-muted-foreground mt-1">Integrity checks, not certification</div>
             </div>
           </div>
         </CardContent>

@@ -9,66 +9,66 @@ export default function Careers() {
     {
       title: "Senior Full-Stack Engineer",
       department: "Engineering",
-      location: "London, UK (Hybrid)",
-      type: "Full-time",
+      location: "UK — arrangements to be confirmed",
+      type: "Indicative full-time role",
       description: "Build and scale our AI-powered governance platform using React, Node.js, and Python.",
       requirements: ["5+ years experience", "React/TypeScript", "Node.js/Python", "Cloud infrastructure"],
-      priority: "Hiring Now"
+      priority: "Planned role"
     },
     {
       title: "AI/ML Engineer",
       department: "Engineering",
-      location: "London, UK (Hybrid)",
-      type: "Full-time",
+      location: "UK — arrangements to be confirmed",
+      type: "Indicative full-time role",
       description: "Develop machine learning models for regulatory analysis and compliance recommendations.",
       requirements: ["3+ years ML experience", "NLP expertise", "Python/PyTorch", "Production ML systems"],
-      priority: "Hiring Now"
+      priority: "Planned role"
     },
     {
       title: "Product Manager - Compliance",
       department: "Product",
-      location: "London, UK",
-      type: "Full-time",
+      location: "UK — arrangements to be confirmed",
+      type: "Indicative full-time role",
       description: "Drive product strategy for our compliance monitoring and regulatory intelligence features.",
       requirements: ["5+ years product experience", "RegTech/FinTech background", "FCA knowledge", "B2B SaaS"],
-      priority: "Q2 2026"
+      priority: "Planned role"
     },
     {
       title: "Customer Success Manager",
       department: "Customer Success",
-      location: "London, UK",
-      type: "Full-time",
+      location: "UK — arrangements to be confirmed",
+      type: "Indicative full-time role",
       description: "Ensure our enterprise customers achieve their governance automation goals.",
       requirements: ["3+ years CSM experience", "Financial services background", "Technical aptitude", "Relationship building"],
-      priority: "Q2 2026"
+      priority: "Planned role"
     },
     {
       title: "Sales Development Representative",
       department: "Sales",
-      location: "London, UK",
-      type: "Full-time",
+      location: "UK — arrangements to be confirmed",
+      type: "Indicative full-time role",
       description: "Generate and qualify leads from financial services and regulated industries.",
       requirements: ["1-2 years SDR experience", "B2B SaaS sales", "Financial services interest", "CRM proficiency"],
-      priority: "Q2 2026"
+      priority: "Planned role"
     },
     {
       title: "Compliance Specialist",
       department: "Product",
-      location: "London, UK",
-      type: "Full-time",
+      location: "UK — arrangements to be confirmed",
+      type: "Indicative full-time role",
       description: "Provide regulatory expertise to shape our product and support enterprise customers.",
       requirements: ["5+ years compliance experience", "FCA/PRA knowledge", "Policy writing", "Risk management"],
-      priority: "Q2 2026"
+      priority: "Planned role"
     }
   ];
 
   const benefits = [
-    { icon: Laptop, title: "Flexible Working", description: "Hybrid model with 2-3 days in our London office" },
-    { icon: Heart, title: "Health & Wellness", description: "Private health insurance and mental health support" },
-    { icon: GraduationCap, title: "Learning Budget", description: "£2,000 annual budget for courses and conferences" },
-    { icon: Coffee, title: "Team Events", description: "Regular team lunches, offsites, and social events" },
-    { icon: TrendingUp, title: "Equity Options", description: "Share in our success with employee stock options" },
-    { icon: Globe, title: "25 Days Holiday", description: "Plus bank holidays and your birthday off" }
+    { icon: Laptop, title: "Flexible Working", description: "Flexible working arrangements under consideration; no office commitment is confirmed" },
+    { icon: Heart, title: "Health & Wellness", description: "Wellbeing support under consideration, subject to an approved benefits package" },
+    { icon: GraduationCap, title: "Learning Budget", description: "Professional development support planned; budget to be confirmed" },
+    { icon: Coffee, title: "Team Events", description: "Opportunities for team collaboration as the organisation develops" },
+    { icon: TrendingUp, title: "Equity Options", description: "Potential incentive arrangements subject to legal and funding review" },
+    { icon: Globe, title: "Leave Arrangements", description: "Leave entitlements and any additional benefits will be set out in employment terms" }
   ];
 
   return (
@@ -80,13 +80,13 @@ export default function Careers() {
         <div className="container mx-auto max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full mb-6">
             <Zap className="h-4 w-4 text-amber-400" />
-            <span className="text-sm">We're Growing - Join Our Team</span>
+            <span className="text-sm">Pre-launch — Future Team Opportunities</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Build the Future of<br />Governance Automation
           </h1>
           <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
-            Join a mission-driven team transforming how organizations manage compliance, 
+            Join a mission-driven team transforming how organizations manage compliance,
             risk, and governance. We're building technology that makes a real difference.
           </p>
           <div className="flex flex-wrap justify-center gap-6 text-sm">
@@ -96,11 +96,11 @@ export default function Careers() {
             </div>
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-amber-400" />
-              <span>Growing Team</span>
+              <span>Building Our Future Team</span>
             </div>
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-amber-400" />
-              <span>Series A Stage</span>
+              <span>Pre-launch Stage</span>
             </div>
           </div>
         </div>
@@ -110,30 +110,30 @@ export default function Careers() {
       <section className="py-16 px-6 bg-slate-50 dark:bg-slate-900">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Our Growth Journey</h2>
+            <h2 className="text-3xl font-bold mb-4">Indicative Hiring Plan</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              We're on an ambitious path to transform governance automation in the UK and beyond.
+              RegulaSync is pre-launch, targeting Q2 2027. These indicative staffing forecasts are not current headcount or confirmed vacancies; hiring depends on funding, product progress and demand.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border">
               <div className="text-4xl font-bold text-primary mb-2">6</div>
-              <div className="font-medium mb-1">Team Size in Year 1</div>
+              <div className="font-medium mb-1">Indicative Year 1 Team</div>
               <p className="text-sm text-muted-foreground">
                 CTO, Software Developer, AI/ML Developer, UI/UX Designer, Compliance Officer, Sales & Marketing
               </p>
             </div>
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border">
               <div className="text-4xl font-bold text-primary mb-2">8</div>
-              <div className="font-medium mb-1">Team Size by Year 2</div>
+              <div className="font-medium mb-1">Indicative Year 2 Team</div>
               <p className="text-sm text-muted-foreground">
                 Adding Accountant and expanding Sales & Marketing team
               </p>
             </div>
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border">
               <div className="text-4xl font-bold text-primary mb-2">13</div>
-              <div className="font-medium mb-1">Team Size by Year 3</div>
+              <div className="font-medium mb-1">Indicative Year 3 Team</div>
               <p className="text-sm text-muted-foreground">
                 Scaling engineering, design, and sales teams for growth
               </p>
@@ -150,8 +150,8 @@ export default function Careers() {
                   Creating Jobs in the UK Tech Sector
                 </h3>
                 <p className="text-amber-700 dark:text-amber-300 text-sm">
-                  RegulaSync is committed to building a world-class team in London. Our growth plans 
-                  will create high-skilled jobs in software engineering, AI/ML, product management, 
+                  RegulaSync is committed to building a world-class team in London. Our growth plans
+                  aim to create high-skilled jobs in software engineering, AI/ML, product management,
                   and customer success. We're proud to contribute to the UK's thriving RegTech ecosystem.
                 </p>
               </div>
@@ -160,13 +160,13 @@ export default function Careers() {
         </div>
       </section>
 
-      {/* Open Positions */}
+      {/* Planned Roles */}
       <section className="py-16 px-6">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Open Positions</h2>
+            <h2 className="text-3xl font-bold mb-4">Planned Roles</h2>
             <p className="text-muted-foreground">
-              Join us in building the future of governance automation
+              These are potential future roles, not current vacancies. Timing, location and employment terms are to be confirmed.
             </p>
           </div>
 
@@ -178,8 +178,8 @@ export default function Careers() {
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">{job.title}</h3>
                       <span className={`text-xs px-2 py-1 rounded-full ${
-                        job.priority === "Hiring Now" 
-                          ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300" 
+                        job.priority === "Open vacancy"
+                          ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
                           : "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
                       }`}>
                         {job.priority}
@@ -209,9 +209,7 @@ export default function Careers() {
                     </div>
                   </div>
                   <div className="flex-shrink-0">
-                    <Button className="w-full md:w-auto">
-                      Apply Now
-                    </Button>
+                    <Button className="w-full md:w-auto" asChild><Link href="/contact">Register Interest</Link></Button>
                   </div>
                 </div>
               </div>
@@ -222,9 +220,7 @@ export default function Careers() {
             <p className="text-muted-foreground mb-4">
               Don't see a role that fits? We're always looking for talented people.
             </p>
-            <Button variant="outline">
-              Send Speculative Application
-            </Button>
+            <Button variant="outline" asChild><Link href="/contact">Discuss Future Opportunities</Link></Button>
           </div>
         </div>
       </section>
@@ -235,7 +231,7 @@ export default function Careers() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Why Join RegulaSync?</h2>
             <p className="text-muted-foreground">
-              We offer competitive benefits and a supportive work environment
+              Our intended working culture; benefits are proposed and are not a current employment offer
             </p>
           </div>
 
@@ -261,17 +257,15 @@ export default function Careers() {
               <h2 className="text-3xl font-bold mb-6">Our Culture</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  At RegulaSync, we believe in building products that genuinely help organizations 
-                  navigate complex regulatory environments. We're a team of problem-solvers who 
+                  At RegulaSync, we believe in building products that genuinely help organizations
+                  navigate complex regulatory environments. We're a team of problem-solvers who
                   care deeply about our customers' success.
                 </p>
                 <p>
-                  We value transparency, continuous learning, and work-life balance. Our hybrid 
-                  working model gives you flexibility while maintaining the collaboration and 
-                  connection that comes from working together in person.
+                  We value transparency, continuous learning, and work-life balance. Future working arrangements will be developed as the team grows, with terms confirmed before recruitment.
                 </p>
                 <p>
-                  We're building a diverse and inclusive team where everyone can do their best work. 
+                  We're building a diverse and inclusive team where everyone can do their best work.
                   We welcome applications from candidates of all backgrounds and experiences.
                 </p>
               </div>
@@ -326,13 +320,11 @@ export default function Careers() {
         <div className="container mx-auto max-w-3xl text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Make an Impact?</h2>
           <p className="text-white/80 mb-8">
-            Join us in transforming how organizations manage governance and compliance. 
+            Join us in transforming how organizations manage governance and compliance.
             We're looking for passionate people who want to build something meaningful.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-white text-[#1e3a5f] hover:bg-white/90">
-              View Open Positions
-            </Button>
+            <Button size="lg" className="bg-white text-[#1e3a5f] hover:bg-white/90" asChild><Link href="/contact">Discuss Future Opportunities</Link></Button>
             <Link href="/about">
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
                 Learn About Us

@@ -9,26 +9,26 @@ const currentIntegrations = [
   {
     name: "REST API",
     category: "Core Platform",
-    description: "Full REST API access for custom integrations with your existing systems",
-    status: "Available",
+    description: "Proposed external API connectivity; supported endpoints and production access will be confirmed",
+    status: "Prototype / planned",
     icon: Server },
   {
     name: "Webhook Events",
     category: "Core Platform",
-    description: "Real-time event notifications for policy changes, approvals, and compliance alerts",
-    status: "Available",
+    description: "Proposed event notifications; production webhook delivery is not yet confirmed",
+    status: "Prototype / planned",
     icon: Zap },
   {
     name: "CSV/Excel Import",
     category: "Data Import",
-    description: "Bulk import policies, users, and compliance data from spreadsheets",
-    status: "Available",
+    description: "Prototype spreadsheet workflows; supported formats and data types depend on the demonstrated module",
+    status: "Prototype / planned",
     icon: FileText },
   {
     name: "PDF Export",
     category: "Reporting",
-    description: "Export compliance reports, audit trails, and policy documents to PDF",
-    status: "Available",
+    description: "Prototype reporting/export workflows; available outputs depend on the demonstrated module",
+    status: "Prototype / planned",
     icon: FileText },
 ];
 
@@ -37,74 +37,74 @@ const plannedIntegrations = [
     name: "Microsoft 365",
     category: "Productivity",
     description: "Sync policies with SharePoint, integrate with Teams for approvals, and connect to Azure AD for SSO",
-    timeline: "Q2 2025",
+    timeline: "Planned — timing to be confirmed",
     icon: Cloud },
   {
     name: "Google Workspace",
     category: "Productivity",
     description: "Google Drive policy storage, Gmail notifications, and Google SSO authentication",
-    timeline: "Q2 2025",
+    timeline: "Planned — timing to be confirmed",
     icon: Cloud },
   {
     name: "Salesforce",
     category: "CRM",
     description: "Sync compliance data with customer records, automate governance workflows in sales processes",
-    timeline: "Q3 2025",
+    timeline: "Planned — timing to be confirmed",
     icon: Database },
   {
     name: "SAP",
     category: "ERP",
     description: "Connect to SAP for procurement approvals, financial controls, and HR governance workflows",
-    timeline: "Q4 2025",
+    timeline: "Planned — timing to be confirmed",
     icon: Building2 },
   {
     name: "Oracle",
     category: "ERP",
     description: "Integration with Oracle Financials for approval thresholds and delegation of authority",
-    timeline: "Q4 2025",
+    timeline: "Planned — timing to be confirmed",
     icon: Database },
   {
     name: "Workday",
     category: "HRIS",
     description: "Sync employee data, automate HR policy compliance, and manage role-based access",
-    timeline: "Q3 2025",
+    timeline: "Planned — timing to be confirmed",
     icon: Building2 },
 ];
 
 const ukRegulatoryIntegrations = [
   {
-    name: "FCA Gabriel",
-    description: "Automated regulatory reporting submissions to the Financial Conduct Authority",
+    name: "FCA Reporting (Planned)",
+    description: "Proposed reporting support, subject to regulator requirements and technical validation; no live regulatory submissions",
     regulator: "FCA",
-    timeline: "Q3 2025" },
+    timeline: "Planned — timing to be confirmed" },
   {
     name: "PRA Reporting",
     description: "Prudential reporting integration for banks and insurers",
     regulator: "PRA",
-    timeline: "Q4 2025" },
+    timeline: "Planned — timing to be confirmed" },
   {
     name: "Companies House API",
     description: "Automated company information verification and filing status checks",
     regulator: "Companies House",
-    timeline: "Q2 2025" },
+    timeline: "Planned — timing to be confirmed" },
   {
     name: "ICO Registration",
     description: "Data protection registration verification and compliance tracking",
     regulator: "ICO",
-    timeline: "Q3 2025" },
+    timeline: "Planned — timing to be confirmed" },
   {
     name: "HMRC MTD",
     description: "Making Tax Digital integration for financial compliance workflows",
     regulator: "HMRC",
-    timeline: "Q4 2025" },
+    timeline: "Planned — timing to be confirmed" },
 ];
 
 const securityFeatures = [
   { text: "Security-first integration design", icon: Shield },
-  { text: "End-to-end encryption for all data transfers", icon: Lock },
-  { text: "OAuth 2.0 and SAML 2.0 authentication", icon: Lock },
-  { text: "Audit logging for all integration activities", icon: FileText },
-  { text: "UK data residency for all integration data", icon: Globe },
+  { text: "Encrypted transport — integration design target", icon: Lock },
+  { text: "OAuth / SAML support — planned, subject to validation", icon: Lock },
+  { text: "Integration audit logging — design target", icon: FileText },
+  { text: "Data hosting/residency to be confirmed for each deployment", icon: Globe },
 ];
 
 export default function Integrations() {
@@ -123,8 +123,7 @@ export default function Integrations() {
             Connect RegulaSync to Your Existing Systems
           </h1>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Seamlessly integrate governance automation with your enterprise tools, 
-            UK regulatory systems, and business applications.
+            Explore proposed connectivity for enterprise tools and UK regulatory workflows. RegulaSync is pre-launch; these roadmap items are not claims of live third-party connections.
           </p>
         </div>
       </section>
@@ -132,7 +131,7 @@ export default function Integrations() {
       {/* Current Integrations */}
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-2xl font-bold text-slate-900 mb-8">Available Now</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-8">Prototype Tooling and Planned Connectivity</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {currentIntegrations.map((integration, index) => {
               const IconComponent = integration.icon;
@@ -165,7 +164,7 @@ export default function Integrations() {
           <div className="text-center mb-12">
             <h2 className="text-2xl font-bold text-slate-900 mb-4">UK Regulatory Integrations</h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
-              Direct connections to UK regulatory bodies for automated reporting and compliance verification
+              Proposed regulatory connectivity only. No live direct reporting, regulator endorsement or verified connection is implied.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -235,9 +234,9 @@ export default function Integrations() {
       <section className="py-16 px-4 bg-slate-50">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Enterprise-Grade Security</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-4">Integration Security Design Targets</h2>
             <p className="text-slate-600">
-              All integrations are built with security and compliance as the foundation
+              Planned controls require implementation and verification before production use
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
@@ -262,19 +261,19 @@ export default function Integrations() {
           <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2d5a87] rounded-2xl p-8 md:p-12 text-white text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Integration Partner Program</h2>
             <p className="text-white/80 mb-8 max-w-2xl mx-auto">
-              Are you a technology vendor or systems integrator? Partner with RegulaSync to 
+              Are you a technology vendor or systems integrator? Partner with RegulaSync to
               deliver governance automation solutions to your clients.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/#request-demo">
+              <Link href="/contact">
                 <Button size="lg" className="bg-white text-[#1e3a5f] hover:bg-slate-100">
                   Become a Partner
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
-              <Link href="/security">
+              <Link href="/api-docs">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                  View API Documentation
+                  Explore Prototype API Documentation
                 </Button>
               </Link>
             </div>
@@ -287,10 +286,9 @@ export default function Integrations() {
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Need a Custom Integration?</h2>
           <p className="text-slate-600 mb-8">
-            Our Enterprise plan includes custom integration development to connect RegulaSync 
-            with your specific systems and workflows.
+            Discuss Enterprise integration requirements with us. Scope, feasibility, delivery timing and any additional fees will be agreed separately.
           </p>
-          <Link href="/#request-demo">
+          <Link href="/contact">
             <Button size="lg" className="bg-[#b87333] hover:bg-[#a06329]">
               Discuss Your Requirements
             </Button>

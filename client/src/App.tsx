@@ -63,34 +63,69 @@ import DocumentationHub from "./pages/DocumentationHub";
 import SecuritySettings from "./pages/SecuritySettings";
 import OnboardingWizard from "./pages/OnboardingWizard";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
+import { prepareDemoPresentation } from "./lib/demoSession";
 import LiveChat from "./components/LiveChat";
 import PresentationMode from "./components/PresentationMode";
 
 // Scroll to top on route change
 function ScrollToTop() {
   const [location] = useLocation();
-  
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location]);
-  
+
   return null;
 }
 
 // Protected route wrapper - checks real server session via trpc.auth.me
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { data: user, isLoading, isFetching, error, refetch } = trpc.auth.me.useQuery(undefined, {
+  const { data: user, isLoading, isFetching, isError, refetch } = trpc.auth.me.useQuery(undefined, {
     retry: false,
-    staleTime: 0,
-    refetchOnMount: "always",
+    staleTime: 30_000,
   });
-  if (isLoading || (!user && isFetching)) return <div role="status" className="p-6">Checking your session…</div>;
-  if (error) return <div role="alert" className="p-6">Unable to check your session. <button onClick={() => refetch()}>Try again</button></div>;
+  const utils = trpc.useUtils();
+  const { mutateAsync: renew } = trpc.passwordAuth.renewDemoSession.useMutation();
+  const [recoveryFailed, setRecoveryFailed] = useState(false);
+  const demoAccess = localStorage.getItem("demoMode") === "true";
+  useEffect(() => {
+    if (user || isLoading || isFetching || isError || !demoAccess || recoveryFailed) return;
+    prepareDemoPresentation({ cancelAuth: () => utils.auth.me.cancel(), renew: () => renew(),
+      invalidateAuth: () => utils.auth.me.invalidate(undefined, { refetchType: "none" }),
+      readUser: () => utils.auth.me.fetch(undefined, { staleTime: 0 }) })
+      .then(() => { void utils.invalidate(); })
+      .catch(() => { setRecoveryFailed(true); });
+  }, [user, isLoading, isFetching, isError, demoAccess, recoveryFailed, renew, utils]);
+  if (!user && demoAccess && !recoveryFailed && !isError) return <div className="p-6 text-sm text-muted-foreground" role="status">Restoring your verified demo session…</div>;
+  if (isLoading || (!user && isFetching)) return null;
+  if (isError && !user) return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6">
+      <p>Unable to check your session. Please retry.</p>
+      <button className="rounded-md bg-navy px-4 py-2 text-white" onClick={() => void refetch()}>Retry</button>
+    </div>
+  );
   if (!user) return <Redirect to="/login" />;
   return <>{children}</>;
 }
-// Main Router - public pages always accessible, protected routes require login
+
+// Session tools live above the public/protected branch so demo navigation does
+// not unmount the panel or lose its timer when it visits /home, /about, etc.
 function Router() {
+  const [location] = useLocation();
+  const { data: user } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 30_000 });
+  const hideTools = ["/", "/login", "/forgot-password", "/accept-invite"].includes(location);
+  return (
+    <>
+      <ScrollToTop />
+      {user && !hideTools && <LiveChat />}
+      {!hideTools && <PresentationMode />}
+      <PageRouter />
+    </>
+  );
+}
+
+// Main Router - public pages always accessible, protected routes require login
+function PageRouter() {
   // Public paths that never require auth
   const [location] = useLocation();
   const publicPaths = ["/", "/home", "/landing", "/login", "/forgot-password", "/accept-invite",
@@ -101,8 +136,6 @@ function Router() {
   if (isPublicPage) {
     return (
       <>
-        <ScrollToTop />
-        <LiveChat />
         <Switch>
           <Route path="/"><ComingSoon /></Route>
           <Route path="/home"><Landing /></Route>
@@ -125,10 +158,7 @@ function Router() {
     );
   }
   return (
-    <>
-      <ScrollToTop />
-      <LiveChat />
-      <ProtectedRoute>
+    <ProtectedRoute>
       <Switch>
         {/* Dashboard Routes — all require login */}
         <Route path="/dashboard">
@@ -136,116 +166,116 @@ function Router() {
             <Dashboard />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/policies">
           <DashboardLayout>
             <Policies />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/delegation">
           <DashboardLayout>
             <Delegation />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/compliance">
           <DashboardLayout>
             <Compliance />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/ai-recommendations">
           <DashboardLayout>
             <AIRecommendations />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/regulatory-updates">
           <DashboardLayout>
             <RegulatoryUpdates />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/audit-trail">
           <DashboardLayout>
             <AuditTrail />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/reports">
           <DashboardLayout>
             <Reports />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/admin/contacts">
           <DashboardLayout>
             <AdminContacts />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/gap-analysis">
           <DashboardLayout>
             <GapAnalysis />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/regulatory-sync">
           <DashboardLayout>
             <RegulatorySyncDemo />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/executive-summary">
           <DashboardLayout>
             <ExecutiveSummary />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/regulatory-timeline">
           <DashboardLayout>
             <RegulatoryTimeline />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/admin">
           <DashboardLayout>
             <AdminPanel />
           </DashboardLayout>
         </Route>
-        
+
         {/* Tools Routes */}
         <Route path="/workflow-simulator">
           <DashboardLayout>
             <WorkflowSimulator />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/governance-logic">
           <DashboardLayout>
             <GovernanceLogic />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/competitor-comparison">
           <DashboardLayout>
             <CompetitorComparison />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/certifications">
           <DashboardLayout>
             <CertificationReadiness />
           </DashboardLayout>
         </Route>
-        
+
         <Route path="/roi-calculator">
           <DashboardLayout>
             <ROICalculator />
           </DashboardLayout>
         </Route>
-        
+
         {/* New Feature Routes */}
         <Route path="/vendor-risk">
           <DashboardLayout>
@@ -387,8 +417,7 @@ function Router() {
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
-      </ProtectedRoute>
-    </>
+    </ProtectedRoute>
   );
 }
 
@@ -399,7 +428,6 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
-          <PresentationMode />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

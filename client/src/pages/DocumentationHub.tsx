@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Search, BookOpen, Shield, Users, Workflow, Key, Webhook, Settings, ChevronRight } from "lucide-react";
+import { PLAN_PRICING, ANNUAL_BILLING_EXPLANATION, USER_BILLING_EXPLANATION, formatGBP } from "@shared/planPricing";
 
 interface DocSection {
   id: string;
@@ -90,19 +91,25 @@ To change a user's role, navigate to User Management, click the user's name, and
         tags: ["billing", "subscription", "tiers", "admin"],
         content: `## Subscription Tiers
 
-RegulaSync offers three subscription tiers:
+RegulaSync offers three subscription tiers priced per user/month:
 
-### Core — £90/month
+${USER_BILLING_EXPLANATION}
+
+${ANNUAL_BILLING_EXPLANATION}
+
+### Core — ${formatGBP(PLAN_PRICING.core.monthlyPence)} per user/month
 Ideal for small compliance teams getting started.
-- Up to 5 users
+- Annual billing: ${formatGBP(PLAN_PRICING.core.annualPence)} per user/year
+- Per-user licensing
 - 3 regulatory frameworks (FCA, PRA, ICO)
 - Core policy management
 - Basic SVAC audit trail
 - Email support
 
-### Professional — £175/month
+### Professional — ${formatGBP(PLAN_PRICING.professional.monthlyPence)} per user/month
 For growing compliance functions.
-- Up to 25 users
+- Annual billing: ${formatGBP(PLAN_PRICING.professional.annualPence)} per user/year
+- Per-user licensing
 - Unlimited frameworks
 - AI policy drafting
 - Predictive risk engine
@@ -110,9 +117,10 @@ For growing compliance functions.
 - Slack/Teams integration
 - Priority support
 
-### Enterprise — £350/month
+### Enterprise — ${formatGBP(PLAN_PRICING.enterprise.monthlyPence)} per user/month
 For large regulated firms requiring full capability.
-- Unlimited users
+- Annual billing: ${formatGBP(PLAN_PRICING.enterprise.annualPence)} per user/year
+- Per-user licensing
 - All Professional features
 - White-label configuration
 - Custom domain
@@ -121,8 +129,11 @@ For large regulated firms requiring full capability.
 - Dedicated account manager
 - SLA-backed support
 
+### Calculating Team Costs
+Multiply the plan's per-user rate by the number of licensed users. For example, 5 Core users cost ${formatGBP(PLAN_PRICING.core.monthlyPence)} × 5 = ${formatGBP(PLAN_PRICING.core.monthlyPence * 5)} per month in total. This is illustrative, not a bundle offer. VAT may apply.
+
 ### Upgrading
-Contact your account manager or email sales@regulasync.co.uk to upgrade your subscription. Changes take effect within 24 hours.`,
+Contact your account manager or email sales@regulasync.co.uk to arrange a team subscription or discuss plan changes. The Pricing page checkout purchases one user licence. Team quantities and any bespoke commercial terms must be confirmed in writing.`,
       },
       {
         id: "admin-security",

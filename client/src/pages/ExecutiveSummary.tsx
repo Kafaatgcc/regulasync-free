@@ -142,12 +142,12 @@ export default function ExecutiveSummary() {
       // Header
       doc.setFillColor(26, 54, 93); // Navy color
       doc.rect(0, 0, pageWidth, 40, 'F');
-      
+
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(24);
       doc.setFont('helvetica', 'bold');
       doc.text('RegulaSync', margin, 25);
-      
+
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
       doc.text('Executive Summary Report', margin, 35);
@@ -155,9 +155,9 @@ export default function ExecutiveSummary() {
       // Report date
       doc.setTextColor(200, 200, 200);
       doc.setFontSize(10);
-      doc.text(`Generated: ${new Date().toLocaleDateString('en-GB', { 
-        day: 'numeric', 
-        month: 'long', 
+      doc.text(`Generated: ${new Date().toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
@@ -175,27 +175,27 @@ export default function ExecutiveSummary() {
       // Draw metrics boxes
       const boxWidth = (pageWidth - margin * 2 - 15) / 4;
       const boxHeight = 35;
-      
+
       metrics.forEach((metric, index) => {
         const xPos = margin + (index * (boxWidth + 5));
-        
+
         // Box background
         doc.setFillColor(248, 250, 252);
         doc.roundedRect(xPos, yPos, boxWidth, boxHeight, 3, 3, 'F');
-        
+
         // Metric value
         doc.setTextColor(26, 54, 93);
         doc.setFontSize(18);
         doc.setFont('helvetica', 'bold');
         doc.text(String(metric.value), xPos + 5, yPos + 15);
-        
+
         // Metric title
         doc.setTextColor(100, 100, 100);
         doc.setFontSize(8);
         doc.setFont('helvetica', 'normal');
         const titleLines = doc.splitTextToSize(metric.title, boxWidth - 10);
         doc.text(titleLines, xPos + 5, yPos + 25);
-        
+
         // Change indicator
         doc.setFontSize(7);
         doc.setTextColor(metric.change > 0 ? 34 : 220, metric.change > 0 ? 139 : 38, metric.change > 0 ? 34 : 38);
@@ -227,20 +227,20 @@ export default function ExecutiveSummary() {
         const rowColor = index % 2 === 0 ? [255, 255, 255] : [248, 250, 252];
         doc.setFillColor(rowColor[0], rowColor[1], rowColor[2]);
         doc.rect(margin, yPos, pageWidth - margin * 2, 8, 'F');
-        
+
         doc.setTextColor(60, 60, 60);
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
         doc.text(area.name, margin + 5, yPos + 6);
         doc.text(`${area.score}%`, pageWidth - margin - 55, yPos + 6);
-        
+
         // Status badge
-        const statusColor = area.status === 'compliant' ? [34, 139, 34] : 
+        const statusColor = area.status === 'compliant' ? [34, 139, 34] :
                            area.status === 'at-risk' ? [255, 165, 0] : [220, 38, 38];
         doc.setTextColor(statusColor[0], statusColor[1], statusColor[2]);
         doc.setFont('helvetica', 'bold');
         doc.text(area.status === 'compliant' ? 'Compliant' : area.status === 'at-risk' ? 'At Risk' : 'Non-Compliant', pageWidth - margin - 30, yPos + 6);
-        
+
         yPos += 8;
       });
 
@@ -256,22 +256,22 @@ export default function ExecutiveSummary() {
       upcomingDeadlines.forEach((deadline) => {
         doc.setFillColor(248, 250, 252);
         doc.roundedRect(margin, yPos, pageWidth - margin * 2, 12, 2, 2, 'F');
-        
+
         // Priority indicator
         const priorityColor = deadline.priority === 'critical' ? [220, 38, 38] :
                              deadline.priority === 'high' ? [255, 165, 0] : [59, 130, 246];
         doc.setFillColor(priorityColor[0], priorityColor[1], priorityColor[2]);
         doc.circle(margin + 6, yPos + 6, 2, 'F');
-        
+
         doc.setTextColor(60, 60, 60);
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
         doc.text(deadline.title, margin + 12, yPos + 7);
-        
+
         doc.setTextColor(100, 100, 100);
         doc.setFontSize(8);
         doc.text(`${deadline.type} • ${deadline.daysLeft} days left`, pageWidth - margin - 50, yPos + 7);
-        
+
         yPos += 14;
       });
 
@@ -287,27 +287,27 @@ export default function ExecutiveSummary() {
       aiInsights.forEach((insight) => {
         const insightColor = insight.type === 'recommendation' ? [34, 139, 34] :
                             insight.type === 'risk' ? [220, 38, 38] : [59, 130, 246];
-        
+
         doc.setFillColor(insightColor[0], insightColor[1], insightColor[2]);
         doc.rect(margin, yPos, 3, 20, 'F');
-        
+
         doc.setFillColor(248, 250, 252);
         doc.rect(margin + 3, yPos, pageWidth - margin * 2 - 3, 20, 'F');
-        
+
         doc.setTextColor(26, 54, 93);
         doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
         doc.text(insight.title, margin + 8, yPos + 7);
-        
+
         doc.setTextColor(100, 100, 100);
         doc.setFontSize(8);
         doc.setFont('helvetica', 'normal');
         const descLines = doc.splitTextToSize(insight.description, pageWidth - margin * 2 - 20);
         doc.text(descLines[0], margin + 8, yPos + 14);
-        
+
         doc.setTextColor(60, 60, 60);
         doc.text(`Impact: ${insight.impact} | Effort: ${insight.effort}`, margin + 8, yPos + 18);
-        
+
         yPos += 24;
       });
 
@@ -315,7 +315,7 @@ export default function ExecutiveSummary() {
       const footerY = doc.internal.pageSize.getHeight() - 15;
       doc.setDrawColor(200, 200, 200);
       doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
-      
+
       doc.setTextColor(150, 150, 150);
       doc.setFontSize(8);
       doc.text('RegulaSync - AI-Powered Governance Automation', margin, footerY);
@@ -326,13 +326,13 @@ export default function ExecutiveSummary() {
       const fileName = `RegulaSync_Executive_Summary_${new Date().toISOString().split('T')[0]}.pdf`;
       doc.save(fileName);
 
-      toast.success('Report Downloaded', { 
-        description: `${fileName} has been saved to your downloads folder` 
+      toast.success('Report Downloaded', {
+        description: `${fileName} has been saved to your downloads folder`
       });
     } catch (error) {
       console.error('PDF generation error:', error);
-      toast.error('Export Failed', { 
-        description: 'Unable to generate PDF. Please try again.' 
+      toast.error('Export Failed', {
+        description: 'Unable to generate PDF. Please try again.'
       });
     } finally {
       setIsExporting(false);
@@ -433,7 +433,7 @@ export default function ExecutiveSummary() {
                         area.status === 'compliant' ? 'bg-green-100 text-green-700' :
                         area.status === 'at-risk' ? 'bg-amber-100 text-amber-700' : ''
                       }>
-                        {area.status === 'compliant' ? 'Compliant' : 
+                        {area.status === 'compliant' ? 'Compliant' :
                          area.status === 'at-risk' ? 'At Risk' : 'Non-Compliant'}
                       </Badge>
                       <span className="font-bold w-12 text-right">{area.score}%</span>
@@ -519,20 +519,20 @@ export default function ExecutiveSummary() {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
             <div>
-              <p className="text-4xl font-bold text-copper">85%</p>
-              <p className="text-sm text-white/70 mt-1">Reduction in Compliance Time</p>
+              <p className="text-4xl font-bold text-copper">Workflow</p>
+              <p className="text-sm text-white/70 mt-1">Workflow automation — design goal</p>
             </div>
             <div>
-              <p className="text-4xl font-bold text-copper">99.9%</p>
-              <p className="text-sm text-white/70 mt-1">Audit Trail Accuracy</p>
+              <p className="text-4xl font-bold text-copper">Integrity</p>
+              <p className="text-sm text-white/70 mt-1">Tamper-evident audit design</p>
             </div>
             <div>
-              <p className="text-4xl font-bold text-copper">60%</p>
-              <p className="text-sm text-white/70 mt-1">Faster Policy Approvals</p>
+              <p className="text-4xl font-bold text-copper">Approvals</p>
+              <p className="text-sm text-white/70 mt-1">Approval workflow prototype</p>
             </div>
             <div>
-              <p className="text-4xl font-bold text-copper">24/7</p>
-              <p className="text-sm text-white/70 mt-1">Automated Monitoring</p>
+              <p className="text-4xl font-bold text-copper">Monitoring</p>
+              <p className="text-sm text-white/70 mt-1">Regulatory monitoring prototype</p>
             </div>
           </div>
         </CardContent>

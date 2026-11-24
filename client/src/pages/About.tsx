@@ -18,7 +18,7 @@ export default function About() {
               About RegulaSync
             </h1>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Building the future of governance automation for regulated industries, 
+              Building the future of governance automation for regulated industries,
               founded on 18 years of real-world compliance and operational excellence experience.
             </p>
           </div>
@@ -36,7 +36,7 @@ export default function About() {
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900 mb-4">Our Mission</h3>
                 <p className="text-slate-600">
-                  To transform how organisations manage governance by embedding policy logic 
+                  To transform how organisations manage governance by embedding policy logic
                   directly into daily operations, reducing risk and ensuring consistent compliance.
                 </p>
               </CardContent>
@@ -48,7 +48,7 @@ export default function About() {
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900 mb-4">Our Vision</h3>
                 <p className="text-slate-600">
-                  To become the leading governance automation platform for regulated industries 
+                  To become the leading governance automation platform for regulated industries
                   worldwide, starting with the UK financial services sector.
                 </p>
               </CardContent>
@@ -60,7 +60,7 @@ export default function About() {
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900 mb-4">Our Values</h3>
                 <p className="text-slate-600">
-                  Transparency, accountability, and innovation guide everything we build. 
+                  Transparency, accountability, and innovation guide everything we build.
                   We believe governance should enable growth, not hinder it.
                 </p>
               </CardContent>
@@ -75,7 +75,7 @@ export default function About() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Meet the Founder</h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
-              RegulaSync was founded by an industry veteran with deep expertise in governance, 
+              RegulaSync was founded by an industry veteran with deep expertise in governance,
               compliance, and operational excellence across leading global organisations.
             </p>
           </div>
@@ -85,8 +85,8 @@ export default function About() {
               {/* Profile Image Area */}
               <div className="md:col-span-2 bg-gradient-to-br from-[#1e3a5f] to-[#2d5a87] p-12 flex flex-col items-center justify-center text-white">
                 <div className="w-48 h-48 rounded-full overflow-hidden mb-6 border-4 border-white/30">
-                  <img 
-                    src="/founder.jpg" 
+                  <img
+                    src="/api/brand/founder.jpg"
                     alt="Baidaa Housen - Founder & CEO of RegulaSync"
                     className="w-full h-full object-cover"
                   />
@@ -107,14 +107,14 @@ export default function About() {
               <div className="md:col-span-3 p-12">
                 <div className="prose prose-slate max-w-none">
                   <p className="text-lg text-slate-700 mb-6">
-                    With <strong>18 years of experience</strong> in executive support, governance coordination, 
-                    compliance, and operational strategy across leading UAE institutions, I bring deep domain 
+                    With <strong>18 years of experience</strong> in executive support, governance coordination,
+                    compliance, and operational strategy across leading UAE institutions, I bring deep domain
                     knowledge in transforming complex organisational rules into clear, executable processes.
                   </p>
                   <p className="text-slate-600 mb-8">
-                    Throughout my career at <strong>Mubadala Investment Company</strong>, <strong>Mubadala Capital</strong>, 
-                    and <strong>Mubadala Energy</strong>, I witnessed first-hand how fragmented governance processes, 
-                    siloed compliance functions, and manual policy enforcement contribute to risk exposure, 
+                    Throughout my career at <strong>Mubadala Investment Company</strong>, <strong>Mubadala Capital</strong>,
+                    and <strong>Mubadala Energy</strong>, I witnessed first-hand how fragmented governance processes,
+                    siloed compliance functions, and manual policy enforcement contribute to risk exposure,
                     inefficiency, and audit challenges. This experience directly informed the creation of RegulaSync.
                   </p>
                 </div>
@@ -224,8 +224,8 @@ export default function About() {
               <div>
                 <h3 className="font-semibold text-slate-900 mb-2">High-Skilled Job Creation</h3>
                 <p className="text-slate-600">
-                  Our growth plans will create high-skilled jobs in software engineering, AI/ML, product management, 
-                  sales, and customer success. We're building a diverse team of professionals who are passionate 
+                  Our growth plans will create high-skilled jobs in software engineering, AI/ML, product management,
+                  sales, and customer success. We're building a diverse team of professionals who are passionate
                   about transforming governance for regulated industries.
                 </p>
                 <Link href="/careers">

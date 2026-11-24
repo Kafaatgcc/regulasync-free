@@ -1,4 +1,5 @@
 import { useState } from "react";
+import SuperAdminUsers from "@/components/SuperAdminUsers";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +27,6 @@ export default function SuperAdminDashboard() {
 
   const { data: stats } = trpc.superAdmin.globalStats.useQuery();
   const { data: orgs, refetch: refetchOrgs } = trpc.superAdmin.listOrgs.useQuery();
-  const { data: allUsers } = trpc.superAdmin.listAllUsers.useQuery();
   const { data: featureFlags, refetch: refetchFlags } = trpc.featureFlags.list.useQuery();
   const { data: orgFlags, refetch: refetchOrgFlags } = trpc.featureFlags.getForOrg.useQuery(
     { organizationId: selectedOrgId ?? undefined },
@@ -242,45 +242,11 @@ export default function SuperAdminDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-amber-500" />
-                All Users ({allUsers?.length ?? 0})
+                All Users ({stats?.totalUsers ?? 0})
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border text-muted-foreground">
-                      <th className="text-left py-2 pr-4">User</th>
-                      <th className="text-left py-2 pr-4">Role</th>
-                      <th className="text-left py-2 pr-4">Organisation</th>
-                      <th className="text-left py-2 pr-4">Status</th>
-                      <th className="text-left py-2">Last Sign In</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(allUsers ?? []).map((user: any) => (
-                      <tr key={user.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                        <td className="py-2 pr-4">
-                          <div className="font-medium text-foreground">{user.name ?? "—"}</div>
-                          <div className="text-xs text-muted-foreground">{user.email}</div>
-                        </td>
-                        <td className="py-2 pr-4">
-                          <Badge variant="outline" className="text-xs capitalize">{user.role?.replace("_", " ")}</Badge>
-                        </td>
-                        <td className="py-2 pr-4 text-muted-foreground text-xs">{user.organizationId ?? "—"}</td>
-                        <td className="py-2 pr-4">
-                          <Badge variant={user.isActive ? "default" : "destructive"} className="text-xs">
-                            {user.isActive ? "Active" : "Inactive"}
-                          </Badge>
-                        </td>
-                        <td className="py-2 text-muted-foreground text-xs">
-                          {user.lastSignedIn ? new Date(user.lastSignedIn).toLocaleDateString() : "—"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <SuperAdminUsers organizations={orgs ?? []} />
             </CardContent>
           </Card>
         </TabsContent>

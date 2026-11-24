@@ -41,11 +41,11 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { 
-  FileText, 
-  Plus, 
-  Search, 
-  Filter, 
+import {
+  FileText,
+  Plus,
+  Search,
+  Filter,
   MoreHorizontal,
   Eye,
   Edit,
@@ -64,6 +64,7 @@ import {
 } from "lucide-react";
 import PolicyCreator from "@/components/PolicyCreator";
 import { toast } from "sonner";
+import { SAMPLE_DATE_LABEL, samplePolicyUpdatedDates } from "@shared/sampleDates";
 
 const policies = [
   {
@@ -74,7 +75,7 @@ const policies = [
     priority: "critical",
     owner: "Sarah Chen",
     department: "Compliance",
-    lastUpdated: "2024-12-15",
+    lastUpdated: samplePolicyUpdatedDates[0],
     complianceScore: 98,
     automationEnabled: true,
   },
@@ -86,7 +87,7 @@ const policies = [
     priority: "high",
     owner: "Michael Brown",
     department: "Legal",
-    lastUpdated: "2024-12-10",
+    lastUpdated: samplePolicyUpdatedDates[1],
     complianceScore: 95,
     automationEnabled: true,
   },
@@ -98,7 +99,7 @@ const policies = [
     priority: "high",
     owner: "James Wilson",
     department: "IT",
-    lastUpdated: "2024-11-28",
+    lastUpdated: samplePolicyUpdatedDates[2],
     complianceScore: 92,
     automationEnabled: false,
   },
@@ -110,7 +111,7 @@ const policies = [
     priority: "medium",
     owner: "Emma Davis",
     department: "Operations",
-    lastUpdated: "2024-12-18",
+    lastUpdated: samplePolicyUpdatedDates[3],
     complianceScore: 88,
     automationEnabled: false,
   },
@@ -122,7 +123,7 @@ const policies = [
     priority: "medium",
     owner: "Lisa Johnson",
     department: "HR",
-    lastUpdated: "2024-10-05",
+    lastUpdated: samplePolicyUpdatedDates[4],
     complianceScore: 96,
     automationEnabled: true,
   },
@@ -134,7 +135,7 @@ const policies = [
     priority: "high",
     owner: "Robert Taylor",
     department: "Finance",
-    lastUpdated: "2024-12-20",
+    lastUpdated: samplePolicyUpdatedDates[5],
     complianceScore: 0,
     automationEnabled: false,
   },
@@ -146,7 +147,7 @@ const policies = [
     priority: "critical",
     owner: "David Lee",
     department: "Operations",
-    lastUpdated: "2024-11-15",
+    lastUpdated: samplePolicyUpdatedDates[6],
     complianceScore: 91,
     automationEnabled: true,
   },
@@ -158,7 +159,7 @@ const policies = [
     priority: "low",
     owner: "Anna White",
     department: "Operations",
-    lastUpdated: "2024-12-01",
+    lastUpdated: samplePolicyUpdatedDates[7],
     complianceScore: 85,
     automationEnabled: false,
   },
@@ -220,12 +221,12 @@ export default function Policies() {
   // Process uploaded document
   const processUpload = async () => {
     if (!uploadedFile) return;
-    
+
     setIsUploading(true);
-    
+
     // Simulate processing (in production, this would upload to S3 and analyze)
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     // Create a new policy from the uploaded document
     const newPolicy = {
       id: Date.now(),
@@ -241,13 +242,13 @@ export default function Policies() {
       source: "uploaded",
       fileName: uploadedFile.name,
     };
-    
+
     setDemoPolicies(prev => [...prev, newPolicy]);
     setIsUploading(false);
     setUploadedFile(null);
     setIsCreateOpen(false);
     setSelectedApprover("");
-    
+
     const approverName = approvers.find(a => a.id === selectedApprover)?.name || "pending assignment";
     toast.success('Document uploaded successfully!', {
       description: `"${newPolicy.title}" has been added and assigned to ${approverName} for approval.`
@@ -256,7 +257,7 @@ export default function Policies() {
 
   // Combine static policies with demo-created policies
   const allPolicies = [...policies, ...demoPolicies];
-  
+
   const filteredPolicies = allPolicies.filter(policy =>
     policy.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     policy.department.toLowerCase().includes(searchQuery.toLowerCase())
@@ -280,6 +281,7 @@ export default function Policies() {
             Policy Management
           </h1>
           <p className="text-muted-foreground">Create, manage, and automate organizational policies</p>
+          <p className="text-xs text-muted-foreground mt-1">{SAMPLE_DATE_LABEL}: preloaded names, dates and scores are sample data, not verified compliance evidence.</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setIsAICreatorOpen(true)}>
@@ -307,7 +309,7 @@ export default function Policies() {
                 Create a new policy from scratch or upload an existing document
               </DialogDescription>
             </DialogHeader>
-            
+
             <Tabs value={createTab} onValueChange={setCreateTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="scratch" className="flex items-center gap-2">
@@ -319,7 +321,7 @@ export default function Policies() {
                   Upload Document
                 </TabsTrigger>
               </TabsList>
-              
+
               {/* Create from Scratch Tab */}
               <TabsContent value="scratch" className="space-y-4 mt-4">
                 <div className="grid gap-2">
@@ -412,7 +414,7 @@ export default function Policies() {
                   <p className="text-xs text-muted-foreground">The selected approver will be notified to review and approve this policy.</p>
                 </div>
               </TabsContent>
-              
+
               {/* Upload Document Tab */}
               <TabsContent value="upload" className="space-y-4 mt-4">
                 <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
@@ -446,7 +448,7 @@ export default function Policies() {
                     )}
                   </label>
                 </div>
-                
+
                 {/* Category and Priority for uploaded docs */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
@@ -477,7 +479,7 @@ export default function Policies() {
                     </Select>
                   </div>
                 </div>
-                
+
                 {/* Approver Selection for uploaded docs */}
                 <div className="grid gap-2 pt-2 border-t">
                   <Label className="flex items-center gap-2">
@@ -500,7 +502,7 @@ export default function Policies() {
                 </div>
               </TabsContent>
             </Tabs>
-            
+
             <DialogFooter className="mt-4">
               <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
               {createTab === "scratch" ? (
@@ -647,7 +649,7 @@ export default function Policies() {
                     {policy.complianceScore > 0 ? (
                       <div className="flex items-center gap-2">
                         <div className="w-16 h-2 bg-secondary rounded-full overflow-hidden">
-                          <div 
+                          <div
                             className={`h-full rounded-full ${
                               policy.complianceScore >= 90 ? 'bg-green-500' :
                               policy.complianceScore >= 70 ? 'bg-amber-500' : 'bg-red-500'
@@ -707,8 +709,8 @@ export default function Policies() {
         </CardContent>
       </Card>
       {/* AI Policy Creator */}
-      <PolicyCreator 
-        open={isAICreatorOpen} 
+      <PolicyCreator
+        open={isAICreatorOpen}
         onOpenChange={setIsAICreatorOpen}
         onPolicyCreated={(policy) => {
           setDemoPolicies(prev => [...prev, {

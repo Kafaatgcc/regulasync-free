@@ -32,9 +32,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  GitBranch, 
-  Plus, 
+import {
+  GitBranch,
+  Plus,
   Search,
   Users,
   DollarSign,
@@ -49,6 +49,7 @@ import {
   RefreshCw,
   Loader2
 } from "lucide-react";
+import { SAMPLE_DATE_LABEL, sampleDelegationPeriods, sampleApprovalDueDates } from "@shared/sampleDates";
 
 const delegations = [
   {
@@ -59,8 +60,7 @@ const delegations = [
     delegatee: "CFO - Sarah Chen",
     threshold: "£500,000",
     status: "active",
-    effectiveFrom: "2024-01-01",
-    effectiveTo: "2025-12-31",
+    ...sampleDelegationPeriods[0],
     conditions: "All expenditures above £100,000 require board notification",
   },
   {
@@ -71,8 +71,7 @@ const delegations = [
     delegatee: "Head of Procurement - Emma Davis",
     threshold: "£100,000",
     status: "active",
-    effectiveFrom: "2024-03-15",
-    effectiveTo: "2025-03-14",
+    ...sampleDelegationPeriods[1],
     conditions: "Vendor contracts only, excluding employment contracts",
   },
   {
@@ -83,8 +82,7 @@ const delegations = [
     delegatee: "CTO - James Wilson",
     threshold: "£50,000",
     status: "active",
-    effectiveFrom: "2024-06-01",
-    effectiveTo: "2025-05-31",
+    ...sampleDelegationPeriods[2],
     conditions: "Technology and software purchases only",
   },
   {
@@ -95,8 +93,7 @@ const delegations = [
     delegatee: "HR Director - Lisa Johnson",
     threshold: "£75,000 annual salary",
     status: "pending",
-    effectiveFrom: "2025-01-01",
-    effectiveTo: "2025-12-31",
+    ...sampleDelegationPeriods[3],
     conditions: "Non-executive positions only",
   },
   {
@@ -107,8 +104,7 @@ const delegations = [
     delegatee: "Chief Compliance Officer - Michael Brown",
     threshold: "N/A",
     status: "active",
-    effectiveFrom: "2024-01-01",
-    effectiveTo: "2025-12-31",
+    ...sampleDelegationPeriods[4],
     conditions: "Minor compliance exceptions only, major exceptions require board approval",
   },
 ];
@@ -121,7 +117,7 @@ const pendingApprovals = [
     requester: "IT Department",
     amount: "£45,000",
     status: "pending",
-    dueDate: "2024-12-28",
+    dueDate: sampleApprovalDueDates[0],
     priority: "high",
   },
   {
@@ -131,7 +127,7 @@ const pendingApprovals = [
     requester: "Marketing Department",
     amount: "£125,000",
     status: "pending",
-    dueDate: "2024-12-30",
+    dueDate: sampleApprovalDueDates[1],
     priority: "medium",
   },
   {
@@ -141,7 +137,7 @@ const pendingApprovals = [
     requester: "Engineering Department",
     amount: "£85,000 annual",
     status: "escalated",
-    dueDate: "2025-01-05",
+    dueDate: sampleApprovalDueDates[2],
     priority: "high",
   },
 ];
@@ -210,6 +206,7 @@ export default function Delegation() {
             Delegation of Authority
           </h1>
           <p className="text-muted-foreground">Manage approval chains and authority matrices</p>
+          <p className="text-xs text-muted-foreground mt-1">{SAMPLE_DATE_LABEL}: preloaded delegations, approvals and thresholds are sample data, not live authority records.</p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
@@ -322,6 +319,7 @@ export default function Delegation() {
               Delegation Expiry Alerts
               <Badge variant="destructive" className="ml-auto">{expiringDelegations.length + expiredDelegations.length}</Badge>
             </CardTitle>
+            <CardDescription>Stored records, separate from the illustrative examples below.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

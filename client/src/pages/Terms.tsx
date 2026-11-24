@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import PublicHeader from "@/components/PublicHeader";
 import PublicFooter from "@/components/PublicFooter";
 import { FileText, Scale, AlertTriangle, CreditCard, Shield, Gavel } from "lucide-react";
+import { PLAN_PRICING, ANNUAL_BILLING_EXPLANATION, USER_BILLING_EXPLANATION, formatGBP } from "@shared/planPricing";
 
 export default function Terms() {
   return (
@@ -22,8 +23,8 @@ export default function Terms() {
             </div>
           </div>
           <p className="text-lg text-muted-foreground">
-            These Terms of Service ("Terms") govern your access to and use of RegulaSync's 
-            governance automation platform and related services. By using our services, you agree 
+            These Terms of Service ("Terms") govern your access to and use of RegulaSync's
+            governance automation platform and related services. By using our services, you agree
             to be bound by these Terms.
           </p>
         </div>
@@ -32,7 +33,7 @@ export default function Terms() {
       {/* Content */}
       <section className="py-12 px-6">
         <div className="container mx-auto max-w-4xl space-y-12">
-          
+
           {/* Definitions */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
@@ -67,8 +68,8 @@ export default function Terms() {
                 <li>Integration with third-party systems</li>
               </ul>
               <p className="mt-3">
-                The Service is designed to assist with governance processes but does not constitute 
-                legal, regulatory, or compliance advice. Customers remain responsible for their own 
+                The Service is designed to assist with governance processes but does not constitute
+                legal, regulatory, or compliance advice. Customers remain responsible for their own
                 compliance obligations.
               </p>
             </div>
@@ -89,7 +90,7 @@ export default function Terms() {
                 <li>Be at least 18 years old or have legal authority to bind your organization</li>
               </ul>
               <p className="mt-3">
-                You are responsible for all activities that occur under your account. We reserve 
+                You are responsible for all activities that occur under your account. We reserve
                 the right to suspend or terminate accounts that violate these Terms.
               </p>
             </div>
@@ -105,10 +106,12 @@ export default function Terms() {
               <div className="bg-muted/50 p-4 rounded-lg space-y-2">
                 <h3 className="font-medium text-foreground">Pricing Tiers</h3>
                 <ul className="text-sm space-y-1">
-                  <li>• <strong>Core:</strong> £90 per month (up to 5 users) or £900 per year</li>
-                  <li>• <strong>Professional:</strong> £175 per month (up to 25 users) or £1,750 per year</li>
-                  <li>• <strong>Enterprise:</strong> £350 per month (unlimited users) or £3,500 per year</li>
+                  <li>• <strong>Core:</strong> {formatGBP(PLAN_PRICING.core.monthlyPence)} per user/month or {formatGBP(PLAN_PRICING.core.annualPence)} per user/year</li>
+                  <li>• <strong>Professional:</strong> {formatGBP(PLAN_PRICING.professional.monthlyPence)} per user/month or {formatGBP(PLAN_PRICING.professional.annualPence)} per user/year</li>
+                  <li>• <strong>Enterprise:</strong> {formatGBP(PLAN_PRICING.enterprise.monthlyPence)} per user/month or {formatGBP(PLAN_PRICING.enterprise.annualPence)} per user/year</li>
                 </ul>
+                <p className="text-sm">{USER_BILLING_EXPLANATION} Total subscription fees are the selected rate multiplied by the number of licensed users.</p>
+                <p className="text-sm">{ANNUAL_BILLING_EXPLANATION} Any bespoke discount requires an agreed written quote.</p>
               </div>
               <ul className="list-disc pl-6 space-y-2 mt-4">
                 <li><strong>Billing:</strong> Subscriptions are billed in advance on a monthly or annual basis.</li>
@@ -149,23 +152,23 @@ export default function Terms() {
             </div>
             <div className="pl-8 space-y-3 text-muted-foreground">
               <p>
-                <strong>Ownership:</strong> You retain all rights to your Customer Data. We do not 
+                <strong>Ownership:</strong> You retain all rights to your Customer Data. We do not
                 claim ownership of any content you upload to the Service.
               </p>
               <p>
-                <strong>License:</strong> You grant us a limited license to use, process, and store 
+                <strong>License:</strong> You grant us a limited license to use, process, and store
                 your Customer Data solely to provide the Service and as described in our Privacy Policy.
               </p>
               <p>
-                <strong>Security:</strong> We implement appropriate technical and organizational measures 
+                <strong>Security:</strong> We implement appropriate technical and organizational measures
                 to protect your Customer Data. See our Security page for details.
               </p>
               <p>
-                <strong>Data Export:</strong> You may export your Customer Data at any time through 
+                <strong>Data Export:</strong> You may export your Customer Data at any time through
                 the Service's export functionality.
               </p>
               <p>
-                <strong>Data Deletion:</strong> Upon termination, we will delete your Customer Data 
+                <strong>Data Deletion:</strong> Upon termination, we will delete your Customer Data
                 within 90 days, unless retention is required by law.
               </p>
             </div>
@@ -179,12 +182,12 @@ export default function Terms() {
             </div>
             <div className="pl-8 space-y-3 text-muted-foreground">
               <p>
-                The Service, including all software, algorithms, designs, and documentation, is owned 
-                by RegulaSync and protected by intellectual property laws. Your subscription grants 
+                The Service, including all software, algorithms, designs, and documentation, is owned
+                by RegulaSync and protected by intellectual property laws. Your subscription grants
                 you a limited, non-exclusive, non-transferable license to use the Service.
               </p>
               <p>
-                You may not copy, modify, distribute, or create derivative works based on the Service 
+                You may not copy, modify, distribute, or create derivative works based on the Service
                 without our prior written consent.
               </p>
             </div>
@@ -199,13 +202,13 @@ export default function Terms() {
             <div className="pl-8 space-y-3 text-muted-foreground">
               <div className="bg-amber-50 dark:bg-amber-950/30 p-4 rounded-lg border border-amber-200 dark:border-amber-900">
                 <p className="text-amber-800 dark:text-amber-200">
-                  THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, 
-                  EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
+                  THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND,
+                  EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
                   FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
                 </p>
               </div>
               <p className="mt-3">
-                We do not warrant that the Service will be uninterrupted, error-free, or completely secure. 
+                We do not warrant that the Service will be uninterrupted, error-free, or completely secure.
                 We are not responsible for any regulatory decisions made based on information provided by the Service.
               </p>
             </div>
@@ -219,12 +222,12 @@ export default function Terms() {
             </div>
             <div className="pl-8 space-y-3 text-muted-foreground">
               <p>
-                To the maximum extent permitted by applicable law, RegulaSync's total liability for any claims 
-                arising from these Terms or your use of the Service shall not exceed the fees paid 
+                To the maximum extent permitted by applicable law, RegulaSync's total liability for any claims
+                arising from these Terms or your use of the Service shall not exceed the fees paid
                 by you in the twelve (12) months preceding the claim.
               </p>
               <p>
-                We shall not be liable for any indirect, incidental, special, consequential, or 
+                We shall not be liable for any indirect, incidental, special, consequential, or
                 punitive damages, including loss of profits, data, or business opportunities.
               </p>
             </div>
@@ -238,7 +241,7 @@ export default function Terms() {
             </div>
             <div className="pl-8 space-y-3 text-muted-foreground">
               <p>
-                You agree to indemnify and hold harmless RegulaSync and its team members 
+                You agree to indemnify and hold harmless RegulaSync and its team members
                 and agents from any claims, damages, losses, or expenses arising from:
               </p>
               <ul className="list-disc pl-6 space-y-1">
@@ -258,15 +261,15 @@ export default function Terms() {
             </div>
             <div className="pl-8 space-y-3 text-muted-foreground">
               <p>
-                <strong>By You:</strong> You may terminate your subscription at any time through 
+                <strong>By You:</strong> You may terminate your subscription at any time through
                 your account settings. Termination takes effect at the end of your current billing period.
               </p>
               <p>
-                <strong>By Us:</strong> We may suspend or terminate your access if you violate these 
+                <strong>By Us:</strong> We may suspend or terminate your access if you violate these
                 Terms, fail to pay fees, or if we discontinue the Service with 90 days' notice.
               </p>
               <p>
-                <strong>Effect of Termination:</strong> Upon termination, your access to the Service 
+                <strong>Effect of Termination:</strong> Upon termination, your access to the Service
                 will cease, and we will delete your Customer Data in accordance with our data retention policy.
               </p>
             </div>
@@ -280,11 +283,11 @@ export default function Terms() {
             </div>
             <div className="pl-8 space-y-3 text-muted-foreground">
               <p>
-                These Terms are governed by the laws of England and Wales. Any disputes shall be 
+                These Terms are governed by the laws of England and Wales. Any disputes shall be
                 resolved exclusively in the courts of England and Wales.
               </p>
               <p>
-                Before initiating legal proceedings, you agree to attempt to resolve disputes through 
+                Before initiating legal proceedings, you agree to attempt to resolve disputes through
                 good faith negotiation for at least 30 days.
               </p>
             </div>
@@ -298,11 +301,11 @@ export default function Terms() {
             </div>
             <div className="pl-8 space-y-3 text-muted-foreground">
               <p>
-                We may update these Terms from time to time. We will notify you of material changes 
+                We may update these Terms from time to time. We will notify you of material changes
                 by email or through the Service at least 30 days before they take effect.
               </p>
               <p>
-                Your continued use of the Service after changes take effect constitutes acceptance 
+                Your continued use of the Service after changes take effect constitutes acceptance
                 of the updated Terms.
               </p>
             </div>

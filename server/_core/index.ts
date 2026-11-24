@@ -11,6 +11,11 @@ const app = express();
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
+// Stable compatibility aliases for the existing approved Railway brand files.
+const brandDir = path.join(process.cwd(), process.env.NODE_ENV === "production" ? "dist/public" : "client/public");
+app.get("/api/brand/logo.png", (_req, res) => res.sendFile(path.join(brandDir, "logo.png")));
+app.get("/api/brand/founder.jpg", (_req, res) => res.sendFile(path.join(brandDir, "founder.jpg")));
+
 // Serve uploaded files
 const uploadDir = path.join(process.cwd(), "uploads");
 app.use("/uploads", express.static(uploadDir));

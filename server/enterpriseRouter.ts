@@ -1,3 +1,4 @@
+import { searchUsersProcedure } from "./adminUserSearch";
 /**
  * Enterprise Router — Commercial SaaS features
  *
@@ -109,6 +110,7 @@ export const featureFlagsRouter = router({
 // ─── Super Admin Global Dashboard ────────────────────────────────────────────
 
 export const superAdminRouter = router({
+  searchUsers: searchUsersProcedure,
   // Global stats across all orgs
   globalStats: protectedProcedure.query(async ({ ctx }) => {
     if (ctx.user.role !== "super_admin") throw new TRPCError({ code: "FORBIDDEN" });

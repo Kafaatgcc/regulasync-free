@@ -2,6 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
 
 interface PublicHeaderProps {
   transparent?: boolean;
@@ -10,6 +11,9 @@ interface PublicHeaderProps {
 export default function PublicHeader({ transparent = false }: PublicHeaderProps) {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: user } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 30_000 });
+  const accountPath = user ? "/dashboard" : "/login";
+  const accountLabel = user ? "Dashboard" : "Log In";
 
   const navLinks = [
     { href: "/about", label: "About" },
@@ -29,9 +33,9 @@ export default function PublicHeader({ transparent = false }: PublicHeaderProps)
           {/* Logo */}
           <Link href="/">
             <a className="flex items-center gap-2.5">
-              <img 
-                src="/logo.png" 
-                alt="RegulaSync" 
+              <img
+                src="/api/brand/logo.png"
+                alt="RegulaSync"
                 className="h-9 w-9 object-contain flex-shrink-0"
               />
               <span className="text-xl font-bold text-slate-900">
@@ -45,8 +49,8 @@ export default function PublicHeader({ transparent = false }: PublicHeaderProps)
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
                 <a className={`text-sm font-medium transition-colors ${
-                  isActive(link.href) 
-                    ? 'text-[#b87333]' 
+                  isActive(link.href)
+                    ? 'text-[#b87333]'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}>
                   {link.label}
@@ -57,9 +61,9 @@ export default function PublicHeader({ transparent = false }: PublicHeaderProps)
 
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="/login">
+            <Link href={accountPath}>
               <Button variant="outline" size="sm" className="text-slate-700 border-slate-300 hover:bg-slate-50">
-                Log In
+                {accountLabel}
               </Button>
             </Link>
             <Link href="/#request-demo">
@@ -71,12 +75,12 @@ export default function PublicHeader({ transparent = false }: PublicHeaderProps)
 
           {/* Mobile: Log In button + hamburger */}
           <div className="lg:hidden flex items-center gap-2">
-            <Link href="/login">
+            <Link href={accountPath}>
               <Button variant="outline" size="sm" className="text-slate-700 border-slate-300 text-xs px-3">
-                Log In
+                {accountLabel}
               </Button>
             </Link>
-            <button 
+            <button
               className="p-2 text-slate-600"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
@@ -92,10 +96,10 @@ export default function PublicHeader({ transparent = false }: PublicHeaderProps)
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
-                  <a 
+                  <a
                     className={`text-sm font-medium py-2.5 px-2 rounded-md block transition-colors ${
-                      isActive(link.href) 
-                        ? 'text-[#b87333] bg-orange-50' 
+                      isActive(link.href)
+                        ? 'text-[#b87333] bg-orange-50'
                         : 'text-slate-700 hover:bg-slate-50'
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
