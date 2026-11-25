@@ -85,16 +85,16 @@ const botResponses: Record<string, string> = {
   'hello': 'Hello! Welcome to RegulaSync. How can I help you today?',
   'hi': 'Hi there! I\'m here to help you with any questions about RegulaSync.',
   'demo': 'I\'d be happy to help you explore our demo! You can access the full platform demo by clicking "Start Demo" on the landing page. Would you like me to guide you through specific features?',
-  'pricing': 'Our pricing starts at £49/user/month for the Core plan, £109/user/month for Professional, and £179/user/month for Enterprise. All plans include a 14-day free trial. Would you like more details?',
-  'features': 'RegulaSync offers: AI-powered policy analysis, real-time regulatory monitoring, automated compliance alerts, delegation of authority management, and comprehensive audit trails. Which feature would you like to learn more about?',
-  'compliance': 'Our compliance monitoring system tracks your policies against UK regulations (FCA, PRA, ICO) in real-time. When regulations change, we automatically alert you to required policy updates.',
-  'contact': 'You can reach our team at contact@regulasync.co.uk or call +44 (0) 20 7123 4567. Would you like to schedule a demo with our team?',
-  'regulations': 'RegulaSync monitors UK regulatory bodies including FCA, PRA, ICO, and Bank of England. We track regulatory updates and automatically match them against your company policies.',
-  'security': 'We implement enterprise-grade security: 256-bit encryption, UK data centres, and are pursuing ISO 27001 and SOC 2 certifications. Your data is protected with the highest standards.',
+  'pricing': 'Proposed Q2 2027 pricing is £90 per user/month for Core, £175 per user/month for Professional, and £350 per user/month for Enterprise. Early-access availability, any trial and commercial terms must be confirmed in writing. This pre-launch prototype is not an activated paid-service offer. Would you like more details?',
+  'features': 'The RegulaSync prototype demonstrates AI-assisted policy analysis, regulatory monitoring, compliance alerts, delegation of authority management and audit-log workflows. Production capabilities and integrations are subject to validation. Which feature would you like to explore?',
+  'compliance': 'The prototype illustrates comparing policies with UK regulatory requirements (FCA, PRA, ICO) and suggesting updates. Sample scores and alerts are not a legal assessment or assurance of compliance; regulatory coverage and production monitoring require validation and human review.',
+  'contact': 'You can reach our team at bhousen@regulasync.co.uk to discuss a demo or proposed early access for Q2 2027.',
+  'regulations': 'RegulaSync proposes coverage of UK regulatory bodies including FCA, PRA, ICO and Bank of England. The prototype illustrates regulatory-update and policy-matching workflows; live feeds, coverage and matching accuracy must be validated before production use.',
+  'security': 'This is an assessment prototype, not evidence of production security assurance. Hosting, encryption, access controls and any certification status must be verified before production use. Please see the Security page for the current qualification of security claims.',
   'policy': 'I can help you with policy management! You can create new policies, review existing ones, or use our AI to generate policy drafts. What would you like to do?',
   'delegation': 'Delegation of Authority helps you manage who can approve what. You can set spending limits, approval chains, and track all delegations in one place.',
-  'report': 'Our reporting features include Executive Summaries, Compliance Reports, and Custom Reports. You can export them as PDF for stakeholders.',
-  'audit': 'The Audit Trail tracks all changes across your organization - policy updates, delegations, compliance events, and user actions. Everything is timestamped and searchable.',
+  'report': 'The prototype demonstrates Executive Summaries, Compliance Reports and Custom Reports, with PDF export workflows. Sample outputs are illustrative, require human review and do not provide audit or regulatory assurance.',
+  'audit': 'The prototype demonstrates audit-log workflows for policy updates, delegations, compliance events and user actions. Sample records do not establish complete event coverage, immutability or suitability as regulatory evidence; production controls and assurance require validation.',
   'help': 'I\'m here to help! I can assist with: navigating the platform, understanding features, compliance questions, or connecting you with our team.',
   'default': 'Thank you for your question. Let me help you with that. You can also explore our Help Center or contact our team for personalized assistance.'
 };
@@ -106,7 +106,7 @@ const getPageContextSuggestions = (pathname: string, userProfile: UserProfile) =
   
   const pageContexts: Record<string, { message: string; suggestions: string[] }> = {
     '/dashboard': {
-      message: `Welcome back, ${userProfile.name.split(' ')[0]}! ${userProfile.pendingTasks && userProfile.pendingTasks > 0 ? `You have ${userProfile.pendingTasks} pending tasks.` : 'Here\'s what you can do:'}`,
+      message: `Welcome back, ${userProfile.name.split(' ')[0]}! ${userProfile.pendingTasks && userProfile.pendingTasks > 0 ? `This sample profile shows ${userProfile.pendingTasks} pending tasks.` : 'Here\'s what you can do:'}`,
       suggestions: isAdmin 
         ? ['Review team compliance', 'Check pending approvals', 'View system alerts', 'Generate executive report']
         : ['Review your tasks', 'Check compliance status', 'View AI recommendations', 'Update your policies']
@@ -118,7 +118,7 @@ const getPageContextSuggestions = (pathname: string, userProfile: UserProfile) =
         : ['Create new policy', 'Review my policies', 'Request policy change', 'View policy history']
     },
     '/compliance': {
-      message: `Compliance Overview - ${userProfile.complianceScore ? `Your current score is ${userProfile.complianceScore}%.` : 'Monitor your compliance status here.'}`,
+      message: `Compliance Overview - ${userProfile.complianceScore ? `The illustrative sample score is ${userProfile.complianceScore}%, not an assessment of your compliance.` : 'Explore compliance-monitoring workflows here.'}`,
       suggestions: isCompliance
         ? ['Run compliance audit', 'Generate compliance report', 'Review all departments', 'Set compliance targets']
         : ['Check my compliance', 'View department score', 'See improvement tips', 'Report compliance issue']
@@ -146,7 +146,7 @@ const getPageContextSuggestions = (pathname: string, userProfile: UserProfile) =
       suggestions: ['View this month', 'Set reminders', 'Filter by priority', 'Export calendar']
     },
     '/audit-trail': {
-      message: isAdmin ? 'Full audit trail access - Track all system activities.' : 'View your activity history.',
+      message: isAdmin ? 'Explore prototype audit-log workflows; complete event coverage and audit assurance are not established.' : 'Explore the prototype activity-history view.',
       suggestions: isAdmin
         ? ['Search all logs', 'Export audit report', 'Filter by user', 'Compliance audit']
         : ['View my activity', 'Recent changes', 'Export my logs', 'Activity summary']
@@ -184,7 +184,7 @@ const getProactiveAlerts = (userProfile: UserProfile): Message[] => {
   if (userProfile.complianceScore && userProfile.complianceScore < 90) {
     alerts.push({
       id: 'alert-compliance',
-      text: `⚠️ Your compliance score is ${userProfile.complianceScore}%. I can help you identify areas for improvement.`,
+      text: `⚠️ This sample profile shows an illustrative compliance score of ${userProfile.complianceScore}%, not a verified assessment. Explore example improvement areas.`,
       sender: 'bot',
       timestamp: new Date(),
       suggestions: ['Show improvement areas', 'Generate action plan', 'View detailed breakdown'],
@@ -197,7 +197,7 @@ const getProactiveAlerts = (userProfile: UserProfile): Message[] => {
   if (userProfile.pendingTasks && userProfile.pendingTasks > 5) {
     alerts.push({
       id: 'alert-tasks',
-      text: `📋 You have ${userProfile.pendingTasks} pending tasks. Would you like me to help prioritize them?`,
+      text: `📋 This sample profile shows ${userProfile.pendingTasks} pending tasks. Would you like to explore task-prioritization workflows?`,
       sender: 'bot',
       timestamp: new Date(),
       suggestions: ['Prioritize tasks', 'View all tasks', 'Delegate tasks'],
@@ -216,14 +216,14 @@ function getBotResponse(message: string, userProfile: UserProfile): { text: stri
   // Personalized responses
   if (lowerMessage.includes('my compliance') || lowerMessage.includes('my score')) {
     return {
-      text: `${firstName}, your current compliance score is ${userProfile.complianceScore || 94}%. ${userProfile.complianceScore && userProfile.complianceScore >= 90 ? 'Great job maintaining high compliance!' : 'Let me help you improve this.'}`,
+      text: `${firstName}, this sample profile shows an illustrative score of ${userProfile.complianceScore || 94}%, not a verified assessment of your compliance. ${userProfile.complianceScore && userProfile.complianceScore >= 90 ? 'Explore the example score breakdown.' : 'Explore example improvement areas.'}`,
       suggestions: ['View breakdown', 'Improvement tips', 'Compare to target']
     };
   }
   
   if (lowerMessage.includes('my tasks') || lowerMessage.includes('pending')) {
     return {
-      text: `You have ${userProfile.pendingTasks || 12} pending tasks. The most urgent ones are related to policy reviews and compliance updates.`,
+      text: `This sample profile shows ${userProfile.pendingTasks || 12} pending tasks, with example policy-review and compliance-update priorities. These are prototype examples, not verified tasks for your organisation.`,
       suggestions: ['Show urgent tasks', 'View all tasks', 'Mark complete']
     };
   }
@@ -435,7 +435,7 @@ export default function LiveChat() {
     const context = getPageContextSuggestions(location, userProfile);
     const proactiveAlerts = getProactiveAlerts(userProfile);
     
-    const welcomeMessage = `Hello, ${userProfile.name.split(' ')[0]}! ${context.message}`;
+    const welcomeMessage = `Hello, ${userProfile.name.split(' ')[0]}! ${context.message} This is a pre-launch prototype; profile scores and tasks are sample data, and AI outputs require human review.`;
     
     const initialMessages: Message[] = [
       {
@@ -637,7 +637,7 @@ export default function LiveChat() {
     const firstName = userProfile.name.split(' ')[0];
     
     if (location.includes('/compliance') && userProfile.complianceScore && userProfile.complianceScore < 95) {
-      return `Hi ${firstName}! I noticed your compliance score could be improved. Want some tips?`;
+      return `Hi ${firstName}! Want to explore example improvement tips for the prototype's sample compliance score?`;
     }
     
     if (location.includes('/policies')) {
@@ -720,7 +720,7 @@ export default function LiveChat() {
             <h3 className="text-white font-semibold">RegulaSync Assistant</h3>
             <p className="text-white/70 text-xs flex items-center gap-1">
               <span className="w-2 h-2 bg-green-400 rounded-full" />
-              {isSpeaking ? 'Speaking...' : isListening ? 'Listening...' : `Personalized for ${userProfile.name.split(' ')[0]}`}
+              {isSpeaking ? 'Speaking...' : isListening ? 'Listening...' : `Prototype • ${userProfile.name.split(' ')[0]}`}
             </p>
           </div>
         </div>

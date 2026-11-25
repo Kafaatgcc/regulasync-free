@@ -37,7 +37,7 @@ export default function About() {
                 <h3 className="text-xl font-semibold text-slate-900 mb-4">Our Mission</h3>
                 <p className="text-slate-600">
                   To transform how organisations manage governance by embedding policy logic
-                  directly into daily operations, reducing risk and ensuring consistent compliance.
+                  directly into daily operations, reducing risk and supporting consistent compliance.
                 </p>
               </CardContent>
             </Card>
@@ -94,7 +94,7 @@ export default function About() {
                 <h3 className="text-2xl font-bold mb-2">Baidaa Housen</h3>
                 <p className="text-white/80 mb-6">Founder & CEO</p>
                 <div className="flex gap-4">
-                  <a href="mailto:baidaa@regulasync.com" className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
+                  <a href="mailto:bhousen@regulasync.co.uk" className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
                     <Mail className="w-5 h-5" />
                   </a>
                   <a href="https://www.linkedin.com/in/baidaa-housen-84355844" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
@@ -196,20 +196,21 @@ export default function About() {
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Creating Jobs in the UK</h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
               RegulaSync is committed to building a world-class team in London and contributing to the UK's thriving tech ecosystem.
+              Staffing figures below are indicative targets for relative Years 1–3, not current headcount.
             </p>
           </div>
           <div className="grid md:grid-cols-4 gap-6 mb-12">
             <div className="bg-white p-6 rounded-xl shadow-lg text-center">
               <div className="text-4xl font-bold text-[#1e3a5f] mb-2">6</div>
-              <p className="text-slate-600 text-sm">Team size Year 1 (2026)</p>
+              <p className="text-slate-600 text-sm">Indicative team size — Year 1</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg text-center">
               <div className="text-4xl font-bold text-[#1e3a5f] mb-2">8</div>
-              <p className="text-slate-600 text-sm">Team size Year 2 (2027)</p>
+              <p className="text-slate-600 text-sm">Indicative team size — Year 2</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg text-center">
               <div className="text-4xl font-bold text-[#1e3a5f] mb-2">13</div>
-              <p className="text-slate-600 text-sm">Team size Year 3 (2028)</p>
+              <p className="text-slate-600 text-sm">Indicative team size — Year 3</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg text-center">
               <div className="text-4xl font-bold text-[#b87333] mb-2">London</div>

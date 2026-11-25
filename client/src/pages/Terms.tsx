@@ -114,11 +114,11 @@ export default function Terms() {
                 <p className="text-sm">{ANNUAL_BILLING_EXPLANATION} Any bespoke discount requires an agreed written quote.</p>
               </div>
               <ul className="list-disc pl-6 space-y-2 mt-4">
-                <li><strong>Billing:</strong> Subscriptions are billed in advance on a monthly or annual basis.</li>
-                <li><strong>Payment:</strong> Payment is due upon invoice. We accept major credit cards and bank transfers.</li>
+                <li><strong>Proposed Billing:</strong> Monthly or annual billing arrangements and service activation must be confirmed in written commercial terms before purchase.</li>
+                <li><strong>Payment:</strong> Accepted payment methods, invoice timing and payment activation are to be confirmed; this prototype is not an activated paid-service offer.</li>
                 <li><strong>Taxes:</strong> Applicable taxes will be added where required by law.</li>
-                <li><strong>Refunds:</strong> Annual subscriptions may be cancelled within 14 days for a full refund. Monthly subscriptions are non-refundable.</li>
-                <li><strong>Price Changes:</strong> We may change prices with 30 days' notice. Changes apply at the next renewal.</li>
+                <li><strong>Cancellation and Refunds:</strong> Proposed subscription terms will state applicable cancellation and refund arrangements, without limiting statutory rights.</li>
+                <li><strong>Price Changes:</strong> Any price-change and renewal-notice arrangements will be specified in agreed commercial terms.</li>
               </ul>
             </div>
           </div>
@@ -320,7 +320,7 @@ export default function Terms() {
             <div className="pl-8 space-y-3 text-muted-foreground">
               <p>If you have any questions about these Terms, please contact us:</p>
               <div className="bg-muted/50 p-4 rounded-lg">
-                <p><strong>Email:</strong> hello@regulasync.co.uk</p>
+                <p><strong>Email:</strong> bhousen@regulasync.co.uk</p>
               </div>
             </div>
           </div>

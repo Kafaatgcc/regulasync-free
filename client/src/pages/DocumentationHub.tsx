@@ -51,10 +51,10 @@ Go to User Management → Invite Users. Enter the email address and select the a
 Navigate to Compliance → Frameworks. Select the regulatory frameworks applicable to your organisation (FCA SYSC, PRA, ICO, Basel III, etc.). Each framework will populate with relevant obligations.
 
 **Step 4 — Upload Existing Policies**
-Go to Policies → Upload. Import your existing policy documents (PDF, Word, or plain text). The AI will analyse them against your selected frameworks and identify gaps.
+Go to Policies → Upload. Import your existing policy documents (PDF, Word, or plain text). AI analysis may suggest gaps against selected frameworks. Outputs are unvalidated review aids; verify them against source requirements before acting.
 
-**Step 5 — Connect Integrations**
-Navigate to Enterprise → Integrations to connect Slack, Microsoft Teams, or configure webhooks for your existing systems.`,
+**Step 5 — Review Planned Integrations**
+Navigate to Enterprise → Integrations to explore configuration options. The demo does not confirm production Slack, Microsoft Teams, or webhook delivery. Confirm availability and requirements with bhousen@regulasync.co.uk before connecting production systems.`,
       },
       {
         id: "admin-users",
@@ -114,7 +114,7 @@ For growing compliance functions.
 - AI policy drafting
 - Predictive risk engine
 - Board-ready reports
-- Slack/Teams integration
+- Planned Slack/Teams integration — production availability to be confirmed
 - Priority support
 
 ### Enterprise — ${formatGBP(PLAN_PRICING.enterprise.monthlyPence)} per user/month
@@ -123,9 +123,9 @@ For large regulated firms requiring full capability.
 - Per-user licensing
 - All Professional features
 - White-label configuration
-- Custom domain
-- API access
-- Webhooks
+- Planned custom domain — production availability to be confirmed
+- Planned API access — production availability to be confirmed
+- Planned webhooks — production availability to be confirmed
 - Dedicated account manager
 - SLA-backed support
 
@@ -133,7 +133,7 @@ For large regulated firms requiring full capability.
 Multiply the plan's per-user rate by the number of licensed users. For example, 5 Core users cost ${formatGBP(PLAN_PRICING.core.monthlyPence)} × 5 = ${formatGBP(PLAN_PRICING.core.monthlyPence * 5)} per month in total. This is illustrative, not a bundle offer. VAT may apply.
 
 ### Upgrading
-Contact your account manager or email sales@regulasync.co.uk to arrange a team subscription or discuss plan changes. The Pricing page checkout purchases one user licence. Team quantities and any bespoke commercial terms must be confirmed in writing.`,
+Contact your account manager or email bhousen@regulasync.co.uk to arrange a team subscription or discuss plan changes. The Pricing page checkout purchases one user licence. Team quantities, planned feature availability, and any bespoke commercial terms must be confirmed in writing.`,
       },
       {
         id: "admin-security",
@@ -168,28 +168,24 @@ To enable 2FA:
         tags: ["white label", "branding", "reseller", "admin"],
         content: `## White Label Configuration
 
-White labelling allows you to replace RegulaSync branding with your own for reselling or internal deployment.
+White-label configuration screens illustrate branding options for potential reselling or internal deployment. Production availability and deployment requirements must be confirmed separately.
 
-### What Gets Branded
+### Branding Options Shown
 - Platform logo and favicon
 - Colour scheme (primary, secondary, accent)
 - Browser tab title
 - Support email address
 - Privacy policy and terms of service links
-- Custom domain (e.g. compliance.yourfirm.com)
+- Planned custom domain (e.g. compliance.yourfirm.com) — not a confirmed production service
 
-### Setup Steps
-1. Navigate to **Enterprise → White Label**
-2. Upload your logo (recommended: SVG or PNG, minimum 200×60px)
-3. Set your colour scheme using the colour pickers
-4. Enter your custom domain (requires DNS CNAME configuration)
-5. Toggle **Active** and save
+### Reviewing Configuration
+Explore **Enterprise → White Label** to review logo, colour, and domain configuration fields. Saving settings or toggling **Active** does not confirm production domain provisioning.
 
-### DNS Configuration
-To use a custom domain, add a CNAME record pointing to your RegulaSync instance. Contact support@regulasync.co.uk for the target hostname.
+### Planned Custom Domains
+Do not change production DNS based on this demo. Contact bhousen@regulasync.co.uk to confirm service availability, hosting requirements, and any agreed setup process before deployment.
 
 ### Reseller Considerations
-Each client organisation can have independent white-label settings. Super Admins can configure white-label settings for any organisation from the Global Dashboard.`,
+Organisation-level white-label settings can be reviewed from the Global Dashboard by Super Admins. Reseller deployment and commercial terms require separate confirmation.`,
       },
     ],
   },
@@ -205,22 +201,22 @@ Each client organisation can have independent white-label settings. Super Admins
         tags: ["dashboard", "overview", "getting started"],
         content: `## Understanding Your Dashboard
 
-Your dashboard provides a real-time overview of your organisation's compliance posture.
+Your dashboard summarises available compliance data. Demo metrics are illustrative, not evidence of a customer's compliance or a regulatory determination.
 
 ### Key Metrics
-- **Compliance Score** — Overall percentage of obligations met across all active frameworks
+- **Compliance Score** — Indicator based on recorded obligation statuses; not a verified measure of compliance
 - **Open Risks** — Number of risk items requiring attention, colour-coded by severity
 - **Pending Tasks** — Actions assigned to you or your team
 - **Policy Status** — Count of policies by status (active, under review, expiring)
 
 ### Regulatory Intelligence Feed
-The right panel shows the latest regulatory updates from FCA, PRA, ICO, and Bank of England. Each update is AI-analysed to show its potential impact on your organisation.
+The right panel shows regulatory updates from FCA, PRA, ICO, and Bank of England. AI-generated impact suggestions are unvalidated aids for human review; check source publications and relevance before relying on them.
 
 ### Compliance Health Scorecard
 The scorecard breaks down compliance by framework, showing which areas are strong and which need attention. Click any framework to drill into specific obligations.
 
 ### Notifications
-The bell icon in the top navigation shows unread alerts. Critical compliance alerts are also sent to your configured notification channels (Slack, Teams, email).`,
+The bell icon in the top navigation shows unread alerts. External notification delivery depends on supported integrations and configuration; planned Slack/Teams delivery is not confirmed by the demo.`,
       },
       {
         id: "user-policies",
@@ -236,6 +232,8 @@ The bell icon in the top navigation shows unread alerts. Critical compliance ale
 5. Link the policy to one or more compliance frameworks
 6. Set the review date
 7. Save as **Draft**
+
+AI-generated drafts are unvalidated review support. A qualified reviewer should check accuracy, applicability, and completeness before approval.
 
 ### Policy Lifecycle
 Policies move through these statuses:
@@ -268,10 +266,10 @@ The Risk Register lists all identified risks with severity scores, owners, and m
 | Low | 0–39 | Monitor and review quarterly |
 
 ### Predictive Risk Engine
-The AI Predictive Risk Engine analyses patterns across your compliance data to forecast emerging risks. Navigate to **Risk → Predictive Analysis** to view:
+The AI Predictive Risk Engine presents potential risk indicators for human review. Demo predictions and confidence scores are illustrative; other AI outputs are unvalidated and are not calibrated probabilities or customer evidence. Navigate to **Risk → Predictive Analysis** to view:
 - Trend direction (improving/deteriorating)
-- Top predicted risks for the next 90 days
-- Recommended pre-emptive actions
+- Potential risks over an illustrative 90-day horizon
+- Suggested pre-emptive actions to assess with a qualified reviewer
 
 ### Logging a Risk
 1. Go to **Risk → New Risk**
@@ -286,9 +284,9 @@ The AI Predictive Risk Engine analyses patterns across your compliance data to f
         tags: ["audit", "evidence", "export", "compliance"],
         content: `## Audit Trail
 
-The audit trail is an immutable record of every action taken on the platform. It cannot be edited or deleted, making it suitable for regulatory submissions.
+The audit trail stores recorded platform events. Its hash-linked design is intended to support tamper-evident integrity checks and human review, not to guarantee immutability or complete event coverage. Assurance depends on implementation, verification, access controls, and retention. Review records and supporting evidence before any regulatory submission; regulator acceptance is not guaranteed.
 
-### What Is Recorded
+### Event Types to Review
 - User logins and logouts
 - Policy creation, modification, and approval
 - Risk assessments and status changes
@@ -312,7 +310,7 @@ Use the search bar to find specific events. You can filter by:
 5. The export is also recorded in the audit trail
 
 ### Smart Audit Search
-The AI-powered Smart Audit Search understands natural language queries. Try: "Show me all policy approvals by Jane Smith in Q1 2026" or "Find all high-risk items that were closed last month".`,
+Smart Audit Search supports natural-language queries. AI search output may be incomplete or inaccurate; verify results against the underlying records. Try: "Show me all policy approvals by Jane Smith in Q1 2026" or "Find all high-risk items that were closed last month".`,
       },
     ],
   },
@@ -331,16 +329,16 @@ The AI-powered Smart Audit Search understands natural language queries. Try: "Sh
 This journey covers the complete workflow when a new regulation is announced (e.g. a new FCA policy statement).
 
 ### Step 1 — Receive the Alert
-The Regulatory Intelligence Feed will surface the new regulation automatically. You will receive a notification in the platform and optionally via Slack/Teams.
+Review the Regulatory Intelligence Feed and relevant official publications. Feed and notification coverage is not guaranteed; planned Slack/Teams delivery requires production availability to be confirmed.
 
 ### Step 2 — Assess Impact
-Click on the regulatory update to see the AI-generated impact assessment. This shows:
+Click on the regulatory update to see AI-generated impact suggestions. These are unvalidated human-review support, not a compliance determination. Verify:
 - Which of your existing frameworks are affected
 - Which policies may need updating
 - Estimated compliance effort
 
 ### Step 3 — Run Gap Analysis
-Navigate to **Compliance → Gap Analysis** and select the new regulation. The system will compare your current compliance posture against the new requirements and generate a gap report.
+Navigate to **Compliance → Gap Analysis** and select the new regulation. Review the suggested gaps against source requirements and organisational evidence; the output does not establish complete coverage.
 
 ### Step 4 — Create an Action Plan
 From the gap report, click **Generate Action Plan**. This creates a set of tasks assigned to relevant team members with suggested deadlines.
@@ -349,10 +347,10 @@ From the gap report, click **Generate Action Plan**. This creates a set of tasks
 For each gap, either update an existing policy or create a new one using the AI Policy Copilot. The copilot is pre-loaded with the regulatory context.
 
 ### Step 6 — Approve and Activate
-Submit updated policies for approval. Once approved, they become active and the gap is automatically closed.
+Submit updated policies for human approval. Policy activation or a recorded gap status does not establish that the underlying obligation has been met; verify implementation and evidence before closing a gap.
 
 ### Step 7 — Generate Evidence
-Export a Board Report or Regulatory Submission report showing your compliance response for the regulator.`,
+Export a Board Report or Regulatory Submission report to support review of your response. Validate the report and supporting evidence; export does not guarantee compliance or regulator acceptance.`,
       },
       {
         id: "journey-audit",
@@ -364,13 +362,13 @@ Export a Board Report or Regulatory Submission report showing your compliance re
 Navigate to **Reports → Audit Readiness**. This generates a checklist of items regulators typically request, with your current status for each.
 
 ### Step 2 — Compile Evidence Pack
-Use the **Board Report** generator to compile a comprehensive evidence pack. Select the frameworks and date range the regulator is interested in.
+Use the **Board Report** generator to assemble material for an evidence pack. Select the relevant frameworks and date range, and check completeness against the regulator's actual requests.
 
 ### Step 3 — Export Audit Trail
-Export the full audit trail for the relevant period as a PDF. This provides an immutable record of all compliance activities.
+Export available audit records for the relevant period as a PDF. These support review of recorded activities; a PDF export does not establish immutability, complete activity coverage, or regulator approval.
 
 ### Step 4 — Review Open Risks
-Ensure all critical and high risks have documented mitigation plans. Regulators will scrutinise unmitigated risks.
+Check that critical and high risks have documented mitigation plans and assess any remaining exposure. Documented plans alone do not ensure compliance or a favourable audit outcome.
 
 ### Step 5 — Verify Policy Currency
 Check that all active policies have been reviewed within their scheduled review period. Policies overdue for review are flagged in the Policy dashboard.
@@ -414,7 +412,7 @@ Confirm the user can access the sections relevant to their role. If they need ac
     id: "integrations",
     title: "Integration Guides",
     icon: Webhook,
-    description: "Technical guides for connecting RegulaSync to enterprise systems.",
+    description: "Overview of planned enterprise integrations; production availability and technical requirements need separate confirmation.",
     sections: [
       {
         id: "int-slack",
@@ -422,24 +420,19 @@ Confirm the user can access the sections relevant to their role. If they need ac
         tags: ["slack", "notifications", "integration"],
         content: `## Slack Integration
 
-Receive compliance alerts and notifications directly in your Slack workspace.
+Slack alert delivery is a planned integration. Configuration screens in the demo do not confirm a production connection or successful delivery.
 
-### Setup
-1. In Slack, navigate to **Apps → Manage Apps → Build → Create New App**
-2. Choose **From Scratch**, name it "RegulaSync Alerts", select your workspace
-3. Under **Incoming Webhooks**, enable and click **Add New Webhook to Workspace**
-4. Select the channel (e.g. #compliance-alerts) and authorise
-5. Copy the Webhook URL
-6. In RegulaSync, go to **Enterprise → Integrations → Notifications → Add Channel**
-7. Select **Slack**, paste the webhook URL, and choose which events to subscribe to
-8. Click **Test** to send a test message
+### Availability and Setup
+Before configuring a production workspace or sharing webhook credentials, contact bhousen@regulasync.co.uk to confirm availability, supported events, and an agreed setup and testing process.
 
-### Recommended Events
-- \`compliance.alert\` — Immediate compliance issues
-- \`risk.critical\` — Critical risk items
-- \`delegation.expiring\` — Delegations expiring within 7 days
-- \`regulatory.update\` — New regulatory updates from FCA/PRA/ICO
-- \`policy.pending_review\` — Policies due for review`,
+### Illustrative Alert Categories
+- Compliance issues
+- Critical risk items
+- Delegations approaching expiry
+- Regulatory updates
+- Policies due for review
+
+These examples are not a confirmed production event contract.`,
       },
       {
         id: "int-teams",
@@ -447,17 +440,11 @@ Receive compliance alerts and notifications directly in your Slack workspace.
         tags: ["teams", "microsoft", "notifications", "integration"],
         content: `## Microsoft Teams Integration
 
-### Setup via Incoming Webhook
-1. In Teams, navigate to the channel where you want notifications
-2. Click **...** → **Connectors** → **Incoming Webhook** → **Configure**
-3. Name it "RegulaSync" and optionally upload the RegulaSync logo
-4. Copy the webhook URL
-5. In RegulaSync, go to **Enterprise → Integrations → Notifications → Add Channel**
-6. Select **Microsoft Teams**, paste the URL, and select events
-7. Click **Test** to verify
+### Planned Integration
+Microsoft Teams notification delivery is planned. Demo configuration fields and test controls are not evidence of a working production connection.
 
-### Message Format
-RegulaSync sends Adaptive Cards to Teams, which display rich formatted messages with action buttons where applicable.`,
+### Availability and Setup
+Contact bhousen@regulasync.co.uk to confirm availability, supported Microsoft Teams connection methods, permissions, message formats, and an agreed testing process before configuring production channels.`,
       },
       {
         id: "int-api",
@@ -465,44 +452,19 @@ RegulaSync sends Adaptive Cards to Teams, which display rich formatted messages 
         tags: ["api", "integration", "developer", "rest"],
         content: `## REST API Integration
 
-### Authentication
-All API requests require a Bearer token. Generate API keys from **Enterprise → Integrations → API Keys**.
+### Planned Enterprise API
+Enterprise API access and outbound webhooks are planned capabilities. Demo API-key and webhook configuration screens do not confirm production endpoint availability or delivery.
 
-\`\`\`bash
-curl https://your-domain.com/api/v1/frameworks \\
-  -H "Authorization: Bearer rsk_live_your_key_here" \\
-  -H "Content-Type: application/json"
-\`\`\`
+### Confirm Before Integration
+Contact bhousen@regulasync.co.uk for confirmed availability and an agreed technical specification before connecting production systems or sharing credentials.
 
-### Pagination
-All list endpoints support \`limit\` and \`offset\` parameters. The response includes a \`total\` field for calculating page count.
+### Specification to Agree
+- Supported endpoints and authentication requirements
+- Permissions, pagination, and response formats
+- Webhook events, delivery behaviour, and signature verification
+- Rate limits and any service commitments
 
-### Webhooks for Real-Time Events
-Instead of polling the API, use webhooks to receive events as they happen. See the Webhooks section in Enterprise → Integrations.
-
-### Webhook Signature Verification
-All webhook payloads include an \`X-RegulaSync-Signature\` header. Verify it using your webhook secret:
-
-\`\`\`javascript
-const crypto = require('crypto');
-const signature = req.headers['x-regulasync-signature'];
-const expected = 'sha256=' + crypto
-  .createHmac('sha256', webhookSecret)
-  .update(JSON.stringify(req.body))
-  .digest('hex');
-const isValid = crypto.timingSafeEqual(
-  Buffer.from(signature), Buffer.from(expected)
-);
-\`\`\`
-
-### Rate Limits
-| Tier | Requests/Minute |
-|---|---|
-| Core | 60 |
-| Professional | 300 |
-| Enterprise | 1,000 |
-
-Rate limit headers are included in every response: \`X-RateLimit-Remaining\`, \`X-RateLimit-Reset\`.`,
+This overview is not a production API contract or deployment instruction.`,
       },
     ],
   },

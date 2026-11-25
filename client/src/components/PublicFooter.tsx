@@ -39,7 +39,7 @@ export default function PublicFooter() {
                 <Twitter className="w-5 h-5" />
               </a>
               <a
-                href="mailto:hello@regulasync.co.uk"
+                href="mailto:bhousen@regulasync.co.uk"
                 className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors"
               >
                 <Mail className="w-5 h-5" />

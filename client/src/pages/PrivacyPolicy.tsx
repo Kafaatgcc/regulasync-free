@@ -46,7 +46,7 @@ export default function PrivacyPolicy() {
               <div className="bg-muted/50 p-4 rounded-lg">
                 <p className="font-medium text-foreground">Contact Details:</p>
                 <p>RegulaSync</p>
-                <p>Email: hello@regulasync.co.uk</p>
+                <p>Email: bhousen@regulasync.co.uk</p>
               </div>
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function PrivacyPolicy() {
                 please contact us:
               </p>
               <div className="bg-muted/50 p-4 rounded-lg">
-                <p><strong>Email:</strong> hello@regulasync.co.uk</p>
+                <p><strong>Email:</strong> bhousen@regulasync.co.uk</p>
               </div>
             </div>
           </div>

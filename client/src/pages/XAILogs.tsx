@@ -16,7 +16,7 @@ export default function XAILogs() {
   const markReviewed = trpc.xai.markReviewed.useMutation({
     onSuccess: () => {
       refetch();
-      toast.success("Marked as reviewed", { description: "XAI log has been reviewed and signed off." });
+      toast.success("Marked as reviewed", { description: "Review status recorded for this XAI log; this does not validate accuracy or establish compliance approval." });
     },
     onError: (e) => toast.error(e.message),
   });
@@ -33,7 +33,7 @@ export default function XAILogs() {
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <Brain className="h-7 w-7 text-purple-600" /> Explainable AI Logs
         </h1>
-        <p className="text-gray-500 mt-1">Full transparency into every AI decision — regulatory references, confidence scores, and reasoning chains</p>
+        <p className="text-gray-500 mt-1">Review available AI output records, references, confidence scores, and generated explanations — supporting human review, not complete visibility into model reasoning.</p>
       </div>
 
       {/* FCA Alignment Notice */}
@@ -42,10 +42,10 @@ export default function XAILogs() {
           <div className="flex items-start gap-3">
             <Info className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium text-purple-800">FCA Consumer Duty Aligned</p>
+              <p className="font-medium text-purple-800">Human Review and Regulatory Context</p>
               <p className="text-sm text-purple-600 mt-0.5">
-                Every AI recommendation is logged with full explainability in compliance with FCA Consumer Duty requirements
-                and the UK Government's AI Governance Framework. Human review is required for high-stakes decisions.
+                Logs can support assessment of applicable obligations, including FCA Consumer Duty where relevant; they do not establish compliance, regulatory endorsement, or complete logging.
+                AI confidence scores and explanations are unvalidated human-review aids, not calibrated probabilities or verified accounts of model reasoning. Demo outputs are illustrative, not customer evidence. Verify references and outputs before use, especially for high-stakes decisions.
               </p>
             </div>
           </div>
@@ -57,7 +57,7 @@ export default function XAILogs() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Total AI Decisions", value: summary.total || 0, color: "text-purple-600" },
-            { label: "Avg Confidence", value: `${summary.avgConfidence || 0}%`, color: "text-blue-600" },
+            { label: "Avg Confidence (Unvalidated)", value: `${summary.avgConfidence || 0}%`, color: "text-blue-600" },
             { label: "Needs Human Review", value: summary.humanReviewRequired || 0, color: "text-orange-500" },
             { label: "Reviewed", value: summary.reviewed || 0, color: "text-green-600" },
           ].map(s => (
@@ -75,7 +75,7 @@ export default function XAILogs() {
       <Card>
         <CardHeader>
           <CardTitle>AI Decision Log</CardTitle>
-          <CardDescription>Complete audit trail of all AI-generated recommendations with full reasoning transparency</CardDescription>
+          <CardDescription>Available records of AI-generated outputs and explanations for review; completeness, accuracy, and regulatory acceptance are not guaranteed.</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -84,7 +84,7 @@ export default function XAILogs() {
             <div className="text-center py-12 text-gray-400">
               <Brain className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p className="font-medium">No AI decisions logged yet</p>
-              <p className="text-sm mt-1">XAI logs are automatically created when the AI makes recommendations</p>
+              <p className="text-sm mt-1">Recorded AI outputs will appear here when available; this view does not guarantee that every recommendation is logged</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -116,7 +116,7 @@ export default function XAILogs() {
                       <p className={`text-2xl font-bold ${getConfidenceColor(log.confidenceScore || 0)}`}>
                         {log.confidenceScore || 0}%
                       </p>
-                      <p className="text-xs text-gray-400">Confidence</p>
+                      <p className="text-xs text-gray-400">Confidence (Unvalidated)</p>
                     </div>
                   </div>
 
@@ -126,14 +126,14 @@ export default function XAILogs() {
 
                   {log.reasoning && (
                     <div className="mb-3 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs font-medium text-gray-600 mb-1">Reasoning:</p>
+                      <p className="text-xs font-medium text-gray-600 mb-1">Generated Explanation (Unvalidated):</p>
                       <p className="text-sm text-gray-700">{log.reasoning}</p>
                     </div>
                   )}
 
                   {log.regulatoryReferences && log.regulatoryReferences.length > 0 && (
                     <div className="mb-3">
-                      <p className="text-xs font-medium text-gray-600 mb-1">Regulatory References:</p>
+                      <p className="text-xs font-medium text-gray-600 mb-1">Regulatory References (Verify Sources):</p>
                       <div className="flex flex-wrap gap-1">
                         {log.regulatoryReferences.map((ref: string) => (
                           <Badge key={ref} variant="outline" className="text-xs">{ref}</Badge>

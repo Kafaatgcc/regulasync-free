@@ -148,7 +148,7 @@ const presentationSteps: PresentationStep[] = [
     keyPoints: [
       "Q2 2027 launch",
       "Early access partners welcome",
-      "Contact: hello@regulasync.co.uk"
+      "Contact: bhousen@regulasync.co.uk"
     ],
     speakerNotes: "Thank you for your time. RegulaSync targets launch in Q2 2027, and we're accepting early access partners. We believe our two core innovations - SVAC and AI Regulatory Sync - represent genuine advances in compliance technology. I'm happy to answer any questions."
   }

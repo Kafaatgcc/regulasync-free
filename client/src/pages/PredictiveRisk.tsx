@@ -53,8 +53,9 @@ export default function PredictiveRisk() {
           Predictive Compliance Risk Engine
         </h1>
         <p className="text-muted-foreground mt-1">
-          90-day breach probability forecast for all policies, powered by real compliance data
+          Illustrative 90-day heuristic scenarios calculated from policy data, not validated breach probabilities.
         </p>
+        <p className="text-sm text-muted-foreground mt-2">Scores support human review; they are not measured breach likelihoods, certified compliance or customer-outcome evidence.</p>
       </div>
 
       {/* Overall Risk Banner */}
@@ -74,8 +75,8 @@ export default function PredictiveRisk() {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-4xl font-bold">{data.avgBreachProbability}%</p>
-              <p className="text-sm text-muted-foreground">Avg. Breach Probability</p>
+              <p className="text-4xl font-bold">{data.avgBreachProbability}/100</p>
+              <p className="text-sm text-muted-foreground">Avg. Illustrative Risk Score</p>
             </div>
           </CardContent>
         </Card>
@@ -139,15 +140,15 @@ export default function PredictiveRisk() {
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <Badge className={`${riskColor(forecast.riskLevel)} capitalize`}>{forecast.riskLevel}</Badge>
-                    <span className="text-lg font-bold">{forecast.breachProbability}%</span>
+                    <span className="text-lg font-bold">{forecast.breachProbability}/100</span>
                   </div>
                 </div>
 
                 {/* Breach probability bar */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Breach Probability</span>
-                    <span>{forecast.breachProbability}%</span>
+                    <span>Illustrative Risk Score</span>
+                    <span>{forecast.breachProbability}/100</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div

@@ -15,7 +15,7 @@ const dashboardSteps: Step[] = [
         <h3 className="font-bold text-lg mb-2">Welcome to RegulaSync! 🎉</h3>
         <p className="text-sm text-muted-foreground">
           Let's take a quick tour of the AI-powered governance automation platform.
-          This demo showcases how RegulaSync transforms compliance operations for regulated industries.
+          This demo illustrates governance workflows. Demo metrics and AI outputs are not validated customer evidence or compliance determinations.
         </p>
       </div>
     ),
@@ -25,10 +25,10 @@ const dashboardSteps: Step[] = [
     target: '[data-tour="compliance-score"]',
     content: (
       <div className="text-left">
-        <h3 className="font-bold text-lg mb-2">Real-Time Compliance Score</h3>
+        <h3 className="font-bold text-lg mb-2">Illustrative Compliance Score</h3>
         <p className="text-sm text-muted-foreground">
-          Your organization's overall compliance health at a glance.
-          RegulaSync continuously monitors policies and regulations to calculate this score.
+          Explore a summary indicator of recorded obligation statuses.
+          The demo score is illustrative, not a verified measure of your organization's compliance.
         </p>
       </div>
     ),
@@ -40,8 +40,8 @@ const dashboardSteps: Step[] = [
       <div className="text-left">
         <h3 className="font-bold text-lg mb-2">AI-Powered Recommendations</h3>
         <p className="text-sm text-muted-foreground">
-          Our AI analyzes regulatory changes and your policies to provide actionable recommendations.
-          Each suggestion includes a confidence score and priority level.
+          Explore AI-generated suggestions for human review.
+          Demo confidence scores, predictions, and explanations are illustrative and unvalidated, not calibrated probabilities or proof of accuracy. Check sources before acting.
         </p>
       </div>
     ),
@@ -53,8 +53,8 @@ const dashboardSteps: Step[] = [
       <div className="text-left">
         <h3 className="font-bold text-lg mb-2">Activity Timeline</h3>
         <p className="text-sm text-muted-foreground">
-          Track all governance activities in real-time. Every action is logged with
-          cryptographic hashes for complete audit trail integrity.
+          Review recorded governance activity. The hash-linked audit design is intended
+          to support tamper-evident checks; integrity assurance depends on verification and access controls, not a guarantee of complete coverage or immutability.
         </p>
       </div>
     ),
@@ -71,9 +71,9 @@ const dashboardSteps: Step[] = [
         <ul className="text-sm text-muted-foreground space-y-1">
           <li>• <strong>Policies</strong> — AI-powered policy lifecycle management</li>
           <li>• <strong>Delegation</strong> — 7-level visual approval chains</li>
-          <li>• <strong>Regulatory Updates</strong> — Live FCA, PRA, ICO, HM Treasury alerts</li>
+          <li>• <strong>Regulatory Updates</strong> — Review FCA, PRA, ICO, HM Treasury updates; verify source coverage</li>
           <li>• <strong>Audit Trail</strong> — Self-Validating Audit Cache (SVAC)</li>
-          <li>• <strong>Risk Register</strong> — Predictive AI risk scoring</li>
+          <li>• <strong>Risk Register</strong> — Illustrative predictive AI indicators for human review</li>
         </ul>
       </div>
     ),
@@ -90,7 +90,7 @@ const dashboardSteps: Step[] = [
         <ul className="text-sm text-muted-foreground space-y-1">
           <li>• <strong>Core — {formatGBP(PLAN_PRICING.core.monthlyPence)} per user/month</strong>: 3 frameworks, basic SVAC audit trail</li>
           <li>• <strong>Professional — {formatGBP(PLAN_PRICING.professional.monthlyPence)} per user/month</strong>: AI policy drafting, predictive risk, board reports</li>
-          <li>• <strong>Enterprise — {formatGBP(PLAN_PRICING.enterprise.monthlyPence)} per user/month</strong>: White-label, API access, webhooks, dedicated manager</li>
+          <li>• <strong>Enterprise — {formatGBP(PLAN_PRICING.enterprise.monthlyPence)} per user/month</strong>: White-label options, planned API access and webhooks, dedicated manager; production availability requires confirmation</li>
         </ul>
         <p className="text-xs text-muted-foreground mt-2">{USER_BILLING_EXPLANATION}</p>
         <p className="text-xs text-muted-foreground mt-2">{ANNUAL_BILLING_EXPLANATION}</p>
@@ -105,15 +105,15 @@ const dashboardSteps: Step[] = [
       <div className="text-left">
         <h3 className="font-bold text-lg mb-2">🔗 Enterprise Integrations</h3>
         <p className="text-sm text-muted-foreground mb-3">
-          Connect RegulaSync to your existing enterprise systems:
+          Explore planned enterprise integration options:
         </p>
         <ul className="text-sm text-muted-foreground space-y-1">
-          <li>• <strong>API Keys</strong> — Generate and manage machine-to-machine access keys</li>
-          <li>• <strong>Webhooks</strong> — Push compliance events to your systems in real time</li>
-          <li>• <strong>Slack / Microsoft Teams</strong> — Compliance alerts where your team works</li>
-          <li>• <strong>White-Label</strong> — Custom logo, colours, and domain for resellers</li>
+          <li>• <strong>API Keys</strong> — Review configuration options for planned machine-to-machine access</li>
+          <li>• <strong>Webhooks</strong> — Planned event delivery; demo controls do not confirm production delivery</li>
+          <li>• <strong>Slack / Microsoft Teams</strong> — Planned notification integrations</li>
+          <li>• <strong>White-Label</strong> — Logo and colour options; custom-domain service requires confirmation</li>
         </ul>
-        <p className="text-xs text-muted-foreground mt-2">Available under <strong>Enterprise</strong> in the sidebar.</p>
+        <p className="text-xs text-muted-foreground mt-2">Explore under <strong>Enterprise</strong> in the sidebar. Contact bhousen@regulasync.co.uk to confirm production availability before changing DNS or connecting production systems.</p>
       </div>
     ),
     placement: 'center',
@@ -130,7 +130,7 @@ const dashboardSteps: Step[] = [
           <li>• <strong>Admin Guide</strong> — Organisation setup, user management, billing, security</li>
           <li>• <strong>User Guide</strong> — Dashboard, policies, risks, audit trail</li>
           <li>• <strong>User Journeys</strong> — Step-by-step workflows for common compliance scenarios</li>
-          <li>• <strong>API Reference</strong> — Full endpoint documentation for enterprise integrations</li>
+          <li>• <strong>Integration Guides</strong> — Planned capabilities and requirements to confirm before production use</li>
         </ul>
         <p className="text-xs text-muted-foreground mt-2">Access via <strong>Help &amp; Docs</strong> in the sidebar.</p>
       </div>
@@ -143,13 +143,13 @@ const dashboardSteps: Step[] = [
       <div className="text-left">
         <h3 className="font-bold text-lg mb-2">🔒 Security &amp; You're Ready!</h3>
         <p className="text-sm text-muted-foreground mb-3">
-          RegulaSync is built for regulated industries. Security features include:
+          Explore security controls and review deployment-specific assurance before production use:
         </p>
         <ul className="text-sm text-muted-foreground space-y-1">
           <li>• <strong>Two-Factor Authentication (2FA)</strong> — TOTP-based, compatible with all authenticator apps</li>
           <li>• <strong>Session Management</strong> — View and revoke active sessions from any device</li>
-          <li>• <strong>SVAC Audit Trail</strong> — SHA-256 cryptographic chain, tamper-resistant</li>
-          <li>• <strong>UK GDPR compliant</strong> — Data residency in the UK</li>
+          <li>• <strong>SVAC Audit Trail</strong> — Hash-linked design intended to support tamper-evident integrity review</li>
+          <li>• <strong>Data Protection</strong> — Confirm hosting, residency, and UK GDPR obligations for your deployment; this demo does not establish compliance</li>
         </ul>
         <p className="text-sm font-medium text-primary mt-3">You're all set. Welcome to RegulaSync! 🇬🇧</p>
       </div>

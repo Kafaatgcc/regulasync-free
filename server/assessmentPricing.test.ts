@@ -117,8 +117,10 @@ describe("assessment per-user plan pricing", () => {
     expect(pricing).toContain("A £47,000 annual budget is illustrative only");
     expect(pricing).toContain("No savings or ROI are guaranteed");
     expect(pricing).toContain("Illustrative Team Pricing");
-    expect(pricing).toContain('billingPeriod: "monthly"');
-    expect(pricing).toContain("monthly checkout for one user licence");
+    expect(pricing).toContain("Request Early Access");
+    expect(pricing).toContain("opens the inquiry form, not payment checkout");
+    expect(pricing).not.toContain("billing.createCheckout");
+    expect(pricing).not.toContain("trialDays: 14");
   });
 
   it("does not present a fabricated current subscription on the plan comparison", () => {

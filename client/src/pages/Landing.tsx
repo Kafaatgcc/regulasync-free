@@ -82,7 +82,7 @@ export default function Landing() {
 
   const submitDemoRequest = trpc.demoRequests.submit.useMutation({
     onSuccess: () => {
-      toast.success("Thank you for your interest! Our team will contact you within 24 hours.");
+      toast.success("Thank you for your interest! Your demo request has been received.");
       setFormData({ name: "", email: "", company: "", phone: "", message: "" });
     },
     onError: (error) => {
@@ -246,7 +246,7 @@ export default function Landing() {
               <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
                 RegulaSync automates policy enforcement, delegation of authority,
                 and compliance monitoring with AI-driven intelligence. Reduce risk,
-                ensure compliance, and streamline decision-making across your organization.
+                support compliance, and streamline decision-making across your organization.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Button
@@ -295,8 +295,8 @@ export default function Landing() {
               <div className="relative rounded-2xl border bg-card p-4 shadow-2xl sm:p-6 lg:p-8">
                 <div className="space-y-4 sm:space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-lg">Compliance Dashboard</h3>
-                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Live</span>
+                    <h3 className="font-semibold text-lg">Illustrative Mock Dashboard</h3>
+                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Illustrative</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 sm:gap-4">
                     <div className="rounded-xl bg-secondary/50 p-2 text-center sm:p-4">
@@ -352,7 +352,7 @@ export default function Landing() {
             </div>
             <div>
               <div className="text-4xl md:text-5xl font-bold">Integrity</div>
-              <div className="text-sm opacity-80 mt-2">Tamper-evident audit design</div>
+              <div className="text-sm opacity-80 mt-2">Tamper-evident audit design — requires validation</div>
             </div>
             <div>
               <div className="text-4xl md:text-5xl font-bold">Approvals</div>
@@ -386,7 +386,7 @@ export default function Landing() {
             <FeatureCard
               icon={GitBranch}
               title="Delegation of Authority"
-              description="Visual approval chains and authority matrices that ensure proper governance at every level."
+              description="Visual approval chains and authority matrices that support proper governance at every level."
             />
             <FeatureCard
               icon={BarChart3}
@@ -400,8 +400,8 @@ export default function Landing() {
             />
             <FeatureCard
               icon={FileCheck}
-              title="Self-Validating Audit Cache"
-              description="Immutable audit trail with blockchain-inspired hash verification for complete transparency."
+              title="Tamper-Evident Audit Design"
+              description="Tamper-evident audit design using hash verification; requires implementation validation."
             />
             <FeatureCard
               icon={Clock}
@@ -491,7 +491,7 @@ export default function Landing() {
               </p>
               <div className="inline-flex items-center gap-2 text-sm text-[#b87333] font-medium">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                2 Spots Available
+                Express Pilot Interest
               </div>
             </div>
 
@@ -505,7 +505,7 @@ export default function Landing() {
               </p>
               <div className="inline-flex items-center gap-2 text-sm text-[#b87333] font-medium">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                3 Spots Available
+                Express Pilot Interest
               </div>
             </div>
 
@@ -519,7 +519,7 @@ export default function Landing() {
               </p>
               <div className="inline-flex items-center gap-2 text-sm text-[#b87333] font-medium">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                4 Spots Available
+                Express Pilot Interest
               </div>
             </div>
           </div>
@@ -529,10 +529,6 @@ export default function Landing() {
               <div>
                 <h3 className="text-2xl font-bold mb-4">Early Access Benefits</h3>
                 <ul className="space-y-3">
-                  <li className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>50% discount on first year subscription</span>
-                  </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
                     <span>Direct input into product roadmap</span>
@@ -549,7 +545,7 @@ export default function Landing() {
               </div>
               <div className="text-center md:text-right">
                 <p className="text-white/80 mb-4">
-                  Limited to 10 pilot partners for Q2 2027 launch
+                  Register pilot interest for Q2 2027 launch
                 </p>
                 <Button
                   size="lg"
@@ -692,7 +688,6 @@ export default function Landing() {
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   By submitting this form, you agree to our privacy policy.
-                  We'll respond within 24 hours.
                 </p>
               </form>
             </div>

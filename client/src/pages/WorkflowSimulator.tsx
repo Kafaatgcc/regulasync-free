@@ -215,11 +215,11 @@ export default function WorkflowSimulator() {
     setIsRunning(false);
 
     if (final === 'approved') {
-      toast.success('Workflow approved and recorded in SVAC');
+      toast.success('Simulation outcome: approved — no real approval or SVAC record created');
     } else if (final === 'flagged') {
-      toast.warning('Workflow flagged for additional review');
+      toast.warning('Simulation outcome: flagged — no real escalation sent');
     } else {
-      toast.error('Workflow rejected - policy violation detected');
+      toast.error('Simulation outcome: rejected — no real action blocked');
     }
   };
 
@@ -260,7 +260,7 @@ export default function WorkflowSimulator() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Workflow Approval Simulator</h1>
           <p className="text-muted-foreground mt-1">
-            Real-time policy enforcement demonstration - see how RegulaSync evaluates business actions
+            Illustrative policy workflow simulation — not validated compliance checks, real approvals, or customer evidence
           </p>
         </div>
         <Button variant="outline" onClick={resetSimulation}>
@@ -279,7 +279,7 @@ export default function WorkflowSimulator() {
                 Select Workflow Request
               </CardTitle>
               <CardDescription>
-                Choose a sample request or customize the parameters
+                Choose an illustrative sample request or customize the simulation parameters
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -327,7 +327,7 @@ export default function WorkflowSimulator() {
               <CardHeader>
                 <CardTitle className="text-lg">Customize Parameters</CardTitle>
                 <CardDescription>
-                  Modify the request to test different policy scenarios
+                  Modify the request to explore illustrative policy scenarios; no production action is taken
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -340,7 +340,7 @@ export default function WorkflowSimulator() {
                     placeholder="Enter amount"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Try amounts: £50,000 (auto-approve), £150,000 (VP approval), £300,000 (C-Suite), £600,000 (Board)
+                    Illustrative thresholds to explore: £50,000, £150,000, £300,000, £600,000. Displayed outcomes do not confer approval authority.
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -360,12 +360,12 @@ export default function WorkflowSimulator() {
                   {isRunning ? (
                     <>
                       <Clock className="h-4 w-4 mr-2 animate-spin" />
-                      Evaluating Policies...
+                      Simulating Policy Checks...
                     </>
                   ) : (
                     <>
                       <Play className="h-4 w-4 mr-2" />
-                      Run Policy Evaluation
+                      Run Policy Simulation
                     </>
                   )}
                 </Button>
@@ -380,17 +380,17 @@ export default function WorkflowSimulator() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
-                Real-Time Policy Evaluation
+                Illustrative Policy Evaluation
               </CardTitle>
               <CardDescription>
-                Each action is evaluated against governance policies in real-time
+                Checks and results are simulated. No vendor, sanctions, GDPR, due-diligence, or other compliance verification is performed.
               </CardDescription>
             </CardHeader>
             <CardContent>
               {workflowSteps.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <Shield className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                  <p>Select a request and click "Run Policy Evaluation" to see the workflow in action</p>
+                  <p>Select a request and click "Run Policy Simulation" to explore illustrative outcomes</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -420,8 +420,8 @@ export default function WorkflowSimulator() {
                               step.status === 'flagged' ? 'secondary' : 'destructive'
                             }
                           >
-                            {step.status === 'approved' ? 'Compliant' :
-                             step.status === 'flagged' ? 'Review Required' : 'Non-Compliant'}
+                            {step.status === 'approved' ? 'Demo Pass' :
+                             step.status === 'flagged' ? 'Demo Review' : 'Demo Fail'}
                           </Badge>
                         )}
                       </div>
@@ -450,20 +450,20 @@ export default function WorkflowSimulator() {
                   {finalResult === 'approved' && <CheckCircle2 className="h-6 w-6 text-green-500" />}
                   {finalResult === 'flagged' && <AlertTriangle className="h-6 w-6 text-amber-500" />}
                   {finalResult === 'rejected' && <XCircle className="h-6 w-6 text-red-500" />}
-                  {finalResult === 'approved' ? 'Workflow Approved' :
-                   finalResult === 'flagged' ? 'Flagged for Review' : 'Workflow Rejected'}
+                  {finalResult === 'approved' ? 'Simulation: Approved' :
+                   finalResult === 'flagged' ? 'Simulation: Review Flag' : 'Simulation: Rejected'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm">
-                  {finalResult === 'approved' && 'All policy checks passed. Action has been auto-approved and recorded in the Self-Validating Audit Cache (SVAC).'}
-                  {finalResult === 'flagged' && 'Some policy checks require additional review. The request has been escalated to the appropriate authority level.'}
-                  {finalResult === 'rejected' && 'One or more policy violations detected. The action has been blocked with corrective guidance provided.'}
+                  {finalResult === 'approved' && 'The simulation returned an approved outcome. No real policy validation, approval, or Self-Validating Audit Cache (SVAC) record was created.'}
+                  {finalResult === 'flagged' && 'The simulation returned a review flag. No request was escalated; a qualified reviewer would need to assess a real request.'}
+                  {finalResult === 'rejected' && 'The simulation returned a rejected outcome. No real violation was verified or action blocked.'}
                 </p>
                 
                 {svacHash && (
                   <div className="p-3 bg-background rounded border">
-                    <div className="text-xs text-muted-foreground mb-1">SVAC Hash (SHA-256)</div>
+                    <div className="text-xs text-muted-foreground mb-1">Illustrative SVAC-style value — random demo string, not a SHA-256 integrity proof</div>
                     <code className="text-xs font-mono break-all">{svacHash}</code>
                   </div>
                 )}
@@ -475,7 +475,7 @@ export default function WorkflowSimulator() {
                   </Badge>
                   <Badge variant="outline">
                     <Shield className="h-3 w-3 mr-1" />
-                    Immutable Record
+                    Illustrative Result Only
                   </Badge>
                 </div>
               </CardContent>
@@ -489,7 +489,7 @@ export default function WorkflowSimulator() {
         <CardHeader>
           <CardTitle className="text-lg">Delegation of Authority Limits</CardTitle>
           <CardDescription>
-            Reference table showing approval thresholds by role
+            Illustrative approval thresholds by role — not your organisation's confirmed delegation policy
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PublicHeader from "@/components/PublicHeader";
 import PublicFooter from "@/components/PublicFooter";
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Building2, MessageSquare, AlertCircle } from "lucide-react";
+import { Mail, MapPin, Clock, Send, CheckCircle, Building2, MessageSquare, AlertCircle } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
@@ -118,7 +118,7 @@ export default function Contact() {
             </div>
             <h1 className="text-3xl font-bold text-slate-900 mb-4">Message Sent Successfully</h1>
             <p className="text-lg text-slate-600 mb-8">
-              Thank you for contacting RegulaSync. Our team will review your inquiry and respond within 24 hours.
+              Thank you for contacting RegulaSync. Your inquiry has been received for review; response timing will be confirmed separately.
             </p>
             <div className="flex gap-4 justify-center">
               <Link href="/">
@@ -172,19 +172,9 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="font-medium text-slate-900">Email</p>
-                    <a href="mailto:contact@regulasync.co.uk" className="text-amber-600 hover:text-amber-700">
-                      contact@regulasync.co.uk
+                    <a href="mailto:bhousen@regulasync.co.uk" className="text-amber-600 hover:text-amber-700">
+                      bhousen@regulasync.co.uk
                     </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-900">Phone</p>
-                    <p className="text-slate-600">+44 (0) 20 7123 4567</p>
                   </div>
                 </div>
 
@@ -260,7 +250,7 @@ export default function Contact() {
               <CardHeader>
                 <CardTitle className="text-2xl">Send Us a Message</CardTitle>
                 <CardDescription>
-                  Fill out the form below and we'll get back to you within 24 hours.
+                  Send your inquiry below. Response timing and any next steps will be agreed separately.
                 </CardDescription>
               </CardHeader>
               <CardContent>

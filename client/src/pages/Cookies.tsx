@@ -264,7 +264,7 @@ export default function Cookies() {
                 If you have any questions about our use of cookies, please contact us:
               </p>
               <div className="bg-muted/50 p-4 rounded-lg">
-                <p><strong>Email:</strong> hello@regulasync.co.uk</p>
+                <p><strong>Email:</strong> bhousen@regulasync.co.uk</p>
               </div>
               <p className="mt-3">
                 For more information about how we handle your personal data, please see our{" "}

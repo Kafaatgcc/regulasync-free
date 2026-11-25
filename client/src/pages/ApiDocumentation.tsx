@@ -161,7 +161,7 @@ const API_SECTIONS: ApiSection[] = [
         method: "GET",
         path: "/api/v1/risks/predictive",
         summary: "Predictive risk analysis",
-        description: "Returns AI-generated predictive risk scores and emerging threat analysis.",
+        description: "Illustrative predictive-risk response design. Scores and AI-generated analysis require validation and human review; they are not measured breach probabilities.",
         auth: true,
         response: `{ "overallRiskScore": 67, "trend": "increasing", "topRisks": [...], "predictions": [...] }`,
       },
@@ -169,7 +169,7 @@ const API_SECTIONS: ApiSection[] = [
   },
   {
     title: "Audit Trail",
-    description: "Query the immutable audit log for compliance evidence.",
+    description: "Proposed audit-log queries supporting review; tamper-evident design, coverage and retention require validation.",
     endpoints: [
       {
         method: "GET",
@@ -386,7 +386,7 @@ export default function ApiDocumentation() {
       <div>
         <h1 className="text-3xl font-bold text-foreground">API Documentation</h1>
         <p className="text-muted-foreground mt-1">
-          RESTful API reference for integrating RegulaSync with your enterprise systems.
+          Illustrative API design reference. Examples, endpoints and service limits require implementation and verification; this is not a confirmed production API contract.
         </p>
       </div>
 
@@ -410,9 +410,9 @@ export default function ApiDocumentation() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
             {[
-              { label: "Rate Limit", value: "1,000 req/min (Enterprise)" },
+              { label: "Proposed Rate Limit", value: "Target: 1,000 req/min (Enterprise)" },
               { label: "Response Format", value: "JSON (UTF-8)" },
-              { label: "API Version", value: "v1 (stable)" },
+              { label: "API Version", value: "v1 (proposed)" },
             ].map((item) => (
               <div key={item.label} className="p-2 rounded bg-muted/30 border border-border/50">
                 <p className="text-xs text-muted-foreground">{item.label}</p>

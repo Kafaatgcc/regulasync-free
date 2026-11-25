@@ -1,9 +1,5 @@
-import { useState } from "react";
 import { Link } from "wouter";
-import { Check, HelpCircle, Building2, Users, Globe, TrendingUp, Loader2 } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { toast } from "sonner";
+import { Check, HelpCircle, Building2, Users, Globe, TrendingUp } from "lucide-react";
 import PublicHeader from "@/components/PublicHeader";
 import PublicFooter from "@/components/PublicFooter";
 import { Button } from "@/components/ui/button";
@@ -20,18 +16,18 @@ const pricingTiers = [
     annualPrice: `${formatGBP(PLAN_PRICING.core.annualPence)}${ANNUAL_PRICE_PERIOD}`,
     icon: Users,
     color: "slate",
-    badge: "14-Day Free Trial",
+    badge: "Proposed Early Access",
     features: [
       { text: "Per-user licensing", tooltip: USER_BILLING_EXPLANATION },
       { text: "3 regulatory frameworks (FCA, PRA, ICO)", tooltip: "Core UK regulatory coverage" },
       { text: "Policy management", tooltip: "Create, version, and manage compliance policies" },
-      { text: "Basic audit trail (SVAC)", tooltip: "Cryptographic tamper-resistant audit records" },
+      { text: "Basic audit trail (SVAC)", tooltip: "Tamper-evident design; integrity and coverage require validation" },
       { text: "Compliance dashboard", tooltip: "Real-time compliance status overview" },
       { text: "UK regulatory feeds", tooltip: "FCA, PRA, ICO regulatory updates" },
       { text: "PDF report exports", tooltip: "Generate board-ready compliance reports" },
-      { text: "Email support", tooltip: "Response within 48 hours" },
+      { text: "Email support (proposed)", tooltip: "Response targets will be confirmed in agreed service terms" },
     ],
-    cta: "Start Free Trial",
+    cta: "Request Early Access",
     popular: false,
     targetUsers: "UK SMEs, small compliance teams",
   },
@@ -48,14 +44,14 @@ const pricingTiers = [
       { text: "Per-user licensing", tooltip: USER_BILLING_EXPLANATION },
       { text: "Unlimited regulatory frameworks", tooltip: "All UK and relevant EU frameworks" },
       { text: "AI policy drafting", tooltip: "AI-generated policy drafts aligned to regulations" },
-      { text: "Predictive risk engine", tooltip: "AI-powered risk scoring and forecasting" },
-      { text: "Full SVAC audit trail", tooltip: "Complete cryptographic audit chain" },
+      { text: "Predictive risk engine", tooltip: "Illustrative heuristic risk scenarios requiring human review" },
+      { text: "SVAC audit trail", tooltip: "Hash-linked records; integrity and coverage require validation" },
       { text: "Board-ready reports", tooltip: "Automated executive and board reporting" },
       { text: "Delegation of authority workflows", tooltip: "7-level approval chain automation" },
       { text: "Slack/Teams integration (planned)", tooltip: "Proposed connectivity; timing to be confirmed" },
       { text: "Priority support (proposed)", tooltip: "Response targets will be confirmed in agreed service terms" },
     ],
-    cta: "Start Free Trial",
+    cta: "Request Early Access",
     popular: true,
     targetUsers: "UK financial services and professional services firms",
   },
@@ -86,36 +82,36 @@ const pricingTiers = [
 
 const faqs = [
   {
-    question: "What's included in the free trial?",
-    answer: "Our 14-day free trial includes full access to all Professional tier features. No credit card required to start.",
+    question: "How will early access work?",
+    answer: "Early access is proposed for Q2 2027. Register interest to discuss a pilot; availability, duration, included features and any payment requirements must be confirmed in writing. No active 14-day or no-card Professional trial is currently offered.",
   },
   {
     question: "Can I change plans later?",
-    answer: "Yes, you can upgrade or downgrade your plan at any time. Changes take effect at the start of your next billing cycle.",
+    answer: "Plan changes are intended to be supported under the proposed Q2 2027 commercial terms. Upgrade and downgrade availability, timing and charges must be agreed before paid-service activation; immediate changes are not currently promised.",
   },
   {
     question: "Do you offer discounts for annual billing?",
-    answer: ANNUAL_BILLING_EXPLANATION,
+    answer: `${ANNUAL_BILLING_EXPLANATION} These are proposed Q2 2027 billing terms, subject to written confirmation before paid-service activation.`,
   },
   {
-    question: "What payment methods do you accept?",
-    answer: "We accept all major credit cards, bank transfers, and can arrange invoicing for Enterprise customers.",
+    question: "What payment methods are planned?",
+    answer: "Payment acceptance is not confirmed for this pre-launch prototype. Available payment methods and any Enterprise invoicing arrangements will be confirmed in the agreed commercial terms before paid-service activation, proposed for Q2 2027.",
   },
   {
     question: "Is there a setup fee?",
-    answer: "Core and Professional tiers have no setup fees. Enterprise implementations include a custom onboarding package.",
+    answer: "Setup fees and onboarding arrangements are not yet confirmed. Any Core, Professional or Enterprise implementation charges will be set out in a written quote under the proposed Q2 2027 commercial terms.",
   },
   {
-    question: "How does user counting work?",
-    answer: `${USER_BILLING_EXPLANATION} The monthly total is the plan's per-user rate multiplied by the number of licensed users. The checkout on this page purchases one user licence; contact sales for a team subscription.`,
+    question: "How are users counted?",
+    answer: `${USER_BILLING_EXPLANATION} The proposed monthly total is the plan's per-user rate multiplied by the number of licensed users. This page previews proposed licence prices, not an activated paid-service offer; contact sales to discuss proposed team terms.`,
   },
   {
     question: "What's the minimum contract term?",
-    answer: "Monthly plans are billed monthly. Annual plans are billed yearly at 12 × the monthly per-user rate. See the Terms of Service for cancellation conditions.",
+    answer: "The proposed Q2 2027 model is monthly billing for monthly plans and yearly billing at 12 × the monthly per-user rate for annual plans. Minimum terms, cancellation rights and activation dates must be confirmed in the agreed commercial terms before purchase.",
   },
   {
     question: "Do you offer volume discounts?",
-    answer: "Published rates apply per user. Any bespoke commercial terms must be confirmed in a written quote; no volume discount is assumed.",
+    answer: "Published proposed rates apply per user. Any bespoke Q2 2027 commercial terms must be confirmed in a written quote; no volume discount is assumed.",
   },
 ];
 
@@ -126,35 +122,6 @@ const marketStats = [
 ];
 
 export default function Pricing() {
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
-  const { user } = useAuth();
-
-  const createCheckout = trpc.billing.createCheckout.useMutation({
-    onSuccess: (data) => {
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    },
-    onError: (error) => {
-      toast.error("Failed to start checkout", { description: error.message });
-      setLoadingPlan(null);
-    },
-  });
-
-  const handleSubscribe = async (planId: string) => {
-    if (!user) {
-      toast.error("Please sign in to subscribe");
-      return;
-    }
-
-    setLoadingPlan(planId);
-    createCheckout.mutate({
-      planId: planId.toLowerCase(),
-      billingPeriod: "monthly",
-      trialDays: 14,
-    });
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <PublicHeader />
@@ -174,7 +141,7 @@ export default function Pricing() {
             Prices shown in GBP. VAT may apply for UK customers. {USER_BILLING_EXPLANATION}
           </p>
           <p className="text-sm text-slate-500 mt-2">
-            {ANNUAL_BILLING_EXPLANATION} Start Free Trial opens monthly checkout for one user licence. Contact sales for team subscriptions.
+            {ANNUAL_BILLING_EXPLANATION} Request Early Access opens the inquiry form, not payment checkout. Trial, payment and activation terms must be confirmed before purchase.
           </p>
           <p className="text-sm text-amber-800 mt-3">Pre-launch proposed pricing and features for Q2 2027. Production integrations, support terms and payment activation are subject to confirmation; this assessment prototype is not a live paid-service offer.</p>
         </div>
@@ -249,7 +216,7 @@ export default function Pricing() {
                     </ul>
 
                     {tier.cta === "Contact Sales" ? (
-                      <Link href="/#request-demo">
+                      <Link href="/contact">
                         <Button
                           className="w-full"
                           variant="outline"
@@ -258,21 +225,14 @@ export default function Pricing() {
                         </Button>
                       </Link>
                     ) : (
-                      <Button
-                        className={`w-full ${tier.popular ? 'bg-[#1e3a5f] hover:bg-[#2d5a87]' : ''}`}
-                        variant={tier.popular ? 'default' : 'outline'}
-                        disabled={loadingPlan === tier.name.toLowerCase()}
-                        onClick={() => handleSubscribe(tier.name)}
-                      >
-                        {loadingPlan === tier.name.toLowerCase() ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          tier.cta
-                        )}
-                      </Button>
+                      <Link href={`/contact?plan=${tier.name.toLowerCase()}`}>
+                        <Button
+                          className={`w-full ${tier.popular ? 'bg-[#1e3a5f] hover:bg-[#2d5a87]' : ''}`}
+                          variant={tier.popular ? 'default' : 'outline'}
+                        >
+                          {tier.cta}
+                        </Button>
+                      </Link>
                     )}
                   </CardContent>
                 </Card>

@@ -69,8 +69,8 @@ export default function ComingSoon() {
 
         {/* Subtitle */}
         <p className="text-sm sm:text-base text-slate-400 mb-6 sm:mb-8 max-w-md mx-auto leading-relaxed px-2">
-          Transforming regulatory compliance for UK businesses.
-          Automated policy management, real-time regulatory updates, and intelligent audit trails.
+          Supporting governance and compliance review for UK businesses.
+          Explore policy-management, regulatory-monitoring and audit-trail prototypes with illustrative data.
         </p>
 
         {/* Features */}
@@ -81,7 +81,7 @@ export default function ComingSoon() {
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2 bg-white/5 border border-white/10 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg">
             <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-500" />
-            <span className="text-xs sm:text-sm text-slate-300">Enterprise Security</span>
+            <span className="text-xs sm:text-sm text-slate-300">Security Design</span>
           </div>
         </div>
 
@@ -164,11 +164,11 @@ export default function ComingSoon() {
             Interested in learning more about RegulaSync?
           </p>
           <a
-            href="mailto:hello@regulasync.co.uk"
+            href="mailto:bhousen@regulasync.co.uk"
             className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 transition-colors text-sm sm:text-base"
           >
             <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            hello@regulasync.co.uk
+            bhousen@regulasync.co.uk
           </a>
         </div>
 

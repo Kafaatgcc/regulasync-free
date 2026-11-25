@@ -210,7 +210,7 @@ export default function AuditTrail() {
             <History className="h-6 w-6" />
             Self-Validating Audit Cache
           </h1>
-          <p className="text-muted-foreground">Cryptographically verified, immutable audit trail</p>
+          <p className="text-muted-foreground">Audit-trail prototype with hash-verification tools; integrity assurance requires validation</p>
         </div>
         <div className="flex gap-2">
           <Button 
@@ -276,8 +276,8 @@ export default function AuditTrail() {
                 )}
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                Every audit entry is cryptographically hashed using SHA-256 and linked to the previous entry, 
-                creating an immutable blockchain-style chain of evidence. Any tampering is immediately detectable.
+                The tamper-evident design uses SHA-256 hashes linked to preceding entries. Verification checks the recorded chain;
+                coverage, retention and resistance to alteration require validation. This is not an immutability or audit-assurance guarantee.
               </p>
               <div className="flex flex-wrap items-center gap-4 mt-3">
                 {chainVerification?.chainIntegrity === 'intact' && (
@@ -419,7 +419,7 @@ export default function AuditTrail() {
             <div>
               <CardTitle>Audit Log Entries</CardTitle>
               <CardDescription>
-                {aiResults !== null ? `AI search: ${aiResults.length} results` : 'Complete cryptographically verified history of all governance activities'}
+                {aiResults !== null ? `AI search: ${aiResults.length} results` : 'Recorded governance activities; coverage and integrity require review'}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -535,7 +535,7 @@ export default function AuditTrail() {
                             <DialogHeader>
                               <DialogTitle>Audit Entry Details</DialogTitle>
                               <DialogDescription>
-                                Complete cryptographic verification for entry #{log.id}
+                                Recorded cryptographic fields for entry #{log.id}
                               </DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4 py-4">
@@ -611,8 +611,8 @@ export default function AuditTrail() {
                                   </div>
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                  This hash is computed from: entityType + entityId + action + userId + timestamp + previousHash. 
-                                  Any modification to the data will produce a different hash, making tampering detectable.
+                                  This hash is computed from: entityType + entityId + action + userId + timestamp + previousHash.
+                                  Verification can flag changes to hashed fields against the recorded chain; it does not guarantee complete alteration detection or immutable storage.
                                 </p>
                               </div>
 

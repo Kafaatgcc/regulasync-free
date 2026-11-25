@@ -124,7 +124,7 @@ describe("assessment certification and security claims", () => {
     expect(securitySource).toContain("<PublicHeader />");
     expect(securitySource).toContain("<PublicFooter />");
     expect(securitySource).toContain('href="/#request-demo"');
-    expect(securitySource).toContain('href="mailto:security@regulasync.com"');
+    expect(securitySource).toContain('href="mailto:bhousen@regulasync.co.uk"');
   });
 
   it.each([

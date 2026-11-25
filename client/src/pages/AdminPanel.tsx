@@ -113,8 +113,8 @@ export default function AdminPanel() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Database Status</p>
-                <p className="text-lg font-semibold text-green-600">Connected</p>
+                <p className="text-sm text-muted-foreground">Database Status (Illustrative)</p>
+                <p className="text-lg font-semibold text-green-600">Not checked here</p>
               </div>
               <Database className="h-8 w-8 text-green-500/50" />
             </div>
@@ -124,8 +124,8 @@ export default function AdminPanel() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Hash Chain</p>
-                <p className="text-lg font-semibold text-green-600">Verified</p>
+                <p className="text-sm text-muted-foreground">Hash Chain Status</p>
+                <p className="text-lg font-semibold text-green-600">Not checked here</p>
               </div>
               <Shield className="h-8 w-8 text-green-500/50" />
             </div>
@@ -135,8 +135,8 @@ export default function AdminPanel() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">API Status</p>
-                <p className="text-lg font-semibold text-green-600">Healthy</p>
+                <p className="text-sm text-muted-foreground">API Status (Illustrative)</p>
+                <p className="text-lg font-semibold text-green-600">Not checked here</p>
               </div>
               <Zap className="h-8 w-8 text-green-500/50" />
             </div>
@@ -146,8 +146,8 @@ export default function AdminPanel() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">LLM Service</p>
-                <p className="text-lg font-semibold text-green-600">Active</p>
+                <p className="text-sm text-muted-foreground">LLM Service (Illustrative)</p>
+                <p className="text-lg font-semibold text-green-600">Not checked here</p>
               </div>
               <BarChart3 className="h-8 w-8 text-green-500/50" />
             </div>
@@ -173,8 +173,8 @@ export default function AdminPanel() {
                   Seed All Data
                 </CardTitle>
                 <CardDescription>
-                  Populate the database with comprehensive demo data including policies, 
-                  regulatory updates, compliance records, and more.
+                  Populate the database with illustrative demo data including policies,
+                  regulatory updates, compliance records, and more — not customer evidence.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -253,8 +253,8 @@ export default function AdminPanel() {
                   Seed Audit Trail
                 </CardTitle>
                 <CardDescription>
-                  Create audit entries with cryptographic hash chain verification.
-                  Each entry is linked to the previous via SHA-256 hashes.
+                  Create hash-linked audit entries to support integrity review.
+                  The tamper-evident design is not a guarantee of immutability or complete coverage.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -263,8 +263,8 @@ export default function AdminPanel() {
                   <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• SHA-256 cryptographic hashing</li>
                     <li>• Chain linking (each entry references previous)</li>
-                    <li>• Tamper detection and verification</li>
-                    <li>• Immutable audit history</li>
+                    <li>• Designed to support tamper-evident checks</li>
+                    <li>• Integrity assurance depends on verification and access controls</li>
                   </ul>
                 </div>
 
@@ -300,8 +300,9 @@ export default function AdminPanel() {
                 AI-Powered Gap Analysis
               </CardTitle>
               <CardDescription>
-                Run AI analysis to compare regulatory updates against company policies 
-                and identify compliance gaps. Uses LLM for intelligent comparison.
+                Run AI analysis to compare regulatory updates against company policies
+                and suggest potential gaps. Outputs are unvalidated human-review support,
+                not proof of compliance or complete gap coverage.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -321,7 +322,7 @@ export default function AdminPanel() {
                 <div className="bg-green-50 p-4 rounded-lg">
                   <h4 className="font-medium text-green-900 mb-2">Step 3: Recommendations</h4>
                   <p className="text-sm text-green-700">
-                    Generate actionable recommendations for policy updates.
+                    Generate draft recommendations for qualified human review.
                   </p>
                 </div>
               </div>
@@ -396,7 +397,7 @@ export default function AdminPanel() {
               </div>
 
               <p className="text-xs text-muted-foreground text-center">
-                "Run Live AI Analysis" uses real-time LLM analysis. "Seed UK Regulatory Scenarios" populates pre-computed gap analysis for 12 realistic UK compliance scenarios.
+                "Run Live AI Analysis" requests LLM analysis; verify its output against source requirements and organisational evidence. "Seed UK Regulatory Scenarios" populates 12 illustrative, pre-computed UK scenarios. Demo confidence scores and predictions are not validated probabilities or customer evidence.
               </p>
             </CardContent>
           </Card>
@@ -442,27 +443,27 @@ export default function AdminPanel() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
-                  Verify Hash Chain
+                  Hash Chain Verification Demo
                 </CardTitle>
                 <CardDescription>
-                  Verify the integrity of the audit trail hash chain.
-                  Detects any tampering or corruption in the audit log.
+                  This control simulates a verification message; it does not check stored audit records.
+                  Actual integrity assurance requires implemented verification and supporting controls.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
                   onClick={() => {
-                    toast.info('Hash chain verification started...');
+                    toast.info('Illustrative verification message started — no audit check is performed...');
                     // This would call the verification endpoint
                     setTimeout(() => {
-                      toast.success('Hash chain verified - No tampering detected!');
+                      toast.success('Verification demo complete — stored audit integrity has not been checked.');
                     }, 2000);
                   }}
                   className="w-full"
                   variant="outline"
                 >
                   <Shield className="h-4 w-4 mr-2" />
-                  Verify Audit Chain Integrity
+                  Run Verification Demo
                 </Button>
               </CardContent>
             </Card>

@@ -12,8 +12,8 @@ const DEFAULT_SETTINGS = [
   // Company Identity
   { key: "company_name", value: "RegulaSync", type: "string", category: "identity", isPublic: true, description: "Platform name" },
   { key: "company_tagline", value: "AI-Powered Regulatory Compliance for UK Businesses", type: "string", category: "identity", isPublic: true, description: "Platform tagline" },
-  { key: "company_email", value: "hello@regulasync.co.uk", type: "string", category: "identity", isPublic: true, description: "Primary contact email" },
-  { key: "company_phone", value: "+44 20 7946 0958", type: "string", category: "identity", isPublic: true, description: "Contact phone" },
+  { key: "company_email", value: "bhousen@regulasync.co.uk", type: "string", category: "identity", isPublic: true, description: "Primary contact email" },
+  { key: "company_phone", value: "", type: "string", category: "identity", isPublic: true, description: "Contact phone — awaiting an approved number" },
   { key: "company_address", value: "71-75 Shelton Street, Covent Garden, London, WC2H 9JQ", type: "string", category: "identity", isPublic: true, description: "Registered address" },
   { key: "company_registration", value: "15847293", type: "string", category: "identity", isPublic: true, description: "Companies House registration number" },
   { key: "company_ico_number", value: "ZB847291", type: "string", category: "identity", isPublic: true, description: "ICO registration number" },

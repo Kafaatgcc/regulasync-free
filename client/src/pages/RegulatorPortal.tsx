@@ -77,7 +77,7 @@ export default function RegulatorPortal() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Shield className="h-7 w-7 text-indigo-600" /> Regulator Portal
           </h1>
-          <p className="text-gray-500 mt-1">Grant FCA, ICO, and PRA direct read-only access to your live compliance data — eliminating traditional audit cycles</p>
+          <p className="text-gray-500 mt-1">Manage scoped read-only access to available compliance data to support regulator review. Portal access does not replace audits or confirm regulator participation, approval, or compliance.</p>
         </div>
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
           <DialogTrigger asChild>
@@ -167,9 +167,9 @@ export default function RegulatorPortal() {
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { title: "Zero Paperwork", desc: "Regulators access live, real-time compliance data without requesting documents or scheduling audits" },
-              { title: "Granular Control", desc: "You control exactly what each regulator can see — revoke access instantly at any time" },
-              { title: "Immutable Audit Trail", desc: "Every regulator access is logged in the cryptographic audit chain for accountability" },
+              { title: "Support Evidence Review", desc: "Share available compliance data for review; regulators may still request documents, evidence, or formal audits" },
+              { title: "Scoped Access", desc: "Select access scopes and manage revocation; confirm access behaviour and recipient requirements before sharing" },
+              { title: "Audit Integrity Support", desc: "Recorded access events can support accountability. A hash-linked, tamper-evident design does not guarantee complete access logging or immutability" },
             ].map(s => (
               <div key={s.title}>
                 <p className="font-semibold text-indigo-900">{s.title}</p>
@@ -193,7 +193,7 @@ export default function RegulatorPortal() {
             <div className="text-center py-12 text-gray-400">
               <Shield className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p className="font-medium">No access grants created yet</p>
-              <p className="text-sm mt-1">Grant your first regulator access to enable continuous compliance visibility</p>
+              <p className="text-sm mt-1">Create an access grant to support review of selected data; confirm recipient requirements before sharing</p>
             </div>
           ) : (
             <div className="space-y-3">

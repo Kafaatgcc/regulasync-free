@@ -306,9 +306,9 @@ export default function Security() {
                 Request Security Documentation
               </Button>
             </Link>
-            <a href="mailto:security@regulasync.com">
+            <a href="mailto:bhousen@regulasync.co.uk">
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                Contact Security Team
+                Send a Security Inquiry
               </Button>
             </a>
           </div>
